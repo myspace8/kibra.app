@@ -8,8 +8,6 @@ async function getBooksByCollectionSlug(slug: string): Promise<{ slug: string, b
       .from("collections")
       .select("id, slug")
       .eq("slug", slug)
-
-      
       .single()
 
     if (collectionError || !collection) {

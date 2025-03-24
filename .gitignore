@@ -1,0 +1,30 @@
+yarn-debug.log*
+yarn-debug.log
+yarn-debug-1.log*
+yarn-debug-1.log
+yarn-debug-2.log*
+yarn-debug-2.log
+
+# env
+.env
+
+# node_modules
+node_modules
+
+# vercel
+.vercel
+
+# next
+.next
+
+# dist
+dist
+
+# typescript
+tsconfig.tsbuildinfo
+
+# next-env.d.ts
+next-env.d.ts
+
+
+
