@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useMobile } from "@/hooks/use-mobile"
+import { categories } from "@/lib/categories"
 
 type Category = {
   name: string
@@ -17,15 +18,12 @@ type Category = {
   icon?: React.ReactNode
 }
 
-const categories: Category[] = [
+const categoryList: Category[] = [
   { name: "Home", slug: "/home" },
-  { name: "Business", slug: "/category/business" },
-  { name: "Biography", slug: "/category/biography" },
-  { name: "Technology", slug: "/category/technology" },
-  { name: "Science", slug: "/category/science" },
-  { name: "Fiction", slug: "/category/fiction" },
-  { name: "Self-Help", slug: "/category/self-help" },
-  { name: "History", slug: "/category/history" },
+  ...Object.entries(categories).map(([key, value]) => ({
+    name: value.name,
+    slug: `/category/${key}`,
+  })),
 ]
 
 export function CategoryList() {
@@ -91,7 +89,7 @@ export function CategoryList() {
       )}
 
       <div ref={scrollContainerRef} className="flex gap-2 overflow-x-auto py-3 px-1 scrollbar-hide">
-        {categories.map((category) => {
+        {categoryList.map((category) => {
           const isActive =
             category.slug === pathname || (category.slug !== "/home" && pathname?.startsWith(category.slug))
 

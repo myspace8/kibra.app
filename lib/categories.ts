@@ -1,19 +1,31 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { ChevronLeft, Search, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { UserNav } from "@/components/user-nav"
-import { BookCard } from "@/components/book-card"
-import { CategoryList } from "@/components/category-list"
-
-type Props = {
-  params: { slug: string }
+export type Category = {
+  name: string
+  title: string
+  description: string
+  featuredBooks: Array<{
+    id: number
+    title: string
+    author: string
+    description: string
+    downloads: number
+    image: string
+  }>
+  collections: Array<{
+    title: string
+    books: Array<{
+      id: number
+      title: string
+      author: string
+      description: string
+      downloads: number
+      image: string
+    }>
+  }>
 }
 
-// Category data
-const categories = {
+export const categories: Record<string, Category> = {
   business: {
+    name: "Business",
     title: "Business",
     description: "Discover the best business books",
     featuredBooks: [
@@ -103,38 +115,10 @@ const categories = {
           },
         ],
       },
-      {
-        title: "Personal Finance",
-        books: [
-          {
-            id: 10,
-            title: "The Total Money Makeover",
-            author: "Dave Ramsey",
-            description: "A Proven Plan for Financial Fitness",
-            downloads: 910,
-            image: "/placeholder.svg?height=100&width=70",
-          },
-          {
-            id: 11,
-            title: "I Will Teach You to Be Rich",
-            author: "Ramit Sethi",
-            description: "No Guilt. No Excuses. No BS. Just a 6-Week Program That Works",
-            downloads: 680,
-            image: "/placeholder.svg?height=100&width=70",
-          },
-          {
-            id: 12,
-            title: "The Millionaire Next Door",
-            author: "Thomas J. Stanley",
-            description: "The Surprising Secrets of America's Wealthy",
-            downloads: 750,
-            image: "/placeholder.svg?height=100&width=70",
-          },
-        ],
-      },
     ],
   },
   biography: {
+    name: "Biography",
     title: "Biography",
     description: "Discover the best biography books",
     featuredBooks: [
@@ -228,123 +212,4 @@ const categories = {
       },
     ],
   },
-  // Add more categories as needed
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
-  const category = categories[slug as keyof typeof categories]
-
-  if (!category) {
-    return {
-      title: "Category Not Found - KIBRA",
-    }
-  }
-
-  return {
-    title: `${category.title} Books - KIBRA`,
-    description: category.description,
-  }
-}
-
-export default async function CategoryPage({ params }: Props) {
-  const { slug } = await params
-  const category = categories[slug as keyof typeof categories]
-
-  if (!category) {
-    return (
-      <div className="container max-w-md mx-auto px-4 py-8 text-center">
-        <h1 className="text-2xl font-bold mb-4">Category Not Found</h1>
-        <p className="mb-4">The category you're looking for doesn't exist.</p>
-        <Button asChild>
-          <Link href="/home">Go Home</Link>
-        </Button>
-      </div>
-    )
-  }
-
-  return (
-    <div className="container max-w-md mx-auto px-4 pb-8">
-      <header className="sticky top-0 bg-white z-10 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">KIBRA</h1>
-          <div className="flex items-center gap-2">
-            <div className="relative w-full max-w-[200px]">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search"
-                className="pl-8 h-9 w-full rounded-full bg-gray-100 border-none"
-              />
-            </div>
-            <UserNav />
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <CategoryList />
-        </div>
-      </header>
-
-      <div className="flex items-center gap-2 my-4">
-        <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
-          <Link href="/home">
-            <ChevronLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <h2 className="text-xl font-bold">{category.title}</h2>
-      </div>
-
-      <main className="space-y-8">
-        {/* Featured Books Section - Optimized for mobile */}
-        <section>
-          <h3 className="text-lg font-semibold mb-4">Featured {category.title} Books</h3>
-          <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide">
-            {category.featuredBooks.map((book) => (
-              <div key={book.id} className="flex-shrink-0 w-[70%] sm:w-[calc(100%/3-16px)] snap-start">
-                <BookCard
-                  id={book.id.toString()}
-                  title={book.title}
-                  author={book.author}
-                  description={book.description}
-                  image={book.image}
-                  downloads={book.downloads}
-                  variant="featured"
-                />
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Collections */}
-        {category.collections.map((collection, index) => (
-          <section key={index}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">{collection.title}</h3>
-              <Link
-                href={`/collection/${slug}-${collection.title.toLowerCase().replace(/\s+/g, "-")}`}
-                className="text-sm text-muted-foreground flex items-center"
-              >
-                More <ChevronRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="space-y-4">
-              {collection.books.map((book) => (
-                <BookCard
-                  key={book.id}
-                  id={book.id.toString()}
-                  title={book.title}
-                  author={book.author}
-                  description={book.description}
-                  image={book.image}
-                  downloads={book.downloads}
-                />
-              ))}
-            </div>
-          </section>
-        ))}
-      </main>
-    </div>
-  )
-}
-
+} 
