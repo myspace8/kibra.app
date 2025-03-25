@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { getPopularBiographyBooks } from "./actions"
+import { getPopularBiographyBooks, getBiographyCollections } from "./actions"
 import BiographyClient from "./biography-client"
 
 export const metadata: Metadata = {
@@ -8,7 +8,17 @@ export const metadata: Metadata = {
 }
 
 export default async function BiographyCategoryPage() {
-  const { success, data: books, error } = await getPopularBiographyBooks()
+  const [booksResult, collectionsResult] = await Promise.all([
+    getPopularBiographyBooks(),
+    getBiographyCollections(),
+  ])
 
-  return <BiographyClient books={books ?? null} success={success} error={error ?? null} />
+  return (
+    <BiographyClient
+      books={booksResult.data ?? null}
+      collections={collectionsResult.data ?? null}
+      success={booksResult.success && collectionsResult.success}
+      error={(booksResult.error || collectionsResult.error) ?? null}
+    />
+  )
 } 

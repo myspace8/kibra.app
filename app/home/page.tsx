@@ -86,6 +86,7 @@ export default async function HomePage() {
                   image={book.cover_image_url || "/placeholder.svg?height=80&width=80"}
                   downloads={book.downloads || 0}
                   pdf_url={book.pdf_url} // Pass pdf_url
+                  variant="popular"
                 />
               ))
             ) : (

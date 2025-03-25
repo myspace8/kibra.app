@@ -68,11 +68,11 @@ export default async function CollectionPage({ params }: Props) {
         </div>
       </header>
       <div className="flex items-center gap-2 my-4">
-        <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
+        {/* <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
           <Link href="/home">
             <ChevronLeft className="h-5 w-5" />
           </Link>
-        </Button>
+        </Button> */}
         <h2 className="text-xl font-bold">{collection.name}</h2>
       </div>
       <main className="space-y-6">
