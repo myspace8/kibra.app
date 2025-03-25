@@ -4,7 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Download, BookOpen } from "lucide-react"
+import { Download, BookOpen, TrendingUp, Star } from "lucide-react"
 import { BookMenu } from "@/components/book-menu"
 import { cn } from "@/lib/utils"
 
@@ -15,9 +15,10 @@ type BookCardProps = {
   description?: string
   image: string
   downloads?: number
-  pdf_url?: string // Add pdf_url
-  variant?: "default" | "compact" | "featured"
+  pdf_url?: string
+  variant?: "default" | "compact" | "featured" | "popular"
   className?: string
+  rank?: number
 }
 
 export function BookCard({
@@ -27,13 +28,72 @@ export function BookCard({
   description,
   image,
   downloads = 0,
-  pdf_url, // Add pdf_url
+  pdf_url,
   variant = "default",
   className,
+  rank,
 }: BookCardProps) {
   const [isHovered, setIsHovered] = useState(false)
 
   const formattedDownloads = downloads >= 1000 ? `${(downloads / 1000).toFixed(1)}k` : downloads.toString()
+
+  if (variant === "popular") {
+    return (
+      <motion.div
+        className={cn(
+          "relative group rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300 h-full",
+          className,
+        )}
+        whileHover={{ y: -4 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="flex gap-4 p-4 h-full">
+          <div className="relative w-[80px] h-[120px] flex-shrink-0 overflow-hidden rounded-lg">
+            <Image
+              src={image || "/placeholder.svg"}
+              alt={title}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-110"
+            />
+            <AnimatePresence>
+              {isHovered && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-black/60 flex items-center justify-center"
+                >
+                  <Link href={`/book/${id}`}>
+                    <BookOpen className="h-6 w-6 text-white hover:text-primary transition-colors" />
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="flex-1 min-w-0 flex flex-col">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-primary">Popular</span>
+              </div>
+              <h3 className="font-semibold text-base line-clamp-2 mb-1">{title}</h3>
+              <p className="text-sm text-muted-foreground">{author}</p>
+            </div>
+
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Download className="h-4 w-4" />
+                <span>{formattedDownloads}</span>
+              </div>
+              <BookMenu bookId={id} pdfUrl={pdf_url} />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    )
+  }
 
   if (variant === "compact") {
     return (
@@ -65,7 +125,7 @@ export function BookCard({
               </div>
             </div>
           </div>
-          <BookMenu bookId={id} pdfUrl={pdf_url} /> {/* Pass pdf_url */}
+          <BookMenu bookId={id} pdfUrl={pdf_url} />
         </div>
       </motion.div>
     )
@@ -107,7 +167,7 @@ export function BookCard({
                 animate={{ opacity: isHovered ? 1 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <BookMenu bookId={id} pdfUrl={pdf_url} /> {/* Pass pdf_url */}
+                <BookMenu bookId={id} pdfUrl={pdf_url} />
               </motion.div>
             </div>
           </div>
@@ -167,7 +227,7 @@ export function BookCard({
         </div>
 
         <div className="self-start">
-          <BookMenu bookId={id} pdfUrl={pdf_url} /> {/* Pass pdf_url */}
+          <BookMenu bookId={id} pdfUrl={pdf_url} />
         </div>
       </div>
     </motion.div>
