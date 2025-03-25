@@ -9,7 +9,7 @@ import { getBooksByCollectionSlug, getTrendingBooks } from "./actions"
 
 export const metadata: Metadata = {
   title: "KIBRA - Home",
-  description: "Discover the best books and authors",
+  description: "Any book you want, in pdf format",
 }
 
 export default async function HomePage() {
@@ -19,7 +19,6 @@ export default async function HomePage() {
 
   const trendingData = await getTrendingBooks(3)
   const trending = trendingData.books
-  const trendingSlug = trendingData.slug
 
   return (
     <div className="container max-w-md mx-auto px-4 pb-8">
@@ -74,9 +73,6 @@ export default async function HomePage() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Trending</h2>
-            <Link href={`/collection/${trendingSlug}`} className="text-sm text-muted-foreground flex items-center">
-              More <ChevronRight className="h-4 w-4" />
-            </Link>
           </div>
           <div className="space-y-4">
             {trending.length > 0 ? (

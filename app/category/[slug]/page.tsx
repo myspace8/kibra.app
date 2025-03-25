@@ -231,8 +231,8 @@ const categories = {
   // Add more categories as needed
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const slug = params.slug
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
   const category = categories[slug as keyof typeof categories]
 
   if (!category) {
@@ -247,8 +247,8 @@ export function generateMetadata({ params }: Props): Metadata {
   }
 }
 
-export default function CategoryPage({ params }: Props) {
-  const slug = params.slug
+export default async function CategoryPage({ params }: Props) {
+  const { slug } = await params
   const category = categories[slug as keyof typeof categories]
 
   if (!category) {
@@ -303,7 +303,7 @@ export default function CategoryPage({ params }: Props) {
             {category.featuredBooks.map((book) => (
               <div key={book.id} className="flex-shrink-0 w-[70%] sm:w-[calc(100%/3-16px)] snap-start">
                 <BookCard
-                  id={book.id}
+                  id={book.id.toString()}
                   title={book.title}
                   author={book.author}
                   description={book.description}
@@ -332,7 +332,7 @@ export default function CategoryPage({ params }: Props) {
               {collection.books.map((book) => (
                 <BookCard
                   key={book.id}
-                  id={book.id}
+                  id={book.id.toString()}
                   title={book.title}
                   author={book.author}
                   description={book.description}

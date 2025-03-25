@@ -13,7 +13,7 @@ type Props = {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = params.slug
+  const { slug } = await params
   const collection = await getCollectionBySlug(slug)
 
   if (!collection) {
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CollectionPage({ params }: Props) {
-  const slug = params.slug
+  const { slug } = await params
   const collection = await getCollectionBySlug(slug)
 
   if (!collection) {
