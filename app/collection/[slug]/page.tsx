@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: "Collection Not Found - KIBRA",
     }
   }
-
+  
   return {
     title: `${collection.name} - KIBRA`,
     description: collection.description || `Explore books in the ${collection.name} collection`,
