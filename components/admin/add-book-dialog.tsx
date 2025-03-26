@@ -24,6 +24,7 @@ import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { addBook } from "@/app/admin/books/actions"
 
+const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30 MB in bytes
 const currentYear = new Date().getFullYear()
 const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i)
 
@@ -61,7 +62,9 @@ const bookFormSchema = z.object({
     .max(100, { message: "Author must not exceed 100 characters." }),
   category: z.string({ required_error: "Category is required." }),
   cover_image: z.instanceof(File).optional(),
-  pdf_file: z.instanceof(File, { message: "PDF file is required." }),
+  pdf_file: z.instanceof(File, { message: "PDF file is required." }).refine(
+    (file) => file.size <= MAX_FILE_SIZE,
+    "PDF must be less than 30 MB."),
 })
 
 type BookFormValues = z.infer<typeof bookFormSchema>
@@ -419,7 +422,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
                                   handlePdfChange(file || null)
                                 }}
                               />
-                              <FormDescription>PDF files only, Max 50MB</FormDescription>
+                              <FormDescription>PDF files only, Max 30 MB</FormDescription>
                             </div>
                           </>
                         )}
