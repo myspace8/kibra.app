@@ -30,6 +30,7 @@ const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYe
 
 const categories = [
   "Self-Help",
+  "Romance",
   "Business",
   "History",
   "Finance",

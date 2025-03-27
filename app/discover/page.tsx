@@ -6,17 +6,16 @@ import { SiteHeader } from "@/components/site-header"
 import { getBooksByCollectionSlug, getTrendingBooks } from "./actions"
 
 export const metadata: Metadata = {
-  title: "KIBRA - Home",
+  title: "Discover & Download",
   description: "Any book you want, in pdf format",
 }
 
-export default async function HomePage() {
-  const bestsellersData = await getBooksByCollectionSlug("popular-on-amazon")
-  const bestsellers = bestsellersData.books
-  const bestsellersSlug = bestsellersData.slug
+export default async function Discover() {
+  const exploreRomanceData = await getBooksByCollectionSlug("explore-romance")
+  const businessAndMoney = await getBooksByCollectionSlug("business-and-money")
+  const businessAndMoneyBooks = businessAndMoney.books
+  const exploreRomance = exploreRomanceData.books
 
-  const trendingData = await getTrendingBooks(3)
-  const trending = trendingData.books
 
   return (
     <div className="container max-w-md mx-auto px-4 pb-8">
@@ -24,14 +23,14 @@ export default async function HomePage() {
       <main className="space-y-8">
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Best Selling on Amazon</h2>
-            <Link href={`/collection/${bestsellersSlug}`} className="text-sm text-muted-foreground flex items-center">
+            <h2 className="text-xl font-bold"><span className="font-normal">Explore </span>Romance</h2>
+            <Link href={`/collection/explore-romance`} className="text-sm text-muted-foreground flex items-center">
               More <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="space-y-4">
-            {bestsellers.length > 0 ? (
-              bestsellers.map((book) => (
+            {exploreRomance.length > 0 ? (
+              exploreRomance.map((book) => (
                 <BookCard
                   key={book.id}
                   id={book.id}
@@ -44,31 +43,33 @@ export default async function HomePage() {
                 />
               ))
             ) : (
-              <p className="text-center text-muted-foreground">No bestsellers available.</p>
+              <p className="text-center text-muted-foreground">No data available.</p>
             )}
           </div>
         </section>
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Trending</h2>
+            <h2 className="text-xl font-bold">Business & Money</h2>
+            <Link href={`/collection/business-and-money`} className="text-sm text-muted-foreground flex items-center">
+              More <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
           <div className="space-y-4">
-            {trending.length > 0 ? (
-              trending.map((book) => (
+            {businessAndMoneyBooks.length > 0 ? (
+              businessAndMoneyBooks.map((book) => (
                 <BookCard
                   key={book.id}
                   id={book.id}
                   title={book.title}
                   author={book.author}
                   description={book.description}
-                  image={book.cover_image_url || "/placeholder.svg?height=80&width=80"}
+                  image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
                   downloads={book.downloads || 0}
                   pdf_url={book.pdf_url}
-                  variant="popular"
                 />
               ))
             ) : (
-              <p className="text-center text-muted-foreground">No trending books available.</p>
+              <p className="text-center text-muted-foreground">No data available.</p>
             )}
           </div>
         </section>

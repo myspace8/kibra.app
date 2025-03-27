@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { UserNav } from "@/components/user-nav"
-import { CategoryList } from "@/components/category-list"
+import Link from "next/link"
 
 export function SiteHeader() {
   const [query, setQuery] = useState("")
@@ -20,10 +20,12 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 bg-white z-10 py-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">KIBRA</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-xl font-bold">
+          <Link href={"/"}>Kibra</Link>
+        </h1>
         <div className="flex items-center gap-2">
-          <form onSubmit={handleSearch} className="relative w-full max-w-[230px]">
+          <form onSubmit={handleSearch} className="relative w-[60vw] md:w-full">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
@@ -35,9 +37,6 @@ export function SiteHeader() {
           </form>
           <UserNav />
         </div>
-      </div>
-      <div className="mt-4">
-        <CategoryList />
       </div>
     </header>
   )

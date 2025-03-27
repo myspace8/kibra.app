@@ -25,6 +25,7 @@ import { addCollection } from "@/app/admin/collections/actions"
 
 const categories = [
   "Self-Help",
+  "Romance",
   "Business",
   "History",
   "Finance",

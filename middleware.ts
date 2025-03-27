@@ -16,11 +16,27 @@ export function middleware(req: NextRequest) {
 
   // Check for the NextAuth session token
   const isAuthenticated = !!req.cookies.get("__Secure-next-auth.session-token") || !!req.cookies.get("next-auth.session-token")
-console.log(isAuthenticated);
+  console.log(isAuthenticated);
 
   // Protect /home
   if (pathname === "/home" && !isAuthenticated) {
-    return NextResponse.redirect(new URL("/login", origin))
+    return NextResponse.redirect(new URL("/discover", origin))
+  }
+
+
+  // Protect /admin
+  if (pathname === "/admin" && !isAuthenticated) {
+    return NextResponse.redirect(new URL("/discover", origin))
+  }
+
+  // Protect /admin/books
+  if (pathname === "/admin/books" && !isAuthenticated) {
+    return NextResponse.redirect(new URL("/discover", origin))
+  }
+
+  // Protect /admin/collections
+  if (pathname === "/admin/collections" && !isAuthenticated) {
+    return NextResponse.redirect(new URL("/discover", origin))
   }
 
   // Redirect authenticated users from public routes
@@ -28,8 +44,17 @@ console.log(isAuthenticated);
     (pathname === "/" || pathname === "/login" || pathname === "/signup") &&
     isAuthenticated
   ) {
-    return NextResponse.redirect(new URL("/home", origin))
+    return NextResponse.redirect(new URL("/discover", origin))
   }
+
+  // Redirect authenticated users from public routes
+  if (
+    (pathname === "/" || pathname === "/login" || pathname === "/signup") &&
+    !isAuthenticated
+  ) {
+    return NextResponse.redirect(new URL("/discover", origin))
+  }
+
 
   return NextResponse.next()
 }
