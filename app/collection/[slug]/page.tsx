@@ -39,7 +39,7 @@ export default async function CollectionPage({ params }: Props) {
         <h1 className="text-2xl font-bold mb-4">Collection Not Found</h1>
         <p className="mb-4">The collection you're looking for doesn't exist.</p>
         <Button asChild>
-          <Link href="/home">Go Home</Link>
+          <Link href="/discover">Go Home</Link>
         </Button>
       </div>
     )
@@ -54,18 +54,24 @@ export default async function CollectionPage({ params }: Props) {
       </div>
       <main className="space-y-6">
         {(collection.books ?? []).length > 0 ? (
-          (collection.books ?? []).map((book) => (
-            <BookCard
-              key={book.id}
-              id={book.id}
-              title={book.title}
-              author={book.author}
-              description={book.description}
-              image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
-              downloads={book.downloads || 0}
-              pdf_url={book.pdf_url} // Pass pdf_url
-            />
-          ))
+          <div className="divide-y divide-gray-200">
+            {(collection.books ?? []).map((book) => (
+              <div
+                key={book.id}
+                className="first:pt-0 last:pb-0"
+              >
+                <BookCard
+                  id={book.id}
+                  title={book.title}
+                  author={book.author}
+                  description={book.description}
+                  image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
+                  downloads={book.downloads || 0}
+                  pdf_url={book.pdf_url}
+                />
+              </div>
+            ))}
+          </div>
         ) : (
           <p className="text-center text-muted-foreground">No books in this collection yet.</p>
         )}

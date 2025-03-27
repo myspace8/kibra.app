@@ -29,23 +29,29 @@ export default async function Discover() {
             </Link>
           </div>
           <div className="space-y-4">
-            {exploreRomance.length > 0 ? (
-              exploreRomance.map((book) => (
-                <BookCard
-                  key={book.id}
-                  id={book.id}
-                  title={book.title}
-                  author={book.author}
-                  description={book.description}
-                  image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
-                  downloads={book.downloads || 0}
-                  pdf_url={book.pdf_url}
-                />
-              ))
-            ) : (
-              <p className="text-center text-muted-foreground">No data available.</p>
-            )}
-          </div>
+  {exploreRomance.length > 0 ? (
+    <div className="divide-y divide-gray-200">
+      {exploreRomance.map((book) => (
+        <div
+          key={book.id}
+          className="first:pt-0 last:pb-0" // Adjust padding to align with borders
+        >
+          <BookCard
+            id={book.id}
+            title={book.title}
+            author={book.author}
+            description={book.description}
+            image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
+            downloads={book.downloads || 0}
+            pdf_url={book.pdf_url}
+          />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-center text-muted-foreground">No data available.</p>
+  )}
+</div>
         </section>
         <section>
           <div className="flex items-center justify-between mb-4">

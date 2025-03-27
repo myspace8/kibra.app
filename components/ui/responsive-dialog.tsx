@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import Image from "next/image"
 import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import ReactMarkdown from "react-markdown"
 interface ResponsiveDialogProps {
   title: string
   description?: string
@@ -65,9 +66,12 @@ export function ResponsiveDialog({
             </div>
           </div>
 
-          <div className="text-sm leading-relaxed space-y-2 mb-6">
+          {/* <div className="text-sm leading-relaxed space-y-2 mb-6">
             {description}   
-          </div>
+          </div> */}
+          <div className="prose prose-sm max-w-none">
+          <ReactMarkdown>{description || "No summary (description) available for this book yet."}</ReactMarkdown>   
+        </div>
         </div>
         </DrawerContent>
       </Drawer>
@@ -80,7 +84,7 @@ export function ResponsiveDialog({
         <DialogHeader>
           <DialogTitle>Book Summary</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col">
+        <div className="flex flex-col overflow-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="relative w-[50px] h-[70px] flex-shrink-0">
               <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover rounded-sm" />
@@ -91,9 +95,9 @@ export function ResponsiveDialog({
             </div>
           </div>
 
-          <div className="text-sm leading-relaxed space-y-2 mb-6">
-            {description}   
-          </div>
+          <div className="prose prose-sm max-w-none">
+          <ReactMarkdown>{description || "No summary (description) available for this book yet."}</ReactMarkdown>   
+        </div>
         </div>
       </DialogContent>
     </Dialog>

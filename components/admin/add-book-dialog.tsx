@@ -50,7 +50,7 @@ const bookFormSchema = z.object({
   description: z
     .string()
     .min(10, { message: "Description must be at least 10 characters." })
-    .max(1000, { message: "Description must not exceed 1000 characters." }),
+    .max(2000, { message: "Description must not exceed 2000 characters." }),
   isbn: z.string().optional(),
   language: z
     .string()

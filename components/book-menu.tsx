@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Download, Share, Heart, MoreHorizontal, BookOpenText } from "lucide-react"
+import { Download, BookOpenText, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -11,12 +11,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog"
+import ReactMarkdown from "react-markdown"
 import { cn } from "@/lib/utils"
 
 type BookMenuProps = {
   bookId: string
   pdfUrl?: string
-  summary?: string // Add summary prop
+  summary?: string
   title: string
   author: string
   image?: string
@@ -27,96 +28,127 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
   const [isOpen, setIsOpen] = useState(false)
   const [isSummaryOpen, setIsSummaryOpen] = useState(false)
 
-  const menuItems = [
-    {
-      icon: <Download className="h-4 w-4" />,
-      label: "Download",
-      content: pdfUrl ? (
-        <a href={pdfUrl} download>
-          Download
-        </a>
-      ) : (
-        <span className="text-muted-foreground">Download Unavailable</span>
-      ),
-    },
-    // { icon: <Share className="h-4 w-4" />, label: "Share", action: () => console.log("Share") },
-    // { icon: <Heart className="h-4 w-4" />, label: "Mark as Favorite", action: () => console.log("Mark as Favorite") },
-    {
-      icon: <BookOpenText className="h-4 w-4" />,
-      label: "Read Summary",
-      action: () => setIsSummaryOpen(true), // Open dialog
-    },
-  ]
+  // Animation variants for menu items
+  const itemVariants = {
+    hidden: { opacity: 0, x: -15 },
+    visible: (i: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: { delay: i * 0.05, duration: 0.2 },
+    }),
+    hover: { x: 8, transition: { duration: 0.15 } },
+  }
 
   return (
     <>
+      {/* Trigger Button */}
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
             className={cn(
-              "h-8 w-8 rounded-full transition-all duration-200",
-              isOpen ? "bg-primary/10" : "hover:bg-gray-100",
+              "h-9 w-9 rounded-full transition-all duration-300",
+              isOpen ? "bg-gradient-to-br from-primary/20 to-primary/10" : "hover:bg-gray-100",
+              "text-gray-600 hover:text-primary",
               className,
             )}
           >
-            <MoreHorizontal className="h-4 w-4" />
-            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-5 w-5" />
+            <span className="sr-only">Book options</span>
           </Button>
         </DropdownMenuTrigger>
+
+        {/* Menu Content */}
         <AnimatePresence>
           {isOpen && (
             <DropdownMenuContent
               align="end"
-              className="w-[220px] p-1 rounded-xl shadow-lg border border-gray-200"
-              asChild
-              forceMount
+              className="w-64 rounded-xl bg-white/95 backdrop-blur-sm shadow-xl border border-gray-100 p-2"
             >
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                initial={{ opacity: 0, scale: 0.92, y: -10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                exit={{ opacity: 0, scale: 0.92, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                {menuItems.map((item, index) => (
-                  <DropdownMenuItem
-                    key={item.label}
-                    onClick={item.action}
-                    className="px-3 py-2 cursor-pointer"
-                    asChild
+                {/* Download Item */}
+                <DropdownMenuItem className="p-0 focus:bg-transparent">
+                  <motion.div
+                    custom={0}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                    className="w-full"
                   >
-                    <motion.div
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05, duration: 0.2 }}
-                      whileHover={{ x: 5 }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="p-1.5 rounded-full bg-primary/10 text-primary">{item.icon}</div>
-                        {item.content || <span>{item.label}</span>}
+                    {pdfUrl ? (
+                      <a
+                        href={pdfUrl}
+                        download
+                        className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                      >
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          <Download className="h-4 w-4" />
+                        </span>
+                        <span className="text-sm font-medium text-gray-800">Download</span>
+                      </a>
+                    ) : (
+                      <div className="flex items-center gap-3 px-3 py-2 text-muted-foreground cursor-not-allowed">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+                          <Download className="h-4 w-4" />
+                        </span>
+                        <span className="text-sm font-medium">Download Unavailable</span>
                       </div>
-                    </motion.div>
-                  </DropdownMenuItem>
-                ))}
+                    )}
+                  </motion.div>
+                </DropdownMenuItem>
+
+                {/* Read Summary Item */}
+                <DropdownMenuItem className="p-0 focus:bg-transparent">
+                  <motion.div
+                    custom={1}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                    className="w-full"
+                  >
+                    <button
+                      onClick={() => setIsSummaryOpen(true)}
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg w-full text-left hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <BookOpenText className="h-4 w-4" />
+                      </span>
+                      <span className="text-sm font-medium text-gray-800">Read Summary</span>
+                    </button>
+                  </motion.div>
+                </DropdownMenuItem>
               </motion.div>
             </DropdownMenuContent>
           )}
         </AnimatePresence>
       </DropdownMenu>
 
-      {/* Responsive Dialog for Summary */}
+      {/* Summary Dialog */}
       <ResponsiveDialog
         open={isSummaryOpen}
         onOpenChange={setIsSummaryOpen}
-        title={title}
         author={author}
         image={image}
-        description={summary || "No summary available for this book yet."}
-        scrollable={true} // Enable scrolling if summary is long
-      >
-        <div className="mt-4 flex justify-end">
-          <Button variant="outline" onClick={() => setIsSummaryOpen(false)}>
+        title={title}
+        scrollable={true}
+        description={summary || "No summary available for this book yet."}      >
+        {/* <div className="prose prose-sm max-w-none text-gray-700">
+          <ReactMarkdown>{summary || "No summary available for this book yet."}</ReactMarkdown>
+        </div> */}
+        <div className="mt-6 flex justify-end">
+          <Button
+            variant="outline"
+            onClick={() => setIsSummaryOpen(false)}
+            className="rounded-full border-gray-200 hover:bg-gray-50"
+          >
             Close
           </Button>
         </div>
