@@ -24,6 +24,7 @@ async function getBooksByCollectionSlug(slug: string): Promise<{ slug: string, b
           title,
           author,
           description,
+          summary,
           cover_image_url,
           downloads,
           pdf_url 
@@ -49,7 +50,7 @@ async function getTrendingBooks(limit: number = 3) {
   try {
     const { data, error } = await supabase
       .from("books")
-      .select("id, title, author, description, cover_image_url, downloads, pdf_url") // Add pdf_url
+      .select("id, title, author, description, summary, cover_image_url, downloads, pdf_url") // Add pdf_url
       .order("downloads", { ascending: false })
       .limit(limit)
 

@@ -18,11 +18,11 @@ export default async function Discover() {
 
 
   return (
-    <div className="container max-w-md mx-auto px-4 pb-8">
+    <div className="container max-w-md mx-auto pl-4 pb-8">
       <SiteHeader />
       <main className="space-y-8">
         <section>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 pr-4">
             <h2 className="text-xl font-bold"><span className="font-normal">Explore </span>Romance</h2>
             <Link href={`/collection/explore-romance`} className="text-sm text-muted-foreground flex items-center">
               More <ChevronRight className="h-4 w-4" />
@@ -41,6 +41,7 @@ export default async function Discover() {
             title={book.title}
             author={book.author}
             description={book.description}
+            summary={book.summary}
             image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
             downloads={book.downloads || 0}
             pdf_url={book.pdf_url}
@@ -54,7 +55,7 @@ export default async function Discover() {
 </div>
         </section>
         <section>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 pr-4">
             <h2 className="text-xl font-bold">Business & Money</h2>
             <Link href={`/collection/business-and-money`} className="text-sm text-muted-foreground flex items-center">
               More <ChevronRight className="h-4 w-4" />
@@ -62,18 +63,25 @@ export default async function Discover() {
           </div>
           <div className="space-y-4">
             {businessAndMoneyBooks.length > 0 ? (
-              businessAndMoneyBooks.map((book) => (
-                <BookCard
-                  key={book.id}
-                  id={book.id}
-                  title={book.title}
-                  author={book.author}
-                  description={book.description}
-                  image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
-                  downloads={book.downloads || 0}
-                  pdf_url={book.pdf_url}
-                />
-              ))
+              <div className="divide-y divide-gray-200">
+                {businessAndMoneyBooks.map((book) => (
+                  <div
+                    key={book.id}
+                    className="first:pt-0 last:pb-0" // Adjust padding to align with borders
+                  >
+                    <BookCard
+                      id={book.id}
+                      title={book.title}
+                      author={book.author}
+                      description={book.description}
+                      summary={book.summary}
+                      image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
+                      downloads={book.downloads || 0}
+                      pdf_url={book.pdf_url}
+                    />
+                  </div>
+                ))}
+              </div>
             ) : (
               <p className="text-center text-muted-foreground">No data available.</p>
             )}

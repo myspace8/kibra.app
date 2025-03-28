@@ -139,7 +139,7 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
         image={image}
         title={title}
         scrollable={true}
-        description={summary || "No summary available for this book yet."}      >
+        summary={summary || "No summary available for this book yet."}      >
         {/* <div className="prose prose-sm max-w-none text-gray-700">
           <ReactMarkdown>{summary || "No summary available for this book yet."}</ReactMarkdown>
         </div> */}

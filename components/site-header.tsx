@@ -6,6 +6,7 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { UserNav } from "@/components/user-nav"
 import Link from "next/link"
+import Logo from "./Logo"
 
 export function SiteHeader() {
   const [query, setQuery] = useState("")
@@ -19,10 +20,12 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 bg-white z-10 py-4">
+    <header className="sticky top-0 bg-white z-50 py-4 pr-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">
-          <Link href={"/"}>Kibra</Link>
+          <Link href={"/"}>
+          <Logo />
+          </Link>
         </h1>
         <div className="flex items-center gap-2">
           <form onSubmit={handleSearch} className="relative w-[60vw] md:w-full">

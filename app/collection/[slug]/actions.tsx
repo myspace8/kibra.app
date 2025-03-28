@@ -15,6 +15,7 @@ type Collection = {
     title: string
     author: string
     description: string
+    summary: string
     cover_image_url: string
     downloads: number
     pdf_url: string
@@ -50,6 +51,7 @@ export async function getCollectionBySlug(slug: string): Promise<Collection | nu
           title,
           author,
           description,
+          summary,
           cover_image_url,
           downloads,
           pdf_url

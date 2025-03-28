@@ -34,6 +34,7 @@ export async function addBook(formData: FormData) {
     const category = formData.get("category") as string
     const cover_image = formData.get("cover_image") as File
     const pdf_file = formData.get("pdf_file") as File
+    const summary = formData.get("summary") as string
 
     const slug = title
       .toLowerCase()
@@ -92,6 +93,7 @@ export async function addBook(formData: FormData) {
           cover_image_url,
           pdf_url: pdfUrl.publicUrl,
           status: "published",
+          summary,
         },
       ])
       .select()
@@ -120,6 +122,7 @@ export async function updateBook(id: string, formData: FormData) {
     const category = formData.get("category") as string
     const cover_image = formData.get("cover_image") as File
     const pdf_file = formData.get("pdf_file") as File
+    const summary = formData.get("summary") as string
 
     const slug = title
       .toLowerCase()
@@ -179,6 +182,7 @@ export async function updateBook(id: string, formData: FormData) {
         cover_image_url,
         pdf_url,
         status: "published",
+        summary,
       })
       .eq("id", id)
       .select()

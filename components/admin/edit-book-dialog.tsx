@@ -63,6 +63,10 @@ const bookFormSchema = z.object({
   category: z.string({ required_error: "Category is required." }),
   cover_image: z.instanceof(File).optional(),
   pdf_file: z.instanceof(File).optional(),
+  summary: z
+    .string()
+    .min(10, { message: "Summary must be at least 10 characters." })
+    .max(2000, { message: "Summary must not exceed 2000 characters." }),
 })
 
 type BookFormValues = z.infer<typeof bookFormSchema>
@@ -81,6 +85,7 @@ interface EditBookDialogProps {
     pdf_url: string
     author: string
     category: string
+    summary: string
   }
 }
 
@@ -104,6 +109,7 @@ export function EditBookDialog({ open, onOpenChange, book }: EditBookDialogProps
       publication_year: book.publication_year || undefined,
       author: book.author,
       category: book.category,
+      summary: book.summary
     },
   })
 
@@ -118,6 +124,7 @@ export function EditBookDialog({ open, onOpenChange, book }: EditBookDialogProps
         publication_year: book.publication_year || undefined,
         author: book.author,
         category: book.category,
+        summary: book.summary
       })
       setCoverPreview(book.cover_image_url)
       setPdfPreview(book.pdf_url.split("/").pop() || null)
@@ -172,6 +179,7 @@ export function EditBookDialog({ open, onOpenChange, book }: EditBookDialogProps
       formData.append("existing_pdf_url", book.pdf_url)
       if (data.cover_image) formData.append("cover_image", data.cover_image)
       if (data.pdf_file) formData.append("pdf_file", data.pdf_file)
+      formData.append("summary", data.summary)
 
       const result = await updateBook(book.id, formData)
 
@@ -457,6 +465,20 @@ export function EditBookDialog({ open, onOpenChange, book }: EditBookDialogProps
                           )}
                         </div>
                       </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="summary"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Summary</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Enter book summary" className="resize-none h-32" {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

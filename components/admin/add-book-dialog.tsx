@@ -66,6 +66,10 @@ const bookFormSchema = z.object({
   pdf_file: z.instanceof(File, { message: "PDF file is required." }).refine(
     (file) => file.size <= MAX_FILE_SIZE,
     "PDF must be less than 30 MB."),
+  summary: z
+    .string()
+    .min(10, { message: "Summary must be at least 10 characters." })
+    .max(2000, { message: "Summary must not exceed 2000 characters." }),
 })
 
 type BookFormValues = z.infer<typeof bookFormSchema>
@@ -144,6 +148,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
       formData.append("category", data.category)
       if (data.cover_image) formData.append("cover_image", data.cover_image)
       formData.append("pdf_file", data.pdf_file)
+      formData.append("summary", data.summary)
 
       const result = await addBook(formData)
 
@@ -429,6 +434,20 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
                         )}
                       </div>
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="summary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Summary</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Enter book summary" className="resize-none h-32" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

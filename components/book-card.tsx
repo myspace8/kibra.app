@@ -13,6 +13,7 @@ type BookCardProps = {
   title: string
   author: string
   description?: string
+  summary: string
   image: string
   downloads?: number
   pdf_url?: string
@@ -26,6 +27,7 @@ export function BookCard({
   title,
   author,
   description,
+  summary,
   image,
   downloads = 0,
   pdf_url,
@@ -54,7 +56,7 @@ export function BookCard({
         className,
       )}
     >
-      <div className="flex gap-3 py-3">
+      <div className="flex gap-3 py-3 pr-4">
         <div className="relative w-[80px] h-[110px] flex-shrink-0 overflow-hidden rounded-md">
           <Image
             src={image || "/placeholder.svg"}
@@ -84,7 +86,7 @@ export function BookCard({
               <BookMenu
                 bookId={id}
                 pdfUrl={pdf_url}
-                summary={description}
+                summary={summary}
                 image={image}
                 title={title}
                 author={author}

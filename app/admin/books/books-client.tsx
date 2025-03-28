@@ -23,6 +23,7 @@ interface Book {
   author: string
   category: string
   downloads: number
+  summary: string | null
 }
 
 interface BooksClientProps {

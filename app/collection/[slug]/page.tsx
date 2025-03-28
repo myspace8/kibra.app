@@ -65,6 +65,7 @@ export default async function CollectionPage({ params }: Props) {
                   title={book.title}
                   author={book.author}
                   description={book.description}
+                  summary={book.summary}
                   image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
                   downloads={book.downloads || 0}
                   pdf_url={book.pdf_url}

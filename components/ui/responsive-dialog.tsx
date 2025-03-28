@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import ReactMarkdown from "react-markdown"
 interface ResponsiveDialogProps {
   title: string
-  description?: string
+  summary: string
   image?: string
     author?: string
     pdfUrl?: string
@@ -22,7 +22,7 @@ interface ResponsiveDialogProps {
 
 export function ResponsiveDialog({
   title,
-  description,
+  summary,
   image,
     author,
     pdfUrl,
@@ -70,7 +70,7 @@ export function ResponsiveDialog({
             {description}   
           </div> */}
           <div className="prose prose-sm max-w-none">
-          <ReactMarkdown>{description || "No summary (description) available for this book yet."}</ReactMarkdown>   
+          <ReactMarkdown>{summary || "No summary available for this book yet."}</ReactMarkdown>   
         </div>
         </div>
         </DrawerContent>
@@ -96,7 +96,7 @@ export function ResponsiveDialog({
           </div>
 
           <div className="prose prose-sm max-w-none">
-          <ReactMarkdown>{description || "No summary (description) available for this book yet."}</ReactMarkdown>   
+          <ReactMarkdown>{summary || "No summary available for this book yet."}</ReactMarkdown>   
         </div>
         </div>
       </DialogContent>

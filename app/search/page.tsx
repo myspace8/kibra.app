@@ -23,7 +23,7 @@ export default async function SearchPage({ searchParams }: Props) {
   const books = query ? await searchBooks(query) : []
 
   return (
-    <div className="container max-w-md mx-auto px-4 pb-8">
+    <div className="container max-w-md mx-auto pl-4 pb-8">
       <SiteHeader />
       <div className="flex items-center gap-2 my-4">
         <h2 className="text-xl font-bold">
@@ -32,18 +32,26 @@ export default async function SearchPage({ searchParams }: Props) {
       </div>
       <main className="space-y-6">
         {query && books.length > 0 ? (
-          books.map((book) => (
-            <BookCard
-              key={book.id}
-              id={book.id}
-              title={book.title}
-              author={book.author}
-              description={book.description}
-              image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
-              downloads={book.downloads || 0}
-              pdf_url={book.pdf_url}
-            />
-          ))
+          <div className="divide-y divide-gray-200">
+            {books.map((book) => (
+              <div
+                key={book.id}
+                className="first:pt-0 last:pb-0" // Adjust padding to align with borders
+              >
+                <BookCard
+                  key={book.id}
+                  id={book.id}
+                  title={book.title}
+                  author={book.author}
+                  description={book.description}
+                  summary={book.summary}
+                  image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
+                  downloads={book.downloads || 0}
+                  pdf_url={book.pdf_url}
+                />
+              </div> // Close the div for each book
+            ))} // Close the map function
+          </div> // Close the wrapping div
         ) : query ? (
           <p className="text-center text-muted-foreground">No books found for "{query}".</p>
         ) : (
