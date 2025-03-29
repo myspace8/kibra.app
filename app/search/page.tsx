@@ -1,63 +1,41 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { BookCard } from "@/components/book-card"
+import { Suspense } from "react"
 import { SiteHeader } from "@/components/site-header"
-import { searchBooks } from "./actions"
+import SearchContent from "./search-content"
 
-type Props = {
-  searchParams: { q?: string } 
-}
-
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const query = searchParams.q || "" // Access q directly, no await needed
-  return {
-    title: query ? `Search "${query}" - KIBRA` : "Search - KIBRA",
-    description: "Search for books by title or author",
-  }
-}
-
-export default async function SearchPage({ searchParams }: Props) {
-  const query = searchParams.q || "" // Access q directly, no await needed
-  const books = query ? await searchBooks(query) : []
+export default function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
+  const initialQuery = searchParams.q || ""
 
   return (
-    <div className="container max-w-md mx-auto pl-4 pb-8">
-      <SiteHeader />
-      <div className="flex items-center gap-2 my-4">
-        <h2 className="text-xl font-bold">
-          {query ? `Search Results for "${query}"` : "Search"}
-        </h2>
+    <div className="container max-w-md mx-auto px-4 pb-8">
+      <Suspense fallback={<SearchFallback initialQuery={initialQuery} />}>
+        <SearchContent initialQuery={initialQuery} />
+      </Suspense>
+    </div>
+  )
+}
+
+// Fallback component for Suspense during prerendering
+function SearchFallback({ initialQuery }: { initialQuery: string }) {
+  return (
+    <div className="my-6">
+      <h2 className="text-xl font-bold mb-4">
+        {initialQuery ? `Results for "${initialQuery}"` : "Search Books"}
+      </h2>
+      <div className="relative">
+        <input
+          type="text"
+          defaultValue={initialQuery}
+          placeholder="Search by title or author..."
+          className="w-full pr-10 rounded-lg border border-gray-200 focus:border-primary/50 py-2 px-3"
+          disabled
+        />
+        <div className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center">
+          <span className="h-4 w-4 text-gray-500">🔍</span>
+        </div>
       </div>
-      <main className="space-y-6">
-        {query && books.length > 0 ? (
-          <div className="divide-y divide-gray-200">
-            {books.map((book) => (
-              <div
-                key={book.id}
-                className="first:pt-0 last:pb-0" // Adjust padding to align with borders
-              >
-                <BookCard
-                  key={book.id}
-                  id={book.id}
-                  title={book.title}
-                  author={book.author}
-                  description={book.description}
-                  summary={book.summary}
-                  image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
-                  downloads={book.downloads || 0}
-                  pdf_url={book.pdf_url}
-                />
-              </div> // Close the div for each book
-            ))} // Close the map function
-          </div> // Close the wrapping div
-        ) : query ? (
-          <p className="text-center text-muted-foreground">No books found for "{query}".</p>
-        ) : (
-          <p className="text-center text-muted-foreground">Enter a search term above to find books.</p>
-        )}
-      </main>
+      <p className="text-center text-muted-foreground mt-6">
+        {initialQuery ? "Loading results..." : "Enter a search term to find books."}
+      </p>
     </div>
   )
 }
