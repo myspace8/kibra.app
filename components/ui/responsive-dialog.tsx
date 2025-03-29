@@ -80,7 +80,7 @@ export function ResponsiveDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={scrollable ? "max-h-[85vh]" : ""}>
+      <DialogContent className={scrollable ? "max-h-[85vh] overflow-auto" : ""}>
         <DialogHeader>
           <DialogTitle>Book Summary</DialogTitle>
         </DialogHeader>
