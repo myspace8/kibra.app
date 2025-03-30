@@ -171,7 +171,7 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
             </div>
           ) : books.length > 0 ? (
             <div className="divide-y divide-gray-200">
-              {books.map((book) => (
+              {books.map((book, index) => (
                 <div key={book.id} className="first:pt-0 last:pb-0">
                   <BookCard
                     id={book.id}
@@ -182,6 +182,7 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
                     image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
                     downloads={book.downloads || 0}
                     pdf_url={book.pdf_url}
+                    index={index} // Pass index for stagger
                   />
                 </div>
               ))}

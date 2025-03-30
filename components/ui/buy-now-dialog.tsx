@@ -66,7 +66,7 @@ export function BuyNowDialog({
               <p className="text-sm text-gray-500">{author}</p>
             </div>
             <div>
-              <span>We are working on ways to help you buy this book at an affordable price. <Link href="/discover" className="text-blue-500 block"><br/>Stay tuned_</Link></span>
+              <span>We are working on ways to help you buy this book at an affordable price. <a href="/discover" className="text-blue-500 block"><br/>Stay tuned_</a></span>
             </div>
         </div>
         </div>

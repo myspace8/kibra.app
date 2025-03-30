@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { BookCard } from "@/components/book-card"
 import { SiteHeader } from "@/components/site-header"
-import { getBooksByCollectionSlug, getTrendingBooks } from "./actions"
+import { getBooksByCollectionSlug } from "./actions"
 
 export const metadata: Metadata = {
   title: "Discover & Download",
@@ -28,6 +28,7 @@ export default async function Discover() {
               More <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
+          <div>
           <div className="space-y-4">
   {exploreRomance.length > 0 ? (
     <div className="divide-y divide-gray-200">
@@ -52,6 +53,7 @@ export default async function Discover() {
   ) : (
     <p className="text-center text-muted-foreground">No data available.</p>
   )}
+</div>
 </div>
         </section>
         <section>
