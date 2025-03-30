@@ -58,16 +58,22 @@ export function BuyNowDialog({
           </DrawerHeader>
           <div className="flex flex-col p-3 overflow-auto">
           <div className="flex flex-col items-start gap-3 mb-4">
-            <div className="relative w-[50px] h-[70px] flex-shrink-0">
-              <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover rounded-sm" />
+            <div className="flex gap-3 py-3 pr-4">
+              <div className="relative w-[50px] h-[70px] flex-shrink-0">
+                <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover rounded-sm" />
+              </div>
+              <div>
+                <h3 className="font-medium text-base line-clamp-2">{title}</h3>
+                <p className="text-sm text-gray-500">{author}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-medium text-base">{title}</h3>
-              <p className="text-sm text-gray-500">{author}</p>
-            </div>
-            <div>
-              <span>We are working on ways to help you buy this book at an affordable price. <a href="/discover" className="text-blue-500 block"><br/>Stay tuned_</a></span>
-            </div>
+            <div className="text- p-6 bg-blue-50 rounded-lg border border-blue-200 mt-4">
+        <h3 className="text-lg font-semibold text-blue-800">Not Available - yet</h3>
+        <p className="text-sm text-blue-700 mt-2">
+        We are working on ways to help you buy this book at an affordable price.
+        </p>
+        <span className="block text-blue-700 mt-2">Stay tuned_</span>
+      </div>
         </div>
         </div>
         </DrawerContent>
@@ -82,9 +88,22 @@ export function BuyNowDialog({
           <DialogTitle>Buy Now</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col overflow-auto">
-          <div className="prose prose-sm max-w-none">
-            <span>You can buy this book now</span>
+        <div className="flex gap-3 py-3 pr-4">
+        <div className="relative w-[50px] h-[70px] flex-shrink-0">
+                <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover rounded-sm" />
+              </div>
+        <div>
+              <h3 className="font-medium text-base">{title}</h3>
+              <p className="text-sm text-gray-500">{author}</p>
+            </div>
         </div>
+            <div className="text- p-6 bg-blue-50 rounded-lg border border-blue-200 mt-4">
+        <h3 className="text-lg font-semibold text-blue-800">Not Available - yet</h3>
+        <p className="text-sm text-blue-700 mt-2">
+        We are working on ways to help you buy this book at an affordable price.
+        </p>
+        <span className="block text-blue-700 mt-2">Stay tuned_</span>
+      </div>
         </div>
       </DialogContent>
     </Dialog>

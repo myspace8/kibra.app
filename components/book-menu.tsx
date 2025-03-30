@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Download, BookOpenText, MoreHorizontal, Link } from "lucide-react"
+import { Download, BookOpenText, MoreHorizontal, Wallet, Wallet2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -124,7 +124,7 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                       className="flex items-center gap-3 px-3 py-2 rounded-lg w-full text-left hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
                     >
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <BookOpenText className="h-4 w-4" />
+                        <Wallet className="h-4 w-4" />
                       </span>
                       <span className="text-sm font-medium text-gray-800">Buy Now</span>
                     </button>
