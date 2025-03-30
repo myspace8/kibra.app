@@ -8,7 +8,7 @@ import Image from "next/image"
 import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ReactMarkdown from "react-markdown"
-interface ResponsiveDialogProps {
+interface SummaryDialogProps {
   title: string
   summary: string
   image?: string
@@ -20,7 +20,7 @@ interface ResponsiveDialogProps {
   scrollable?: boolean
 }
 
-export function ResponsiveDialog({
+export function SummaryDialog({
   title,
   summary,
   image,
@@ -30,7 +30,7 @@ export function ResponsiveDialog({
   open,
   onOpenChange,
   scrollable = false,
-}: ResponsiveDialogProps) {
+}: SummaryDialogProps) {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {

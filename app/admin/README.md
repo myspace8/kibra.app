@@ -12,3 +12,4 @@ Add logic to deleteBook to delete the files from storage before removing the dat
 
 # Features
 - Adding search/filter functionality
+- Interesting Quotes from books, displayed at the top

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Download, BookOpenText, MoreHorizontal } from "lucide-react"
+import { Download, BookOpenText, MoreHorizontal, Link } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -10,9 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ResponsiveDialog } from "@/components/ui/responsive-dialog"
-import ReactMarkdown from "react-markdown"
+import { SummaryDialog } from "@/components/ui/summary-dialog"
 import { cn } from "@/lib/utils"
+import { BuyNowDialog } from "@/components/ui/buy-now-dialog"
 
 type BookMenuProps = {
   bookId: string
@@ -27,6 +27,7 @@ type BookMenuProps = {
 export function BookMenu({ bookId, pdfUrl, summary, title, author, image, className }: BookMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isSummaryOpen, setIsSummaryOpen] = useState(false)
+  const [isBuyNowOpen, setIsBuyNowOpen] = useState(false)
 
   // Animation variants for menu items
   const itemVariants = {
@@ -72,7 +73,7 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                 exit={{ opacity: 0, scale: 0.92, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* Download Item */}
+                {/* Download Button */}
                 <DropdownMenuItem className="p-0 focus:bg-transparent">
                   <motion.div
                     custom={0}
@@ -85,13 +86,17 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                     {pdfUrl ? (
                       <a
                         href={pdfUrl}
+                        target="_blank"
                         download
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                        className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
                       >
+                        <div className="flex items-center gap-3">
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                           <Download className="h-4 w-4" />
                         </span>
                         <span className="text-sm font-medium text-gray-800">Download</span>
+                        </div>
+                        <span className="text-xs font-medium text-muted-foreground">Free PDF</span>
                       </a>
                     ) : (
                       <div className="flex items-center gap-3 px-3 py-2 text-muted-foreground cursor-not-allowed">
@@ -101,6 +106,28 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                         <span className="text-sm font-medium">Download Unavailable</span>
                       </div>
                     )}
+                  </motion.div>
+                </DropdownMenuItem>
+
+                {/* Buy Now Item */}
+                <DropdownMenuItem className="p-0 focus:bg-transparent">
+                  <motion.div
+                    custom={1}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                    className="w-full"
+                  >
+                    <button
+                      onClick={() => setIsBuyNowOpen(true)}
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg w-full text-left hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <BookOpenText className="h-4 w-4" />
+                      </span>
+                      <span className="text-sm font-medium text-gray-800">Buy Now</span>
+                    </button>
                   </motion.div>
                 </DropdownMenuItem>
 
@@ -131,28 +158,47 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
         </AnimatePresence>
       </DropdownMenu>
 
+      {/* Buy Now Dialog */}
+      <BuyNowDialog
+        open={isBuyNowOpen}
+        onOpenChange={setIsBuyNowOpen}
+        author={author}
+        image={image}
+        title={title}
+        scrollable={true}
+        summary={""}  
+        >
+          <div>
+            <span className="text-red-600 text-xs">...fluff... this shouldn't be here. Sorry <br />FOR DEVELOPERS: uncomment the content below and it won't affect anything.</span>
+          </div>
+          {/* <div>
+              <span>We are working on ways to help you buy this book at an affordable price. <Link href="/discover" className="text-blue-500 block"><br/>Stay tuned_</Link></span>
+            </div> */}
+        {/* <div className="mt-6 flex justify-end"> */}
+          {/* <Button
+            variant="outline"
+            onClick={() => setIsBuyNowOpen(false)}
+            className="rounded-full border-gray-200 hover:bg-gray-50"
+          >
+            Close
+          </Button> */}
+        {/* </div> */}
+      </BuyNowDialog>
+
       {/* Summary Dialog */}
-      <ResponsiveDialog
+      <SummaryDialog
         open={isSummaryOpen}
         onOpenChange={setIsSummaryOpen}
         author={author}
         image={image}
         title={title}
         scrollable={true}
-        summary={summary || "No summary available for this book yet."}      >
-        {/* <div className="prose prose-sm max-w-none text-gray-700">
-          <ReactMarkdown>{summary || "No summary available for this book yet."}</ReactMarkdown>
-        </div> */}
-        <div className="mt-6 flex justify-end">
-          <Button
-            variant="outline"
-            onClick={() => setIsSummaryOpen(false)}
-            className="rounded-full border-gray-200 hover:bg-gray-50"
-          >
-            Close
-          </Button>
-        </div>
-      </ResponsiveDialog>
+        summary={summary || "No summary available for this book yet."}  
+        >
+         <div>
+            <span className="text-red-600 text-xs">...fluff... this shouldn't be here. Sorry <br />FOR DEVELOPERS: uncomment the content below and it won't affect anything.</span>
+          </div>
+      </SummaryDialog>
     </>
   )
 }
