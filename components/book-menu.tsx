@@ -40,31 +40,19 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
     hover: { x: 8, transition: { duration: 0.15 } },
   }
 
-  const handleDownload = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  // Just for "minor analytics" purposes. TODO:: Will modify in soon
+  const handleBuyNowDrawerOpenCount = async () => {
     if (!pdfUrl) return;
-    e.preventDefault();
-
-    // Open the window synchronously within the click event
-    const downloadWindow = window.open("", "_blank");
-    if (!downloadWindow) {
-      console.error("Pop-up blocked by browser. Please allow pop-ups and try again.");
-      return;
-    }
-
-    console.log("Attempting to increment downloads for bookId:", bookId);
 
     // Perform the Supabase update
     const { data, error } = await supabase.rpc("increment_downloads", { book_id_param: bookId });
-
     if (error) {
-      console.error("Error incrementing downloads:", error.message || error);
-      downloadWindow.close(); // Close the window if the update fails
+      console.error("Error incrementing download:", error.message || error);
     } else {
-      console.log("Downloads incremented successfully, data:", data);
-      downloadWindow.location.href = pdfUrl; // Set the URL after success
+      console.log("Download incremented successfully, data:", data);
     }
   };
-
+  
   return (
     <>
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -106,9 +94,11 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                     className="w-full"
                   >
                     {pdfUrl ? (
-                      <button
-                        onClick={handleDownload}
-                        className="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                      <a
+                        href={pdfUrl}
+                        target="_blank"
+                        download
+                        className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -117,7 +107,7 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                           <span className="text-sm font-medium text-gray-800">Download</span>
                         </div>
                         <span className="text-xs font-medium text-muted-foreground">Free PDF</span>
-                      </button>
+                      </a>
                     ) : (
                       <div className="flex items-center gap-3 px-3 py-2 text-muted-foreground cursor-not-allowed">
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-400">
@@ -139,7 +129,13 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                     className="w-full"
                   >
                     <button
-                      onClick={() => setIsBuyNowOpen(true)}
+                      onClick={
+                        () => {
+                          setIsBuyNowOpen(true)
+                          handleBuyNowDrawerOpenCount()
+                        }
+
+                      }
                       className="flex items-center gap-3 px-3 py-2 rounded-lg w-full text-left hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
                     >
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
