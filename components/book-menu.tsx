@@ -40,7 +40,7 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
     hover: { x: 8, transition: { duration: 0.15 } },
   }
 
-  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleDownload = async (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!pdfUrl) return;
     e.preventDefault();
 
@@ -97,12 +97,12 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                     className="w-full"
                   >
                     {pdfUrl ? (
-                      <a
-                        href={pdfUrl}
+                      <button
+                        // href={pdfUrl}
                         onClick={handleDownload}
-                        target="_blank"
-                        download
-                        className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                        // target="_blank"
+                        // download
+                        className="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -111,7 +111,7 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                           <span className="text-sm font-medium text-gray-800">Download</span>
                         </div>
                         <span className="text-xs font-medium text-muted-foreground">Free PDF</span>
-                      </a>
+                      </button>
                     ) : (
                       <div className="flex items-center gap-3 px-3 py-2 text-muted-foreground cursor-not-allowed">
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-400">
