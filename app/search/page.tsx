@@ -1,17 +1,22 @@
 import { Suspense } from "react"
 import { SiteHeader } from "@/components/site-header"
 import SearchContent from "./search-content"
+import Footer from "@/components/footer"
 
 export default function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
   const initialQuery = searchParams.q || ""
 
   return (
+  <>
     <div className="container max-w-md mx-auto px-4 pb-8">
       <Suspense fallback={<SearchFallback initialQuery={initialQuery} />}>
         <SearchContent initialQuery={initialQuery} />
+
       </Suspense>
     </div>
-  )
+    <Footer />
+  </>
+)
 }
 
 // Fallback component for Suspense during prerendering

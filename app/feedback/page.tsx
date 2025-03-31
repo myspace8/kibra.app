@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
+import Footer from "@/components/footer"
 
 export default function HelpAndFeedbackPage() {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
@@ -72,16 +73,10 @@ export default function HelpAndFeedbackPage() {
   }
 
   return (
+      <>
     <div className="container max-w-md mx-auto px-4 pb-8">
       <SiteHeader />
-
-      {/* Navigation */}
       <div className="flex items-center gap-2 my-6">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/discover">
-            <ChevronLeft className="h-4 w-4 mr-1" /> Back
-          </Link>
-        </Button>
         <h1 className="text-2xl font-bold text-gray-800">Help & Feedback</h1>
       </div>
 
@@ -222,5 +217,7 @@ export default function HelpAndFeedbackPage() {
         )}
       </section>
     </div>
+    <Footer />
+</>
   )
 }

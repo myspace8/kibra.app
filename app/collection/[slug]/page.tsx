@@ -8,6 +8,7 @@ import { BookCard } from "@/components/book-card"
 import { getCollectionBySlug } from "./actions"
 import { CategoryList } from "@/components/category-list"
 import { SiteHeader } from "@/components/site-header"
+import Footer from "@/components/footer"
 
 type Props = {
   params: { slug: string }
@@ -46,38 +47,40 @@ export default async function CollectionPage({ params }: Props) {
   }
 
   return (
-    <div className="container max-w-md mx-auto px-4 pb-8">
-      <SiteHeader />
-
-      <div className="flex items-center gap-2 my-4">
-        <h2 className="text-xl font-bold">{collection.name}</h2>
+    <>
+      <div className="container max-w-md mx-auto px-4 pb-8">
+        <SiteHeader />
+        <div className="flex items-center gap-2 my-4">
+          <h2 className="text-xl font-bold">{collection.name}</h2>
+        </div>
+        <main className="space-y-6 min-h-[60vh]">
+          {(collection.books ?? []).length > 0 ? (
+            <div className="divide-y divide-gray-200">
+              {(collection.books ?? []).map((book) => (
+                <div
+                  key={book.id}
+                  className="first:pt-0 last:pb-0"
+                >
+                  <BookCard
+                    id={book.id}
+                    title={book.title}
+                    author={book.author}
+                    description={book.description}
+                    summary={book.summary}
+                    image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
+                    downloads={book.downloads || 0}
+                    pdf_url={book.pdf_url}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground">No books in this collection yet.</p>
+          )}
+          <div className="text-center mt-8 text-sm text-muted-foreground">No more data</div>
+        </main>
       </div>
-      <main className="space-y-6">
-        {(collection.books ?? []).length > 0 ? (
-          <div className="divide-y divide-gray-200">
-            {(collection.books ?? []).map((book) => (
-              <div
-                key={book.id}
-                className="first:pt-0 last:pb-0"
-              >
-                <BookCard
-                  id={book.id}
-                  title={book.title}
-                  author={book.author}
-                  description={book.description}
-                  summary={book.summary}
-                  image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
-                  downloads={book.downloads || 0}
-                  pdf_url={book.pdf_url}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-center text-muted-foreground">No books in this collection yet.</p>
-        )}
-        <div className="text-center mt-8 text-sm text-muted-foreground">No more data</div>
-      </main>
-    </div>
+      <Footer />
+    </>
   )
 }

@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react"
 import { BookCard } from "@/components/book-card"
 import { SiteHeader } from "@/components/site-header"
 import { getBooksByCollectionSlug } from "./actions"
+import Footer from "@/components/footer"
 
 export const metadata: Metadata = {
   title: "Discover & Download",
@@ -18,6 +19,7 @@ export default async function Discover() {
 
 
   return (
+    <>
     <div className="container max-w-md mx-auto pl-4 pb-8">
       <SiteHeader />
       <main className="space-y-8">
@@ -91,5 +93,8 @@ export default async function Discover() {
         </section>
       </main>
     </div>
+            <Footer />
+
+</>
   )
 }

@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { NavigationProvider } from "@/contexts/navigation-context"
 import { AuthProvider } from "./providers"
+import Footer from "@/components/footer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,6 +21,7 @@ export default function RootLayout({
             <AuthProvider>
               {children}
             </AuthProvider>
+            {/* <Footer /> */}
           </NavigationProvider>
         </ThemeProvider>
       </body>

@@ -109,7 +109,7 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
       </header>
 
       {/* Main Content */}
-      <main className="space-y-6 mt-6">
+      <main className="space-y-6 mt-6 min-h-[70vh]">
         {/* Recent Searches */}
         {recentSearches.length > 0 && (
           <section className="space-y-2">
@@ -194,6 +194,7 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
           <p className="text-center text-muted-foreground">Enter a search term above to find books.</p>
         ) : null}
       </main>
+      
     </>
   )
 }
