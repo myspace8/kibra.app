@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Search, Book, HelpCircle, MessageSquare } from "lucide-react"
+import { Search, Book, HelpCircle, MessageSquare, HelpCircleIcon } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -19,10 +19,10 @@ export default function Footer() {
               <span className="text-sm">Discover</span>
             </Link>
           </div>
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-star w-max">
             <Link href="/feedback" className="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors w-max">
-              <MessageSquare className="h-4 w-4" />
-              <span className="text-sm">Feedback & Help</span>
+              <HelpCircleIcon className="h-4 w-4" />
+              <span className="text-sm">Help & Feedback</span>
             </Link>
           </div>
         </div>
