@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Download, BookOpenText, MoreHorizontal, Wallet, WalletCards } from "lucide-react"
+import { Download, BookOpenText, MoreHorizontal, WalletCards } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -11,8 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SummaryDialog } from "@/components/ui/summary-dialog"
-import { cn } from "@/lib/utils"
 import { BuyNowDialog } from "@/components/ui/buy-now-dialog"
+import { supabase } from "@/lib/supabase"
+import { cn } from "@/lib/utils"
 
 type BookMenuProps = {
   bookId: string
@@ -29,7 +30,6 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
   const [isSummaryOpen, setIsSummaryOpen] = useState(false)
   const [isBuyNowOpen, setIsBuyNowOpen] = useState(false)
 
-  // Animation variants for menu items
   const itemVariants = {
     hidden: { opacity: 0, x: -15 },
     visible: (i: number) => ({
@@ -40,9 +40,24 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
     hover: { x: 8, transition: { duration: 0.15 } },
   }
 
+  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!pdfUrl) return;
+    e.preventDefault();
+
+    console.log("Attempting to increment downloads for bookId:", bookId);
+
+    const { data, error } = await supabase.rpc("increment_downloads", { book_id_param: bookId });
+
+    if (error) {
+      console.error("Error incrementing downloads:", error.message || error);
+    } else {
+      console.log("Downloads incremented successfully, data:", data);
+      window.open(pdfUrl, "_blank");
+    }
+  };
+
   return (
     <>
-      {/* Trigger Button */}
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <Button
@@ -60,7 +75,6 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
           </Button>
         </DropdownMenuTrigger>
 
-        {/* Menu Content */}
         <AnimatePresence>
           {isOpen && (
             <DropdownMenuContent
@@ -73,7 +87,6 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                 exit={{ opacity: 0, scale: 0.92, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* Download Button */}
                 <DropdownMenuItem className="p-0 focus:bg-transparent">
                   <motion.div
                     custom={0}
@@ -86,15 +99,16 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                     {pdfUrl ? (
                       <a
                         href={pdfUrl}
+                        onClick={handleDownload}
                         target="_blank"
                         download
                         className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                          <Download className="h-4 w-4" />
-                        </span>
-                        <span className="text-sm font-medium text-gray-800">Download</span>
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                            <Download className="h-4 w-4" />
+                          </span>
+                          <span className="text-sm font-medium text-gray-800">Download</span>
                         </div>
                         <span className="text-xs font-medium text-muted-foreground">Free PDF</span>
                       </a>
@@ -109,7 +123,6 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                   </motion.div>
                 </DropdownMenuItem>
 
-                {/* Buy Now Item */}
                 <DropdownMenuItem className="p-0 focus:bg-transparent">
                   <motion.div
                     custom={1}
@@ -131,10 +144,9 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                   </motion.div>
                 </DropdownMenuItem>
 
-                {/* Read Summary Item */}
                 <DropdownMenuItem className="p-0 focus:bg-transparent">
                   <motion.div
-                    custom={1}
+                    custom={2}
                     variants={itemVariants}
                     initial="hidden"
                     animate="visible"
@@ -158,7 +170,6 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
         </AnimatePresence>
       </DropdownMenu>
 
-      {/* Buy Now Dialog */}
       <BuyNowDialog
         open={isBuyNowOpen}
         onOpenChange={setIsBuyNowOpen}
@@ -167,26 +178,15 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
         image={image}
         title={title}
         scrollable={true}
-        summary={""}  
-        >
-          <div>
-            <span className="text-red-600 text-xs">...fluff... this shouldn't be here. Sorry <br />FOR DEVELOPERS: uncomment the content below and it won't affect anything.</span>
-          </div>
-          {/* <div>
-              <span>We are working on ways to help you buy this book at an affordable price. <Link href="/discover" className="text-blue-500 block"><br/>Stay tuned_</Link></span>
-            </div> */}
-        {/* <div className="mt-6 flex justify-end"> */}
-          {/* <Button
-            variant="outline"
-            onClick={() => setIsBuyNowOpen(false)}
-            className="rounded-full border-gray-200 hover:bg-gray-50"
-          >
-            Close
-          </Button> */}
-        {/* </div> */}
+        summary={""}
+      >
+        <div>
+          <span className="text-red-600 text-xs">
+            ...fluff... this shouldn't be here. Sorry <br />FOR DEVELOPERS: uncomment the content below and it won't affect anything.
+          </span>
+        </div>
       </BuyNowDialog>
 
-      {/* Summary Dialog */}
       <SummaryDialog
         open={isSummaryOpen}
         onOpenChange={setIsSummaryOpen}
@@ -194,11 +194,13 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
         image={image}
         title={title}
         scrollable={true}
-        summary={summary || "No summary available for this book yet."}  
-        >
-         <div>
-            <span className="text-red-600 text-xs">...fluff... this shouldn't be here. Sorry <br />FOR DEVELOPERS: uncomment the content below and it won't affect anything.</span>
-          </div>
+        summary={summary || "No summary available for this book yet."}
+      >
+        <div>
+          <span className="text-red-600 text-xs">
+            ...fluff... this shouldn't be here. Sorry <br />FOR DEVELOPERS: uncomment the content below and it won't affect anything.
+          </span>
+        </div>
       </SummaryDialog>
     </>
   )
