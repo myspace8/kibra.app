@@ -14,7 +14,7 @@ type BookCardProps = {
   description?: string
   summary: string
   image: string
-  downloads?: number
+  downloads: number
   pdf_url?: string
   variant?: "default" | "compact" | "featured" | "popular"
   className?: string
@@ -29,7 +29,7 @@ export function BookCard({
   description,
   summary,
   image,
-  downloads = 0,
+  downloads,
   pdf_url,
   className,
   index = 0,
