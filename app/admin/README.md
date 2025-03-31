@@ -11,6 +11,5 @@ Add logic to deleteBook to delete the files from storage before removing the dat
 - UI Layout: The dialogs are getting crowded. You might want to reorganize fields (e.g., move author and category to the left column) for better usability.
 
 # Features
-- Adding search/filter functionality
 - Interesting Quotes from books, displayed at the top
 - "Add to cart" button in the book menu dropdown
