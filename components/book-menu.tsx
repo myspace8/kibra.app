@@ -44,15 +44,24 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
     if (!pdfUrl) return;
     e.preventDefault();
 
+    // Open the window synchronously within the click event
+    const downloadWindow = window.open("", "_blank");
+    if (!downloadWindow) {
+      console.error("Pop-up blocked by browser. Please allow pop-ups and try again.");
+      return;
+    }
+
     console.log("Attempting to increment downloads for bookId:", bookId);
 
+    // Perform the Supabase update
     const { data, error } = await supabase.rpc("increment_downloads", { book_id_param: bookId });
 
     if (error) {
       console.error("Error incrementing downloads:", error.message || error);
+      downloadWindow.close(); // Close the window if the update fails
     } else {
       console.log("Downloads incremented successfully, data:", data);
-      window.open(pdfUrl, "_blank");
+      downloadWindow.location.href = pdfUrl; // Set the URL after success
     }
   };
 
@@ -98,11 +107,8 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                   >
                     {pdfUrl ? (
                       <button
-                        // href={pdfUrl}
                         onClick={handleDownload}
-                        // target="_blank"
-                        // download
-                        className="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                        className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
