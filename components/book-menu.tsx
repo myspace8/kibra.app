@@ -108,7 +108,7 @@ export function BookMenu({ bookId, pdfUrl, summary, title, author, image, classN
                     {pdfUrl ? (
                       <button
                         onClick={handleDownload}
-                        className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                        className="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
