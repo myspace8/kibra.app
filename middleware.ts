@@ -24,20 +24,20 @@ export function middleware(req: NextRequest) {
   }
 
 
-  // Protect /admin
-  if (pathname === "/admin" && !isAuthenticated) {
-    return NextResponse.redirect(new URL("/discover", origin))
-  }
+  // // Protect /admin
+  // if (pathname === "/admin" && !isAuthenticated) {
+  //   return NextResponse.redirect(new URL("/discover", origin))
+  // }
 
-  // Protect /admin/books
-  if (pathname === "/admin/books" && !isAuthenticated) {
-    return NextResponse.redirect(new URL("/discover", origin))
-  }
+  // // Protect /admin/books
+  // if (pathname === "/admin/books" && !isAuthenticated) {
+  //   return NextResponse.redirect(new URL("/discover", origin))
+  // }
 
-  // Protect /admin/collections
-  if (pathname === "/admin/collections" && !isAuthenticated) {
-    return NextResponse.redirect(new URL("/discover", origin))
-  }
+  // // Protect /admin/collections
+  // if (pathname === "/admin/collections" && !isAuthenticated) {
+  //   return NextResponse.redirect(new URL("/discover", origin))
+  // }
 
   // Redirect authenticated users from public routes
   if (
