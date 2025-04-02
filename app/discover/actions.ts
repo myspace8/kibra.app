@@ -31,7 +31,7 @@ async function getBooksByCollectionSlug(slug: string): Promise<{ slug: string, b
         )
       `)
       .eq("collection_id", collection.id)
-      .order("book_id", { ascending: true })
+      .limit(3)
 
     if (error) {
       console.error(`Error fetching books for collection ${slug}:`, error)
