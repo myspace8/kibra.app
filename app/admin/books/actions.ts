@@ -8,7 +8,7 @@ export async function getBooks() {
   try {
     const { data, error } = await supabase
       .from("books")
-      .select("id, title, description, isbn, language, publication_year, cover_image_url, pdf_url, status, author, category, downloads")
+      .select("id, title, description, isbn, language, publication_year, cover_image_url, summary, pdf_url, status, author, category, downloads")
       .order("id", { ascending: false })
 
     if (error) {
