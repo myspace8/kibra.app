@@ -8,6 +8,7 @@ Add logic to deleteBook to delete the files from storage before removing the dat
 - User Data: To tie searches to users, add a user_id column and fetch the user ID from your auth system (e.g., Supabase Auth).
 - Rate Limiting: For high traffic, consider debouncing the search logging to avoid overwhelming Supabase.
 Analytics: Use this data later for popular search terms or to improve searchBooks.
+- Scalability: If you have many collections (e.g., 100+), pre-rendering all might slow the build. We could limit it (e.g., top 10 slugs) or skip it for full on-demand ISR.
 
 
 # Additional Considerations

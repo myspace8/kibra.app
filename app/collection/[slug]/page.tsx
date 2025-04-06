@@ -5,13 +5,24 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { UserNav } from "@/components/user-nav"
 import { BookCard } from "@/components/book-card"
-import { getCollectionBySlug } from "./actions"
+import { getCollectionBySlug, getAllCollectionSlugs } from "./actions"
 import { CategoryList } from "@/components/category-list"
 import { SiteHeader } from "@/components/site-header"
+import { CardsSkeleton } from "@/components/cards-skeleton"
 import Footer from "@/components/footer"
+import { Suspense } from "react"
 
 type Props = {
   params: { slug: string }
+}
+
+// ISR with 5-minute revalidation
+export const revalidate = 300
+
+// Pre-generate all collection slugs at build time
+export async function generateStaticParams() {
+  const slugs = await getAllCollectionSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -28,6 +39,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${collection.name} - KIBRA`,
     description: collection.description || `Explore books in the ${collection.name} collection`,
   }
+}
+
+// Component to render the book list
+async function BookList({ books }: { books: any[] }) {
+  return (
+    <div className="space-y-4">
+      {books.length > 0 ? (
+        <div className="divide-y divide-gray-200">
+          {books.map((book) => (
+            <div key={book.id} className="first:pt-0 last:pb-0">
+              <BookCard
+                id={book.id}
+                title={book.title}
+                author={book.author}
+                description={book.description}
+                summary={book.summary}
+                image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
+                downloads={book.downloads || 0}
+                pdf_url={book.pdf_url}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-muted-foreground">No books in this collection yet.</p>
+      )}
+    </div>
+  )
 }
 
 export default async function CollectionPage({ params }: Props) {
@@ -54,29 +93,9 @@ export default async function CollectionPage({ params }: Props) {
           <h2 className="text-xl font-bold">{collection.name}</h2>
         </div>
         <main className="space-y-6 min-h-[60vh]">
-          {(collection.books ?? []).length > 0 ? (
-            <div className="divide-y divide-gray-200">
-              {(collection.books ?? []).map((book) => (
-                <div
-                  key={book.id}
-                  className="first:pt-0 last:pb-0"
-                >
-                  <BookCard
-                    id={book.id}
-                    title={book.title}
-                    author={book.author}
-                    description={book.description}
-                    summary={book.summary}
-                    image={book.cover_image_url || "/placeholder.svg?height=100&width=70"}
-                    downloads={book.downloads || 0}
-                    pdf_url={book.pdf_url}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-muted-foreground">No books in this collection yet.</p>
-          )}
+          <Suspense fallback={<CardsSkeleton />}>
+            <BookList books={collection.books ?? []} />
+          </Suspense>
           <div className="text-center mt-8 text-sm text-muted-foreground">No more data</div>
         </main>
       </div>

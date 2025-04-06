@@ -22,6 +22,7 @@ type Collection = {
   }>
 }
 
+// Fetch a single collection by slug (unchanged)
 export async function getCollectionBySlug(slug: string): Promise<Collection | null> {
   try {
     const { data: collection, error: collectionError } = await supabase
@@ -70,5 +71,24 @@ export async function getCollectionBySlug(slug: string): Promise<Collection | nu
   } catch (error) {
     console.error(`Unexpected error fetching collection ${slug}:`, error)
     return null
+  }
+}
+
+// New function to fetch all collection slugs
+export async function getAllCollectionSlugs(): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from("collections")
+      .select("slug")
+
+    if (error || !data) {
+      console.error("Error fetching all collection slugs:", error)
+      return []
+    }
+
+    return data.map((item) => item.slug)
+  } catch (error) {
+    console.error("Unexpected error fetching all collection slugs:", error)
+    return []
   }
 }
