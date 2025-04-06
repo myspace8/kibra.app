@@ -9,12 +9,13 @@ import Footer from "@/components/footer"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
-  title: "Discover & Download",
-  description: "Any book you want, in pdf format",
+  title: "Discover Top Books & Download Free PDFs",
+  description: "Explore the best personal development and business books in PDF format, ready to download.",
+  keywords: ["free pdf books", "personal development books", "business books", "download ebooks"],
 }
 
-// Force dynamic rendering for streaming
-export const dynamic = "force-dynamic"
+// Enable ISR with a 5-minute revalidation period (300 seconds)
+export const revalidate = 300
 
 // Component to render a list of books
 async function BookList({ books }: { books: any[] }) {
@@ -44,7 +45,7 @@ async function BookList({ books }: { books: any[] }) {
   )
 }
 
-// Personal Development Section with streaming fetch
+// Personal Development Section
 async function PersonalDevelopmentSection() {
   const { books } = await getBooksByCollectionSlug("personal-development")
   return (
@@ -54,7 +55,7 @@ async function PersonalDevelopmentSection() {
   )
 }
 
-// Business & Entrepreneurship Section with streaming fetch
+// Business & Entrepreneurship Section
 async function BusinessSection() {
   const { books } = await getBooksByCollectionSlug("business-entrepreneurship")
   return (
