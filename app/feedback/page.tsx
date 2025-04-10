@@ -74,8 +74,8 @@ export default function HelpAndFeedbackPage() {
 
   return (
       <>
-    <div className="container max-w-md mx-auto px-4 pb-8">
       <SiteHeader />
+    <div className="container max-w-md mx-auto px-4 pb-8">
       <div className="flex items-center gap-2 my-6">
         <h1 className="text-2xl font-bold text-gray-800">Help & Feedback</h1>
       </div>

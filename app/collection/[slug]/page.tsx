@@ -87,8 +87,8 @@ export default async function CollectionPage({ params }: Props) {
 
   return (
     <>
-      <div className="container max-w-md mx-auto px-4 pb-8">
         <SiteHeader />
+      <div className="container max-w-md mx-auto px-4 pb-8">
         <div className="flex items-center gap-2 my-4">
           <h2 className="text-xl font-bold">{collection.name}</h2>
         </div>

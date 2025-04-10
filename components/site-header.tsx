@@ -7,7 +7,7 @@ import Logo from "./Logo"
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 bg-white z-50 py-4 pr-4">
+    <header className="sticky top-0 bg-white z-50 p-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">
           <Link href={"/discover"}>
