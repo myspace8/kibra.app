@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils"
 import { updateCollection } from "@/app/admin/collections/actions"
 
 const categories = [
+  "Top-Leader",
   "Self-Help",
   "Romance",
   "Business",

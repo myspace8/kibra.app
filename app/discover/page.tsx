@@ -48,22 +48,22 @@ async function BookList({ books }: { books: any[] }) {
 // Simulated entrepreneur collection data (replace with API later)
 const entrepreneurCollections = [
   {
-    slug: "elon-musk",
+    slug: "book-recommendations-by-elon-musk",
     name: "Elon Musk",
     image: "https://cdn.businessinsider.es/sites/navi.axelspringer.es/public/media/image/2024/01/elon-musk-3265659.jpg?tf=3840x",
   },
   {
-    slug: "bill-gates",
+    slug: "book-recommendations-by-bill-gates",
     name: "Bill Gates",
     image: "https://a57.foxnews.com/static.foxnews.com/foxnews.com/content/uploads/2021/05/1200/675/Bill-Gates-AP-2.jpg?ve=1&tl=1",
   },
   {
-    slug: "oprah-winfrey",
+    slug: "book-recommendations-by-oprah-winfrey",
     name: "Oprah Winfrey",
     image: "https://assets.entrepreneur.com/content/3x2/2000/1610649737-GettyImages-1292275412.jpg",
   },
   {
-    slug: "jeff-bezos",
+    slug: "book-recommendations-by-jeff-bezos",
     name: "Jeff Bezos",
     image: "https://i.ndtvimg.com/i/2013-08/51375773319_625x300.jpg",
   },
