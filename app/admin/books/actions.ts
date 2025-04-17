@@ -43,7 +43,7 @@ export async function addBook(formData: FormData) {
       .substring(0, 60)
 
     const coverFileName = cover_image?.size > 0 ? `${uuidv4()}-${cover_image.name}` : null
-    const pdfFileName = `${uuidv4()}-${pdf_file.name}`
+    const pdfFileName = `${pdf_file.name}`
 
     let cover_image_url = null
     if (coverFileName) {
