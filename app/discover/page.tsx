@@ -9,7 +9,7 @@ import Footer from "@/components/footer"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
-  title: "Discover Top Books & Download Free PDFs",
+  title: "Discover Great Books & Download Free PDFs",
   description: "Explore the best personal development and business books in PDF format, ready to download.",
   keywords: ["free pdf books", "personal development books", "business books", "download ebooks"],
 }
@@ -75,7 +75,7 @@ function EntrepreneurRecommendations() {
     <section className="space-y-4 md:max-w-fit">
       <div className="flex items-center justify-between pr-4">
         <h2 className="text-2xl max-w-[70vw] font-semibold tracking-tight text-gray-900">
-          Top Leader Recommendations
+          World Best Recommendations
         </h2>
       </div>
       <div className="overflow-x-auto pb-2 -mx-4 px-4">
