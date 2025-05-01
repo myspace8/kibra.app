@@ -1,9 +1,5 @@
 "use client"
-
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { supabase } from "@/lib/supabase"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,78 +9,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User, Settings, HelpCircle } from "lucide-react"
-import { signOut } from "next-auth/react"
+import { LogOut, User, Settings, HelpCircle, BookMarked, Heart, PlusCircle } from "lucide-react"
 import Link from "next/link"
 
 export function UserNav() {
-  const { data: session, status } = useSession()
-  const [isLoading, setIsLoading] = useState(false)
-  const [userName, setUserName] = useState("User Account")
-  const [userEmail, setUserEmail] = useState("user@example.com")
-  const [userInitial, setUserInitial] = useState("U")
-
-  useEffect(() => {
-    async function getUserProfile() {
-      if (status === "loading") return // Wait until session status is resolved
-      if (status === "unauthenticated" || !session?.user) {
-        setUserName("Guest")
-        setUserEmail("Not logged in")
-        setUserInitial("G")
-        return
-      }
-
-      try {
-        const userId = session.user.id || session.user.sub // Use sub as fallback
-
-        // Fetch profile without .single() to handle 0 or multiple rows
-        const { data: profiles, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-
-        if (error) throw error
-
-        if (profiles && profiles.length > 0) {
-          // Use the first profile if multiple exist (add logic if needed)
-          const profile = profiles[0]
-          if (profile.full_name) {
-            setUserName(profile.full_name)
-            setUserInitial(profile.full_name.charAt(0).toUpperCase())
-          }
-        } else {
-          // No profile found, fall back to session data
-          setUserName(session.user.name || "")
-          setUserInitial((session.user.name || "User").charAt(0).toUpperCase())
-        }
-
-        setUserEmail(session.user.email || "user@example.com")
-      } catch (error) {
-        console.error("Error fetching user profile:", error)
-        setUserName("User Account")
-        setUserEmail("user@example.com")
-        setUserInitial("U")
-      }
-    }
-
-    getUserProfile()
-  }, [session, status])
-
-  const handleLogOut = async () => {
-    setIsLoading(true)
-    await signOut({ redirect: false })
-    window.location.href = "/"
-    setIsLoading(false)
-  }
+  // For demo purposes, we'll use static data
+  // In a real app, this would come from your authentication system
+  const userName = "Guest User"
+  const userEmail = "user@umail.com"
+  const userInitial = "U"
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-          <Settings className="h-7 w-7" />
+        <Avatar className="cursor-pointer h-9 w-9 border border-gray-200 hover:border-primary transition-colors">
+          <AvatarFallback>{userInitial}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-56 rounded-xl" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{userName}</p>
@@ -93,13 +35,20 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <Link href="/request">
+            <DropdownMenuItem>
+            <PlusCircle className="h-7 w-7" />
+            <span>Request a book</span>
+            </DropdownMenuItem>
+          </Link>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <Link href="/feedback">
           <DropdownMenuItem>
             <HelpCircle className="mr-2 h-4 w-4" />
-            <Link href={"/feedback"} className="w-full">
             <span>Help & Feedback</span>
-            </Link>
           </DropdownMenuItem>
-        </DropdownMenuGroup>
+        </Link>
       </DropdownMenuContent>
     </DropdownMenu>
   )

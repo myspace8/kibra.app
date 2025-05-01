@@ -1,24 +1,52 @@
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+"use client"
+import { usePathname } from "next/navigation"
 import { Search } from "lucide-react"
 import { UserNav } from "@/components/user-nav"
 import Link from "next/link"
 import Logo from "./Logo"
 
 export function SiteHeader() {
+  const pathname = usePathname()
+
   return (
-    <header className="sticky top-0 bg-white z-50 p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold">
-          <Link href={"/discover"}>
-          <Logo />
-          </Link>
-        </h1>
-        <div className="flex items-center gap-2">
-          <Link href={"/search"} className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 w-10 cursor-pointer">
-          <Search className="h-7 w-7" />
-          </Link>
-          <UserNav />
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md mb-6 border-b border-gray-200 shadow-sm">
+      <div className="container max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center gap-8">
+            <Link href="/" className="shrink-0">
+              <Logo />
+            </Link>
+
+            <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+              <Link
+                href="/discover"
+                className={`transition-colors hover:text-primary ${
+                  pathname === "/discover" ? "text-primary font-medium" : "text-foreground/80"
+                }`}
+              >
+                Discover
+              </Link>
+              <Link
+                href="/request"
+                className={`transition-colors hover:text-primary ${
+                  pathname === "/request" ? "text-primary font-medium" : "text-foreground/80"
+                }`}
+              >
+                Request
+              </Link>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              href="/search"
+              className="inline-flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors p-2"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </Link>
+            <UserNav />
+          </div>
         </div>
       </div>
     </header>

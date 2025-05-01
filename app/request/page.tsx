@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { SiteHeader } from "@/components/site-header"
+import Footer from "@/components/footer"
 
 // Form schema
 const requestFormSchema = z.object({
@@ -42,15 +43,6 @@ const sampleRequests: Request[] = [
         description: "Timeless lessons on wealth, greed, and happiness",
         requestCount: 24,
         status: "approved",
-        image: "/placeholder.svg?height=80&width=60",
-    },
-    {
-        id: "2",
-        title: "Deep Work",
-        author: "Cal Newport",
-        description: "Rules for focused success in a distracted world",
-        requestCount: 18,
-        status: "pending",
         image: "/placeholder.svg?height=80&width=60",
     },
     {
@@ -120,13 +112,13 @@ export default function RequestPage() {
                 <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
                     {/* Request Form */}
                     <Card>
-                        <CardHeader>
+                        {/* <CardHeader className="px-4">
                             <CardTitle>Submit a Book Request</CardTitle>
                             <CardDescription>
                                 Fill out the form below with details about the book you'd like to see in our library.
                             </CardDescription>
-                        </CardHeader>
-                        <CardContent>
+                        </CardHeader> */}
+                        <CardContent className="p-4">
                             {isSubmitted ? (
                                 <div className="flex flex-col items-center justify-center py-6 text-center">
                                     <div className="rounded-full bg-green-100 p-3 mb-4">
@@ -227,7 +219,7 @@ export default function RequestPage() {
 
                     {/* Popular and Recent Requests */}
                     <div className="space-y-6">
-                        <div className="relative">
+                        {/* <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                             <Input
                                 placeholder="Search existing requests..."
@@ -235,7 +227,7 @@ export default function RequestPage() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                        </div>
+                        </div> */}
 
                         <Tabs defaultValue="popular">
                             <TabsList className="grid w-full grid-cols-2">
@@ -275,6 +267,7 @@ export default function RequestPage() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     )
 }
