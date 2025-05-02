@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Book, CheckCircle, Clock, Download, Search, ThumbsUp } from "lucide-react"
-import Image from "next/image"
+import { Book, CheckCircle, Clock, Download, ThumbsUp } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -22,11 +22,10 @@ const requestFormSchema = z.object({
         message: "Book title must be at least 2 characters.",
     }),
     author: z.string().optional(),
-    description: z.string().optional(), // Made optional
-    phone: z
-        .string()
-        .min(10, { message: "Phone number must be at least 10 digits." })
-        .regex(/^[0-9+\s()-]+$/, { message: "Please enter a valid phone number." }),
+    description: z.string().optional(),
+    phone: z.string().optional().refine((val) => !val || /^[0-9+\s()-]+$/.test(val), {
+        message: "Please enter a valid phone number.",
+    }),
     email: z.string().email({
         message: "Please enter a valid email address.",
     }),
@@ -60,18 +59,27 @@ export default function RequestPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSubmitted, setIsSubmitted] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
+    const searchParams = useSearchParams()
 
-    // Initialize form
+    // Get title from query parameter
+    const titleFromQuery = searchParams.get("title") || ""
+
+    // Initialize form with dynamic default title
     const form = useForm<RequestFormValues>({
         resolver: zodResolver(requestFormSchema),
         defaultValues: {
-            title: "",
+            title: titleFromQuery,
             author: "",
             description: "",
             phone: "",
             email: "",
         },
     })
+
+    // Reset title field if query changes
+    useEffect(() => {
+        form.setValue("title", titleFromQuery)
+    }, [titleFromQuery, form])
 
     // Form submission handler
     function onSubmit(data: RequestFormValues) {
@@ -112,12 +120,6 @@ export default function RequestPage() {
                 <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
                     {/* Request Form */}
                     <Card>
-                        {/* <CardHeader className="px-4">
-                            <CardTitle>Submit a Book Request</CardTitle>
-                            <CardDescription>
-                                Fill out the form below with details about the book you'd like to see in our library.
-                            </CardDescription>
-                        </CardHeader> */}
                         <CardContent className="p-4">
                             {isSubmitted ? (
                                 <div className="flex flex-col items-center justify-center py-6 text-center">
@@ -126,7 +128,7 @@ export default function RequestPage() {
                                     </div>
                                     <h3 className="text-xl font-medium mb-2">Request Submitted!</h3>
                                     <p className="text-gray-500 mb-4">
-                                        Thank you for your request. We'll notify you via WhatsApp and email when the book becomes available.
+                                        Thank you for your request. We'll notify you via email when the book becomes available.
                                     </p>
                                     <Button variant="outline" onClick={() => setIsSubmitted(false)}>
                                         Submit Another Request
@@ -142,7 +144,7 @@ export default function RequestPage() {
                                                 <FormItem>
                                                     <FormLabel>Book Title*</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter the book title" {...field} />
+                                                        <Input {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -155,7 +157,7 @@ export default function RequestPage() {
                                                 <FormItem>
                                                     <FormLabel>Author (optional)</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter the author's name" {...field} />
+                                                        <Input {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -168,11 +170,7 @@ export default function RequestPage() {
                                                 <FormItem>
                                                     <FormLabel>Why do you want this book? (optional)</FormLabel>
                                                     <FormControl>
-                                                        <Textarea
-                                                            placeholder="Tell us why you're interested in this book and how it would benefit you"
-                                                            className="min-h-[100px]"
-                                                            {...field}
-                                                        />
+                                                        <Textarea className="min-h-[100px]" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -183,12 +181,12 @@ export default function RequestPage() {
                                             name="phone"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>WhatsApp Number*</FormLabel>
+                                                    <FormLabel>WhatsApp Number (optional)</FormLabel>
                                                     <FormControl>
-                                                        <Input type="tel" placeholder="Enter your WhatsApp number" {...field} />
+                                                        <Input type="tel" {...field} />
                                                     </FormControl>
                                                     <FormDescription>
-                                                        We'll primarily notify you via WhatsApp when this book becomes available.
+                                                        Add your WhatsApp number for faster notifications about your book request.
                                                     </FormDescription>
                                                     <FormMessage />
                                                 </FormItem>
@@ -201,9 +199,11 @@ export default function RequestPage() {
                                                 <FormItem>
                                                     <FormLabel>Email*</FormLabel>
                                                     <FormControl>
-                                                        <Input type="email" placeholder="Enter your email as a backup" {...field} />
+                                                        <Input type="email" {...field} />
                                                     </FormControl>
-                                                    <FormDescription>We'll also send email notifications as a backup.</FormDescription>
+                                                    <FormDescription>
+                                                        We’ll send you an email when your requested book is available.
+                                                    </FormDescription>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -219,16 +219,6 @@ export default function RequestPage() {
 
                     {/* Popular and Recent Requests */}
                     <div className="space-y-6">
-                        {/* <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                                placeholder="Search existing requests..."
-                                className="pl-9"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div> */}
-
                         <Tabs defaultValue="popular">
                             <TabsList className="grid w-full grid-cols-2">
                                 <TabsTrigger value="popular">Popular Requests</TabsTrigger>
@@ -300,15 +290,6 @@ function RequestCard({ request }: { request: Request }) {
     return (
         <Card className="overflow-hidden">
             <div className="flex p-3">
-                {/* <div className="relative w-[60px] h-[80px] flex-shrink-0">
-                    <Image
-                        src={request.image || "/placeholder.svg"}
-                        alt={request.title}
-                        fill
-                        className="object-cover rounded-sm"
-                    />
-                </div> */}
-
                 <div className="flex-1 min-w-0 ml-3">
                     <div className="flex justify-between items-start">
                         <div className="w-full">
@@ -317,7 +298,6 @@ function RequestCard({ request }: { request: Request }) {
                                 <StatusBadge status={request.status} />
                             </div>
                             <h3 className="font-medium text-sm line-clamp-2">{request.title}</h3>
-                            {/* <p className="text-xs text-gray-500 line-clamp-1 mt-1">{request.description}</p> */}
                         </div>
                     </div>
 
