@@ -1,16 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { ChevronLeft, Search, X, MoreHorizontal } from "lucide-react"
+import { ChevronLeft, Search, X, MoreHorizontal, Book } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { BookCard } from "@/components/book-card"
+import { RequestModal } from "@/components/request-modal"
 import { searchBooks } from "./actions"
 import Logo from "@/components/Logo"
 import { UserNav } from "@/components/user-nav"
-import { supabase } from "@/lib/supabase" // Import Supabase client
+import { supabase } from "@/lib/supabase"
 
 export default function SearchContent({ initialQuery }: { initialQuery: string }) {
   const [query, setQuery] = useState(initialQuery)
@@ -18,6 +18,8 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showMore, setShowMore] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalTitle, setModalTitle] = useState("")
   const router = useRouter()
 
   // Load recent searches from local storage on mount
@@ -84,6 +86,12 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
     localStorage.removeItem("recentSearches")
   }
 
+  // Open modal with title
+  const openRequestModal = (title: string) => {
+    setModalTitle(title)
+    setModalOpen(true)
+  }
+
   const visibleSearches = showMore ? recentSearches : recentSearches.slice(0, 3)
 
   return (
@@ -92,17 +100,20 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
       <header className="sticky top-0 bg-white z-50 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-bold">
-            <Link href="/discover">
+            <a href="/discover">
               <Logo />
-            </Link>
+            </a>
           </h1>
           <div className="flex items-center gap-2">
-            <Link
-              href={"/search"}
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 w-10 cursor-pointer"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10"
+              onClick={() => router.push("/search")}
+              aria-label="Open search"
             >
               <Search className="h-7 w-7" />
-            </Link>
+            </Button>
             <UserNav />
           </div>
         </div>
@@ -161,6 +172,17 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
                     <X className="h-3 w-3" />
                     <span className="sr-only">Remove {search}</span>
                   </Button>
+                  {!(query === search && books.length > 0) && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openRequestModal(search)}
+                      className="h-5 w-5 text-gray-500 hover:text-primary"
+                    >
+                      <Book className="h-3 w-3" />
+                      <span className="sr-only">Request {search}</span>
+                    </Button>
+                  )}
                 </div>
               ))}
               {recentSearches.length > 3 && (
@@ -204,20 +226,34 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
               ))}
             </div>
           ) : (
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-800">No Results Found</h3>
-              <Link
-                href={`/request?title=${encodeURIComponent(query)}`}
-                className="text-primary hover:underline"
+            <div className="text-center flex flex-col items-center gap-4 py-8">
+              <h3 className="text-lg font-semibold text-gray-800">
+                No Results for "{query}"
+              </h3>
+              <Button
+                variant="default"
+                className="flex items-center gap-2"
+                onClick={() => openRequestModal(query)}
               >
-                Can't find what you're looking for? Request it here.
-              </Link>
+                <Book className="h-4 w-4" />
+                Request This Book
+              </Button>
+              <p className="text-sm text-gray-500 max-w-md">
+                Request, and we’ll notify you immediately "{query}" is available in our library.
+              </p>
             </div>
           )
         ) : !recentSearches.length ? (
           <p className="text-center text-muted-foreground">Enter a search term above to find books.</p>
         ) : null}
       </main>
+
+      {/* Request Modal */}
+      <RequestModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        initialTitle={modalTitle}
+      />
     </>
   )
 }

@@ -185,8 +185,8 @@ export default function RequestPage() {
                                                     <FormControl>
                                                         <Input type="tel" {...field} />
                                                     </FormControl>
-                                                    <FormDescription>
-                                                        Add your WhatsApp number for faster notifications about your book request.
+                                                    <FormDescription className="text-xs">
+                                                        Add your WhatsApp number for faster notifications.
                                                     </FormDescription>
                                                     <FormMessage />
                                                 </FormItem>
@@ -201,8 +201,8 @@ export default function RequestPage() {
                                                     <FormControl>
                                                         <Input type="email" {...field} />
                                                     </FormControl>
-                                                    <FormDescription>
-                                                        We’ll send you an email when your requested book is available.
+                                                    <FormDescription className="text-xs">
+                                                    We’ll send you an email immediately the requested book is available in our library.
                                                     </FormDescription>
                                                     <FormMessage />
                                                 </FormItem>
