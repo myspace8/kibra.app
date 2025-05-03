@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { SiteHeader } from "@/components/site-header"
 import Footer from "@/components/footer"
+import { supabase } from "@/lib/supabase"
 
 // Form schema
 const requestFormSchema = z.object({
@@ -37,10 +38,10 @@ type RequestFormValues = z.infer<typeof requestFormSchema>
 const sampleRequests: Request[] = [
     {
         id: "1",
-        title: "The Psychology of Money",
-        author: "Morgan Housel",
-        description: "Timeless lessons on wealth, greed, and happiness",
-        requestCount: 24,
+        title: "Sell Like Crazy",
+        author: "Sabri Suby",
+        description: "A guide to selling anything",
+        requestCount: 12,
         status: "approved",
         image: "/placeholder.svg?height=80&width=60",
     },
@@ -50,7 +51,16 @@ const sampleRequests: Request[] = [
         author: "Daniel Kahneman",
         description: "How we think and make decisions",
         requestCount: 15,
-        status: "approved",
+        status: "pending",
+        image: "/placeholder.svg?height=80&width=60",
+    },
+    {
+        id: "4",
+        title: "Man Searching for Meaning",
+        author: "Viktor Frankl",
+        description: "A story of survival and hope",
+        requestCount: 8,
+        status: "pending",
         image: "/placeholder.svg?height=80&width=60",
     },
 ]
@@ -82,21 +92,32 @@ export default function RequestPage() {
     }, [titleFromQuery, form])
 
     // Form submission handler
-    function onSubmit(data: RequestFormValues) {
+    async function onSubmit(data: RequestFormValues) {
         setIsSubmitting(true)
 
-        // Simulate API call
-        setTimeout(() => {
-            console.log(data)
-            setIsSubmitting(false)
-            setIsSubmitted(true)
-            form.reset()
+        // Log request to Supabase
+        const { error } = await supabase.from("book_requests").insert({
+        title: data.title,
+        author: data.author || null,
+        description: data.description || null,
+        phone: data.phone || null,
+        email: data.email,
+        })
 
-            // Reset success message after 5 seconds
-            setTimeout(() => {
-                setIsSubmitted(false)
-            }, 5000)
-        }, 1500)
+        if (error) {
+        console.error("Error submitting request:", error)
+        setIsSubmitting(false)
+        return
+        }
+
+        setIsSubmitting(false)
+        setIsSubmitted(true)
+
+        // Reset after 5 seconds
+        setTimeout(() => {
+        setIsSubmitted(false)
+        form.reset({ title: titleFromQuery, author: "", description: "", phone: "", email: "" })
+        }, 10000)
     }
 
     // Filter requests based on search query

@@ -39,18 +39,24 @@ export default function SearchContent({ initialQuery }: { initialQuery: string }
       }
       setIsLoading(true)
 
-      // Log the search query to Supabase
-      const { error: logError } = await supabase
-        .from("search_queries")
-        .insert({ query: query.trim() })
-      if (logError) {
-        console.error("Error logging search query:", logError)
-      }
+      try {
+        // Log the search query to Supabase
+        const { error: logError } = await supabase
+          .from("search_queries")
+          .insert({ query: query.trim() })
+        if (logError) {
+          console.error("Error logging search query:", logError)
+        }
 
-      // Fetch books
-      const results = await searchBooks(query)
-      setBooks(results)
-      setIsLoading(false)
+        // Fetch books
+        const results = await searchBooks(query)
+        setBooks(results)
+      } catch (error) {
+        console.error("Error fetching books:", error)
+        setBooks([])
+      } finally {
+        setIsLoading(false)
+      }
 
       // Update recent searches
       setRecentSearches((prev) => {

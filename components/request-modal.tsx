@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Book, CheckCircle, X } from "lucide-react"
+import { Book, CheckCircle, AlertCircle, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -52,6 +52,7 @@ interface RequestModalProps {
 export function RequestModal({ open, onOpenChange, initialTitle }: RequestModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [existingRequest, setExistingRequest] = useState(false)
 
   // Initialize form
   const form = useForm<RequestFormValues>({
@@ -64,6 +65,26 @@ export function RequestModal({ open, onOpenChange, initialTitle }: RequestModalP
       email: "",
     },
   })
+
+  // Check for existing requests when modal opens
+  // useEffect(() => {
+  //   const checkExistingRequest = async () => {
+  //     if (!initialTitle) return
+  //     const { data, error } = await supabase
+  //       .from("book_requests")
+  //       .select("id")
+  //       .eq("title", initialTitle.trim())
+  //       .limit(1)
+  //     if (error) {
+  //       console.error("Error checking existing request:", error)
+  //       return
+  //     }
+  //     setExistingRequest(!!data?.length)
+  //   }
+  //   if (open) {
+  //     checkExistingRequest()
+  //   }
+  // }, [open, initialTitle])
 
   // Form submission handler
   async function onSubmit(data: RequestFormValues) {
@@ -80,6 +101,8 @@ export function RequestModal({ open, onOpenChange, initialTitle }: RequestModalP
 
     if (error) {
       console.error("Error submitting request:", error)
+      setIsSubmitting(false)
+      return
     }
 
     setIsSubmitting(false)
@@ -88,9 +111,10 @@ export function RequestModal({ open, onOpenChange, initialTitle }: RequestModalP
     // Reset after 5 seconds
     setTimeout(() => {
       setIsSubmitted(false)
+      // setExistingRequest(false)
       form.reset({ title: initialTitle, author: "", description: "", phone: "", email: "" })
       onOpenChange(false)
-    }, 5000)
+    }, 10000)
   }
 
   return (
@@ -122,10 +146,23 @@ export function RequestModal({ open, onOpenChange, initialTitle }: RequestModalP
               </div>
               <h3 className="text-xl font-medium mb-2">Request Submitted!</h3>
               <p className="text-gray-500 mb-4">
-                We’ll notify you via immediately the book is available.
+                We’ll notify you immediately the book is available.
               </p>
             </div>
-          ) : (
+          ) : 
+          // existingRequest ? (
+          //   <div className="flex flex-col items-center justify-center py-6 text-center">
+          //     <div className="rounded-full bg-yellow-100 p-3 mb-4">
+          //       <AlertCircle className="h-8 w-8 text-yellow-600" />
+          //     </div>
+          //     <h3 className="text-xl font-medium mb-2">Request Already Exists</h3>
+          //     <p className="text-gray-500 mb-4">
+          //       A request for "{initialTitle}" has already been submitted. We’ll notify you when it’s available.
+          //     </p>
+          //     <Button onClick={() => onOpenChange(false)}>Close</Button>
+          //   </div>
+          // ) : 
+          (
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -176,7 +213,7 @@ export function RequestModal({ open, onOpenChange, initialTitle }: RequestModalP
                       <FormControl>
                         <Input type="tel" {...field} />
                       </FormControl>
-                      <FormDescription className="text-xs">
+                      <FormDescription>
                         Add your WhatsApp number for faster notifications.
                       </FormDescription>
                       <FormMessage />
@@ -192,8 +229,8 @@ export function RequestModal({ open, onOpenChange, initialTitle }: RequestModalP
                       <FormControl>
                         <Input type="email" {...field} />
                       </FormControl>
-                      <FormDescription className="text-xs">
-                      We’ll send you an email immediately the requested book is available in our library.
+                      <FormDescription>
+                        We’ll notify you when your book is available.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
