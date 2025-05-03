@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User, Settings, HelpCircle, BookMarked, Heart, PlusCircle } from "lucide-react"
+import { LogOut, User, Settings, HelpCircle, BookMarked, Heart, PlusCircle, BookPlus } from "lucide-react"
 import Link from "next/link"
 
 export function UserNav() {
@@ -37,7 +37,7 @@ export function UserNav() {
         <DropdownMenuGroup>
           <Link href="/request">
             <DropdownMenuItem>
-            <PlusCircle className="h-7 w-7" />
+            <BookPlus className="h-7 w-7" />
             <span>Request a book</span>
             </DropdownMenuItem>
           </Link>

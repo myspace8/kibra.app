@@ -1,5 +1,4 @@
 import { Suspense } from "react"
-import { SiteHeader } from "@/components/site-header"
 import SearchContent from "./search-content"
 import Footer from "@/components/footer"
 
