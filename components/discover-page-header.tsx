@@ -40,7 +40,7 @@ export function DiscoverPageHeader() {
           <div className="flex items-center gap-2">
             <Link
               href="/search"
-              className="inline-flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors p-2"
+              className="inline-flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors p-2"
               aria-label="Search"
             >
               <Search className="h-5 w-5" />
