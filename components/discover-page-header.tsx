@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation"
 import { Search } from "lucide-react"
 import { UserNav } from "@/components/user-nav"
 import Link from "next/link"
-import Logo from "./Logo"
+import Logo from "./logo"
 
 export function DiscoverPageHeader() {
   const pathname = usePathname()

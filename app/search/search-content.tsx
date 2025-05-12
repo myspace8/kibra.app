@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { BookCard } from "@/components/book-card"
 import { RequestModal } from "@/components/request-modal"
 import { searchBooks } from "./actions"
-import Logo from "@/components/Logo"
+import Logo from "@/components/logo"
 import { UserNav } from "@/components/user-nav"
 import { supabase } from "@/lib/supabase"
 
