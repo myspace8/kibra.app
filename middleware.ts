@@ -48,12 +48,12 @@ export function middleware(req: NextRequest) {
   }
 
   // Redirect authenticated users from public routes
-  if (
-    (pathname === "/" || pathname === "/login" || pathname === "/signup") &&
-    !isAuthenticated
-  ) {
-    return NextResponse.redirect(new URL("/discover", origin))
-  }
+  // if (
+  //   (pathname === "/" || pathname === "/login" || pathname === "/signup") &&
+  //   !isAuthenticated
+  // ) {
+  //   return NextResponse.redirect(new URL("/discover", origin))
+  // }
 
 
   return NextResponse.next()

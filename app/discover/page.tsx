@@ -83,7 +83,7 @@ function EntrepreneurRecommendations() {
           {entrepreneurCollections.map((entrepreneur) => (
             <Link
               key={entrepreneur.slug}
-              href={`/collection/${entrepreneur.slug}`}
+              href={`/discover/collection/${entrepreneur.slug}`}
               className="group flex flex-col items-center min-w-fit md:min-w-0"
             >
               <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-100 transition-transform duration-300 group-hover:scale-105">
@@ -129,7 +129,7 @@ export default async function Discover() {
                 Personal Development
               </h2>
               <Link
-                href="/collection/personal-development"
+                href="/discover/collection/personal-development"
                 className="text-sm text-blue-600 hover:text-blue-800 flex items-center transition-colors"
               >
                 More <ChevronRight className="h-4 w-4 ml-1" />
@@ -145,7 +145,7 @@ export default async function Discover() {
                 Business & Entrepreneurship
               </h2>
               <Link
-                href="/collection/business-entrepreneurship"
+                href="/discover/collection/business-entrepreneurship"
                 className="text-sm text-blue-600 hover:text-blue-800 flex items-center transition-colors"
               >
                 More <ChevronRight className="h-4 w-4 ml-1" />
