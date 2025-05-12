@@ -13,7 +13,7 @@ export function DiscoverPageHeader() {
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
-            <Link href="/" className="shrink-0">
+            <Link href="/discover" className="shrink-0">
               <Logo />
             </Link>
 
