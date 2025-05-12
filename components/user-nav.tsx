@@ -36,39 +36,39 @@ export function UserNav() {
         <DropdownMenuSeparator />
         {/* <DropdownMenuGroup> */}
           <Link href="/learn">
-                  <DropdownMenuItem className="rounded-2xl">
+                  <DropdownMenuItem className="rounded-2xl py-2">
                   <Lightbulb className="h-7 w-7" />
                   <span>Learn</span>
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/discover">
-                  <DropdownMenuItem className="rounded-2xl">
+                  <DropdownMenuItem className="rounded-2xl py-2">
                   <BookHeart className="h-7 w-7" />
                   <span>Discover books</span>
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/request">
-                  <DropdownMenuItem className="rounded-2xl">
+                  <DropdownMenuItem className="rounded-2xl py-2">
                   <BookPlus className="h-7 w-7" />
                   <span>Request books</span>
                   </DropdownMenuItem>
                 </Link>
-                <Link href="/learn/settings">
-                  <DropdownMenuItem className="rounded-2xl">
-                    <Settings className="mr-2 h-4 w-4" />
+                <Link href="/settings">
+                  <DropdownMenuItem className="rounded-2xl py-2">
+                    <Settings className="h-4 w-4" />
                     <span>Settings</span>
                   </DropdownMenuItem>
                 </Link>
                   <DropdownMenuSeparator />
                   <Link href="/feedback">
-                    <DropdownMenuItem className="rounded-2xl">
-                      <HelpCircle className="mr-2 h-4 w-4" />
+                    <DropdownMenuItem className="rounded-2xl py-2">
+                      <HelpCircle className="h-4 w-4" />
                       <span>Help & Feedback</span>
                     </DropdownMenuItem>
                   </Link>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="rounded-2xl">
-                  <LogOut className="mr-2 h-4 w-4" />
+                <DropdownMenuItem className="rounded-2xl py-2">
+                  <LogOut className="h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
       </DropdownMenuContent>
