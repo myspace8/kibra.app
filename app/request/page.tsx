@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { SiteHeader } from "@/components/site-header"
+import { DiscoverPageHeader } from "@/components/discover-page-header"
 import Footer from "@/components/footer"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
@@ -130,7 +130,7 @@ export default function RequestPage() {
 
     return (
         <>
-            <SiteHeader />
+            <DiscoverPageHeader />
             <div className="container max-w-md mx-auto px-4 pb-8 mt-2 md:max-w-3xl lg:max-w-5xl">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold mb-2">Request a Book</h1>
@@ -381,7 +381,7 @@ function StatusBadge({ status }: { status: "approved" | "pending" }) {
 // import { Textarea } from "@/components/ui/textarea"
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // import { Badge } from "@/components/ui/badge"
-// import { SiteHeader } from "@/components/site-header"
+// import { DiscoverPageHeader } from "@/components/site-header"
 // import Footer from "@/components/footer"
 // import { supabase } from "@/lib/supabase"
 // import Link from "next/link"
@@ -498,7 +498,7 @@ function StatusBadge({ status }: { status: "approved" | "pending" }) {
 
 //     return (
 //         <>
-//             <SiteHeader />
+//             <DiscoverPageHeader />
 //             <div className="container max-w-md mx-auto px-4 pb-8 mt-2 md:max-w-3xl lg:max-w-5xl">
 //                 <div className="text-center mb-8">
 //                     <h1 className="text-3xl font-bold mb-2">Request a Book</h1>

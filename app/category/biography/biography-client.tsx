@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { FolderOpen } from "lucide-react"
 import { BookCard } from "@/components/book-card"
-import { SiteHeader } from "@/components/site-header"
+import { DiscoverPageHeader } from "@/components/discover-page-header"
 import Image from "next/image"
 import { motion } from "framer-motion"
 
@@ -36,7 +36,7 @@ interface BiographyClientProps {
 export default function BiographyClient({ books, collections, success, error }: BiographyClientProps) {
   return (
     <div className="container max-w-md mx-auto px-4 pb-8">
-      <SiteHeader />
+      <DiscoverPageHeader />
 
       <main className="space-y-8">
         <section>

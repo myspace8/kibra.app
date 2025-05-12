@@ -5,7 +5,7 @@ import { UserNav } from "@/components/user-nav"
 import Link from "next/link"
 import Logo from "./Logo"
 
-export function SiteHeader() {
+export function DiscoverPageHeader() {
   const pathname = usePathname()
 
   return (

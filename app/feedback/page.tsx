@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, HelpCircle, MessageSquare, Send, ChevronDown, Star } from "lucide-react"
-import { SiteHeader } from "@/components/site-header"
+import { DiscoverPageHeader } from "@/components/discover-page-header"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -74,7 +74,7 @@ export default function HelpAndFeedbackPage() {
 
   return (
       <>
-      <SiteHeader />
+      <DiscoverPageHeader />
     <div className="container max-w-md mx-auto px-4 pb-8">
       <div className="flex items-center gap-2 my-6">
         <h1 className="text-2xl font-bold text-gray-800">Help & Feedback</h1>

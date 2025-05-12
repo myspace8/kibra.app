@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { BookCard } from "@/components/book-card"
-import { SiteHeader } from "@/components/site-header"
+import { DiscoverPageHeader } from "@/components/discover-page-header"
 import { CardsSkeleton } from "@/components/cards-skeleton"
 import { getBooksByCollectionSlug } from "./actions"
 import Footer from "@/components/footer"
@@ -119,7 +119,7 @@ async function BusinessSection() {
 export default async function Discover() {
   return (
     <>
-        <SiteHeader />
+        <DiscoverPageHeader />
       <div className="container max-w-md mx-auto px-4 pb-8 mt-2 md:max-w-3xl lg:max-w-5xl">
         <main className="space-y-8">
           <EntrepreneurRecommendations />

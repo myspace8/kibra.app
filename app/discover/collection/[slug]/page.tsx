@@ -7,7 +7,7 @@ import { UserNav } from "@/components/user-nav"
 import { BookCard } from "@/components/book-card"
 import { getCollectionBySlug, getAllCollectionSlugs } from "./actions"
 import { CategoryList } from "@/components/category-list"
-import { SiteHeader } from "@/components/site-header"
+import { DiscoverPageHeader } from "@/components/discover-page-header"
 import { CardsSkeleton } from "@/components/cards-skeleton"
 import Footer from "@/components/footer"
 import { Suspense } from "react"
@@ -87,7 +87,7 @@ export default async function CollectionPage({ params }: Props) {
 
   return (
     <>
-        <SiteHeader />
+        <DiscoverPageHeader />
       <div className="container max-w-md mx-auto px-4 pb-8">
         <div className="flex items-center gap-2 my-4">
           <h2 className="text-xl font-bold">{collection.name}</h2>

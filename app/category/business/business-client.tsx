@@ -9,7 +9,7 @@ import { BookCard } from "@/components/book-card"
 import { CategoryList } from "@/components/category-list"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { SiteHeader } from "@/components/site-header"
+import { DiscoverPageHeader } from "@/components/discover-page-header"
 
 interface Book {
   id: string
@@ -40,7 +40,7 @@ interface BusinessClientProps {
 export default function BusinessClient({ books, collections, success, error }: BusinessClientProps) {
   return (
     <div className="container max-w-md mx-auto px-4 pb-8">
-      <SiteHeader />
+      <DiscoverPageHeader />
 
       <main className="space-y-8">
         <section>
