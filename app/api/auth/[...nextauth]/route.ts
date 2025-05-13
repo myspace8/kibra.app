@@ -2,15 +2,15 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { supabase } from "@/lib/supabase"
 
-export const authOptions = {
-  providers: [
+export const authOptions = {  providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
-        full_name: { label: "Full Name", type: "text" }, // Add full_name for signup
-        is_signup: { label: "Is Signup", type: "text" }, // Flag to differentiate signup from sign-in
+        full_name: { label: "Full Name", type: "text" },
+        username: { label: "Username", type: "text" },
+        is_signup: { label: "Is Signup", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {

@@ -99,7 +99,7 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
         <>
           <Upload className="h-8 w-8 text-gray-400" />
           <p className="text-sm text-gray-500">Upload sources</p>
-          <p className="text-xs text-gray-400">Supported file types: jpg, png, pdf, txt, markdown</p>
+          <p className="text-xs text-gray-400 text-center">Supported file types: jpg, png, pdf, txt, markdown</p>
           <Button variant="outline" size="sm" className="mt-2">
             Select File
           </Button>

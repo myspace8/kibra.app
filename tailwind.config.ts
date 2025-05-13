@@ -83,11 +83,18 @@ const config: Config = {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+			        pulseGlow: {
+          '0%':   { boxShadow: '0 0 0px rgba(236, 72, 153, 0.4)' },   // pink-500
+          '33%':  { boxShadow: '0 0 10px rgba(239, 68, 68, 0.6)' },   // red-500
+          '66%':  { boxShadow: '0 0 10px rgba(234, 179, 8, 0.6)' },   // yellow-500
+          '100%': { boxShadow: '0 0 0px rgba(236, 72, 153, 0.4)' },   // pink-500
+        },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+        'pulse-glow': 'pulseGlow 6s infinite',
   		}
   	}
   },

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, FileText, User, Settings, LogOut, BookPlus, BookHeart, Lightbulb, HelpCircle } from "lucide-react"
+import { Menu, FileText, User, Settings, LogOut, BookPlus, BookHeart, Lightbulb, HelpCircle, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Logo from "@/components/logo"
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar"
 import { UserNav } from "../user-nav"
+import { useSession } from "next-auth/react"
 
 interface HeaderProps {
   className?: string
@@ -29,6 +30,8 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
   const [sourcesModalOpen, setSourcesModalOpen] = useState(false)
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false)
   const [educationalLevel, setEducationalLevel] = useState<string>()
+
+    const { data: session } = useSession()
 
   useEffect(() => {
     const customizations = localStorage.getItem("userCustomizations")
@@ -58,6 +61,14 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
               </>
             )}
             <UserNav />
+            {!session && (
+              <Link href="/signup" className="ml-1">
+                <Button variant="default" className="bg-black hover:bg-black/90 text-white gap-2 rounded-full text-xs h-9">
+                  <UserPlus className="h-4 w-4" />
+                  Sign up
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </header>

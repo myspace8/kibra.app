@@ -135,8 +135,8 @@ export function SourcesModal({ open, onOpenChange, educationalLevel }: SourcesMo
         className="mt-4"
       >
         <TabsList className="grid w-32 grid-cols-2">
-          <TabsTrigger value="file">File</TabsTrigger>
           <TabsTrigger value="text">Text</TabsTrigger>
+          <TabsTrigger value="file">File</TabsTrigger>
         </TabsList>
 
         <TabsContent value="file" className="mt-4 space-y-6 max-h-[60vh]">
