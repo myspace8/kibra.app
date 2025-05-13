@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Input } from "@/components/ui/input"
 import { Plus, Minus, Globe, Lock, Building2 } from "lucide-react"
 import { FileUpload } from "@/components/learn/file-upload"
 import { useMediaQuery } from "@/hooks/use-media-query"
@@ -21,7 +20,7 @@ interface SourcesModalProps {
 }
 
 export function SourcesModal({ open, onOpenChange, educationalLevel }: SourcesModalProps) {
-  const [activeTab, setActiveTab] = useState<"file" | "text">("file")
+  const [activeTab, setActiveTab] = useState<"file" | "text">("text")
   const [questionCount, setQuestionCount] = useState(12)
   const [dokLevel, setDokLevel] = useState("1")
   const [difficultyLevel, setDifficultyLevel] = useState("Easy")

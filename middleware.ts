@@ -20,7 +20,7 @@ export function middleware(req: NextRequest) {
 
   // Protect /home
   if (pathname === "/home" && !isAuthenticated) {
-    return NextResponse.redirect(new URL("/discover", origin))
+    return NextResponse.redirect(new URL("/", origin))
   }
 
 

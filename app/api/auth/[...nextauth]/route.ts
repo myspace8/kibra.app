@@ -2,7 +2,8 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { supabase } from "@/lib/supabase"
 
-export const authOptions = {  providers: [
+export const authOptions = {
+  providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -10,6 +11,7 @@ export const authOptions = {  providers: [
         password: { label: "Password", type: "password" },
         full_name: { label: "Full Name", type: "text" },
         username: { label: "Username", type: "text" },
+        role: { label: "Role", type: "text" },
         is_signup: { label: "Is Signup", type: "text" },
       },
       async authorize(credentials) {
@@ -17,10 +19,9 @@ export const authOptions = {  providers: [
           throw new Error("Please provide email and password")
         }
 
-        const isSignup = credentials.is_signup === "true" // Check if this is a signup request
+        const isSignup = credentials.is_signup === "true"
 
         if (isSignup) {
-          // Handle signup
           const { data, error } = await supabase.auth.signUp({
             email: credentials.email,
             password: credentials.password,
@@ -28,6 +29,7 @@ export const authOptions = {  providers: [
               emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/auth/callback`,
               data: {
                 full_name: credentials.full_name || "New User",
+                role: credentials.role || "student",
               },
             },
           })
@@ -41,9 +43,9 @@ export const authOptions = {  providers: [
             id: data.user.id,
             email: data.user.email,
             name: data.user.user_metadata?.full_name || "New User",
+            role: data.user.user_metadata?.role || "student",
           }
         } else {
-          // Handle sign-in
           const { data, error } = await supabase.auth.signInWithPassword({
             email: credentials.email,
             password: credentials.password,
@@ -58,6 +60,7 @@ export const authOptions = {  providers: [
             id: data.user.id,
             email: data.user.email,
             name: data.user.user_metadata?.full_name || null,
+            role: data.user.user_metadata?.role || "student",
           }
         }
       },
@@ -65,28 +68,36 @@ export const authOptions = {  providers: [
   ],
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/login", // Changed from /home to /login to match your app's flow
+    signIn: "/login",
   },
   callbacks: {
     async session({ session, token }: { session: any; token: any }) {
       if (token.sub) {
-        session.user.id = token.sub // Map the user ID (sub) to the session
+        session.user.id = token.sub
+        session.user.role = token.role
       }
       return session
     },
-    async signIn({ user }: { user: any }) {
-      // After successful signup or sign-in, ensure a profile exists in the profiles table
+    async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
-        const { error } = await supabase.from("profiles").upsert({
+        token.role = user.role
+      }
+      return token
+    },
+    async signIn({ user }: { user: any }) {
+      if (user) {
+        const { error } = await supabase.from("users").upsert({
           id: user.id,
-          full_name: user.name || "New User",
+          name: user.name || "New User",
           email: user.email,
+          role: user.role || "student",
+          username: user.username,
           updated_at: new Date().toISOString(),
         })
 
         if (error) {
-          console.error("Error creating/updating profile:", error)
-          return false // Optionally block sign-in if profile creation fails
+          console.error("Error creating/updating user:", error)
+          return false
         }
       }
       return true

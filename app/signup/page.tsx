@@ -8,7 +8,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react"
 import Image from "next/image"
 import { debounce } from "lodash"
 
@@ -16,6 +17,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [fullName, setFullName] = useState("")
+  const [role, setRole] = useState<"student" | "teacher">("student")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -23,6 +25,7 @@ export default function SignUpPage() {
   const [username, setUsername] = useState("")
   const [usernameError, setUsernameError] = useState<string | null>(null)
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
+  const [passwordValid, setPasswordValid] = useState(false)
   const router = useRouter()
 
   const checkUsername = async (username: string) => {
@@ -40,12 +43,14 @@ export default function SignUpPage() {
     try {
       const response = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username)}`)
       const data = await response.json()
+      console.log(data);
       
-      if (!data.available) {
-        setUsernameError("Username is already taken")
-        return false
-      }
-      
+
+      // if (!data.available) {
+      //   setUsernameError("Username is already taken")
+      //   return false
+      // }
+
       setUsernameError(null)
       return true
     } catch (error) {
@@ -57,10 +62,15 @@ export default function SignUpPage() {
     }
   }
 
-  // Debounced version of username check
   const debouncedCheckUsername = debounce((username: string) => {
     checkUsername(username)
-  }, 2000)
+  }, 500)
+
+  const validatePassword = (password: string) => {
+    const isValid = password.length >= 6
+    setPasswordValid(isValid)
+    return isValid
+  }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -68,8 +78,13 @@ export default function SignUpPage() {
     setError(null)
     setMessage(null)
 
-    // Validate username
-    if (!await checkUsername(username)) {
+    if (!validatePassword(password)) {
+      setError("Password must be at least 6 characters long")
+      setLoading(false)
+      return
+    }
+
+    if (!(await checkUsername(username))) {
       setLoading(false)
       return
     }
@@ -80,6 +95,7 @@ export default function SignUpPage() {
         password,
         username,
         full_name: fullName,
+        role,
         is_signup: "true",
         redirect: false,
       })
@@ -89,7 +105,7 @@ export default function SignUpPage() {
       }
 
       setMessage("Signup successful! Redirecting...")
-      router.push("/home")
+      router.push("/")
       router.refresh()
     } catch (error: any) {
       setError(error.message || "An error occurred during signup")
@@ -99,14 +115,15 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between bg-[#E8E8E8] p-6">
-      <div className="w-full max-w-[320px]">
-        <div className="mb-8 flex justify-center">
-          <Image src="/simple-icons_packagist.png" alt="Logo" width={64} height={64} className="h-16 w-16" />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-6">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 space-y-6">
+        <div className="flex justify-center">
+          <Image src="/simple-icons_packagist.png" alt="Kibra Logo" width={64} height={64} className="h-16 w-16" />
         </div>
-        <form onSubmit={handleSignup} className="space-y-4">
+        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100">Join Kibra Today</h2>
+        <form onSubmit={handleSignup} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="fullName">Your Full Name</Label>
+            <Label htmlFor="fullName" className="text-gray-700 dark:text-gray-300">Full Name</Label>
             <Input
               id="fullName"
               type="text"
@@ -114,10 +131,11 @@ export default function SignUpPage() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
+              className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">Email</Label>
             <Input
               id="email"
               type="email"
@@ -125,32 +143,55 @@ export default function SignUpPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="role" className="text-gray-700 dark:text-gray-300">I am a...</Label>
+            <Select onValueChange={(value: "student" | "teacher") => setRole(value)} defaultValue="student">
+              <SelectTrigger className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                <SelectValue placeholder="Select your role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="student">Student</SelectItem>
+                <SelectItem value="teacher">Teacher</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-2 relative">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">Password</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  validatePassword(e.target.value)
+                }}
                 required
-                className="pr-10"
+                className={`pr-10 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 ${
+                  password && (passwordValid ? "border-green-500" : "border-red-500")
+                }`}
               />
               <button
                 type="button"
                 className="absolute inset-y-0 right-3 flex items-center"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={20} className="text-gray-500" /> : <Eye size={20} className="text-gray-500" />}
               </button>
             </div>
-            <p className="text-xs text-gray-500">Password must be at least 6 characters long</p>
+            {password && (
+              <p className={`text-xs flex items-center gap-1 mt-1 ${passwordValid ? "text-green-500" : "text-red-500"}`}>
+                {passwordValid ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
+                Password must be at least 6 characters long
+              </p>
+            )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username" className="text-gray-700 dark:text-gray-300">Username</Label>
             <Input
               id="username"
               type="text"
@@ -161,39 +202,51 @@ export default function SignUpPage() {
                 setUsername(value)
                 if (value.length >= 3) {
                   debouncedCheckUsername(value)
+                } else {
+                  setUsernameError("Username must be at least 3 characters")
                 }
               }}
               required
-              className={usernameError ? "border-red-500" : ""}
+              className={`border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 ${
+                usernameError ? "border-red-500" : username && !isCheckingUsername ? "border-green-500" : ""
+              }`}
               disabled={isCheckingUsername}
             />
-            {usernameError && (
-              <p className="text-sm text-red-500">{usernameError}</p>
-            )}
-            {isCheckingUsername && (
-              <p className="text-sm text-blue-500">Checking username availability...</p>
+            {usernameError && <p className="text-sm text-red-500">{usernameError}</p>}
+            {isCheckingUsername && <p className="text-sm text-blue-500">Checking username availability...</p>}
+            {!usernameError && username && !isCheckingUsername && (
+              <p className="text-sm text-green-500 flex items-center gap-1">
+                <CheckCircle2 size={14} /> Username available!
+              </p>
             )}
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          {message && <p className="text-sm text-green-500">{message}</p>}
-          <Button type="submit" className="w-full" disabled={loading}>
+          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+          {message && <p className="text-sm text-green-500 text-center">{message}</p>}
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white"
+            disabled={loading || isCheckingUsername || !!usernameError || !passwordValid}
+          >
             {loading ? "Creating account..." : "Sign Up"}
           </Button>
         </form>
-        <p className="mt-4 text-center text-xs text-gray-500">
-          By signing up, you agree to the {" "}
-          <Link href="#" className="text-[#1D9BF0] hover:underline">Terms of Service</Link> and {" "}
-          <Link href="#" className="text-[#1D9BF0] hover:underline">Privacy Policy</Link>, including {" "}
-          <Link href="#" className="text-[#1D9BF0] hover:underline">Cookie Use</Link>.
+        <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+          By signing up, you agree to the{" "}
+          <Link href="#" className="text-blue-500 hover:underline">Terms of Service</Link> and{" "}
+          <Link href="#" className="text-blue-500 hover:underline">Privacy Policy</Link>, including{" "}
+          <Link href="#" className="text-blue-500 hover:underline">Cookie Use</Link>.
         </p>
-        <div className="mt-10 text-center">
-          <p className="text-sm text-gray-600">Already have an account?</p>
-          <Link href="/login" className="mt-2 inline-block w-full rounded-full border border-gray-300 px-4 py-3 text-center text-[#1D9BF0] hover:bg-gray-50">
+        <div className="text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-300">Already have an account?</p>
+          <Link
+            href="/login"
+            className="mt-2 inline-block w-full rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-center text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
             Log in
           </Link>
         </div>
       </div>
-      <div className="mt-8 text-xs text-gray-500">© All rights reserved 2025</div>
+      <div className="mt-6 text-xs text-gray-500 dark:text-gray-400">© All rights reserved 2025</div>
     </div>
   )
 }

@@ -35,7 +35,7 @@ export default function LoginPage() {
         throw new Error(result.error)
       }
 
-      window.location.href = "/home"
+      window.location.href = "/"
     } catch (error: any) {
       setError(error.message || "Login failed")
     } finally {

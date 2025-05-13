@@ -30,7 +30,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-base tracking-tighter leading-snug md:text-xl mb-8"
           >
-            Educate yourself beyond the constraints of traditional schooling!
+            Education, beyond the limits of traditional schooling!
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

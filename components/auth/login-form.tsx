@@ -37,7 +37,7 @@ export default function LoginForm() {
         throw new Error(result.error)
       }
 
-      window.location.href = "/home"
+      window.location.href = "/"
       // const { error } = await supabase.auth.signInWithPassword({
       //   email,
       //   password,
