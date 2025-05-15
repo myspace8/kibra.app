@@ -133,9 +133,9 @@ export function SourcesModal({ open, onOpenChange, educationalLevel }: SourcesMo
         onValueChange={(value) => setActiveTab(value as "file" | "text")}
         className="mt-4"
       >
-        <TabsList className="grid w-32 grid-cols-2">
-          <TabsTrigger value="text">Text</TabsTrigger>
-          <TabsTrigger value="file">File</TabsTrigger>
+        <TabsList className="grid w-32 grid-cols-2 rounded-full">
+          <TabsTrigger value="text" className="rounded-3xl">Text</TabsTrigger>
+          <TabsTrigger value="file" className="rounded-3xl">File</TabsTrigger>
         </TabsList>
 
         <TabsContent value="file" className="mt-4 space-y-6 max-h-[60vh]">
@@ -147,7 +147,7 @@ export function SourcesModal({ open, onOpenChange, educationalLevel }: SourcesMo
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500">What are you interested in?</p>
               <Select value={selectedTopic} onValueChange={setSelectedTopic}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-[140px] rounded-full">
                   <SelectValue placeholder="Select a topic" />
                 </SelectTrigger>
                 <SelectContent>
@@ -334,7 +334,7 @@ export function SourcesModal({ open, onOpenChange, educationalLevel }: SourcesMo
       </div>
 
       <div className="flex justify-end mt-4">
-        <Button onClick={handleDone}>Done</Button>
+        <Button disabled onClick={handleDone}>Generate</Button>
       </div>
     </div>
   )
@@ -343,7 +343,7 @@ export function SourcesModal({ open, onOpenChange, educationalLevel }: SourcesMo
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col">
-          <DialogTitle className="text-xl font-semibold p-2">Sources</DialogTitle>
+          <DialogTitle className="flex flex-col text-xl font-semibold p-2"><span>Generate Personal Quiz / Exam</span> <span className="text-xs text-red-400">This feature is not available - yet <br />Please come back later</span></DialogTitle>
           <div className="flex-1 overflow-auto">
             {content}
           </div>
@@ -354,9 +354,9 @@ export function SourcesModal({ open, onOpenChange, educationalLevel }: SourcesMo
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="px-2 pb-6 max-h-[85vh]">
+      <DrawerContent className="px-2 pb-6 max-h-[75vh] rounded-t-3xl">
         <DrawerHeader>
-          <DrawerTitle className="text-xl font-semibold">Sources</DrawerTitle>
+          <DrawerTitle className="flex flex-col text-xl font-semibold p-2"><span>Generate Personal Quiz / Exam</span> <span className="text-xs text-red-400">This feature is not available - yet <br />Please come back later</span></DrawerTitle>
         </DrawerHeader>
         {content}
       </DrawerContent>
