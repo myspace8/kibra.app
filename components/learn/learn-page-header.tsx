@@ -19,7 +19,7 @@ interface UserSettings {
 
 interface HeaderProps {
   className?: string
-  onSelectQuizSource?: (examId: string) => void
+  onSelectQuizSource?: any
   showActions?: boolean
 }
 
