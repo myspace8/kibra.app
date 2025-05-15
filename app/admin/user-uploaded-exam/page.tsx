@@ -1,3 +1,4 @@
+// app/admin/user-uploaded-exam/page.tsx
 "use client"
 
 import { useState, useEffect } from "react"
@@ -10,9 +11,21 @@ import { supabase } from "@/lib/supabase"
 import { toast } from "@/components/ui/use-toast"
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 
-// Define interfaces for validation
+// Extend the Session type
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id?: string
+      name?: string | null
+      email?: string | null
+      role?: string | null
+      image?: string | null
+    }
+  }
+}
+
+// Define interfaces
 interface Question {
-  id: number
   question: string
   question_type: "objective" | "essay" | "comprehension_and_summary" | "guided_essay" | "theory" | "practical"
   topic: string
@@ -33,30 +46,25 @@ interface Question {
   ai_feedback?: string
 }
 
-interface SchoolExamData {
-  id: number
-  school: string
-  grade_level: string
+interface UserExamData {
   subject: string
-  date: string
-  exam_type: string
+  exam_type?: string
+  date?: string // YYYY-MM-DD, optional
+  description?: string
   questions: Question[]
   questionCount: number
   total_marks: number
   duration: string
   isPublic: boolean
-  examiner: string
-  created_at: string
-  updated_at: string
-  file_url?: string
   tags: string[]
   difficulty: "Easy" | "Medium" | "Hard"
   language: string
   status: "Draft" | "Published" | "Archived"
+  file_url?: string
   instructions?: string
 }
 
-export default function UploadExamPage() {
+export default function UploadUserExam() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [jsonInput, setJsonInput] = useState("")
@@ -64,41 +72,26 @@ export default function UploadExamPage() {
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  // Redirect if not a teacher
   useEffect(() => {
     if (status === "loading") return
-    if (status === "unauthenticated" || session?.user?.role !== "teacher") {
+    if (status === "unauthenticated") {
       toast({
         title: "Access Denied",
-        description: "Only teachers can access this page.",
-        variant: "destructive",
+        description: "You must be logged in to access this page.",
+        variant: "destructive"
       })
-      router.push("/")
+      router.push("/auth/signin")
     }
-  }, [status, session, router])
+  }, [status, router])
 
-  const validateExamData = (data: any): data is SchoolExamData => {
-    // Basic structure validation
+  const validateUserExamData = (data: any): data is UserExamData => {
     if (!data || typeof data !== "object") {
       throw new Error("Input must be a valid JSON object")
     }
 
-    // Required fields
     const requiredFields = [
-      "school",
-      "grade_level",
-      "subject",
-      "date",
-      "exam_type",
-      "questions",
-      "questionCount",
-      "total_marks",
-      "duration",
-      "examiner",
-      "tags",
-      "difficulty",
-      "language",
-      "status",
+      "subject", "questions", "questionCount", "total_marks", "duration",
+      "isPublic", "tags", "difficulty", "language", "status"
     ]
     for (const field of requiredFields) {
       if (!(field in data)) {
@@ -106,28 +99,46 @@ export default function UploadExamPage() {
       }
     }
 
-    // Type validations
-    if (typeof data.school !== "string") throw new Error("school must be a string")
-    if (typeof data.grade_level !== "string") throw new Error("grade_level must be a string")
-    if (typeof data.subject !== "string") throw new Error("subject must be a string")
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(data.date)) throw new Error("date must be in YYYY-MM-DD format")
-    if (typeof data.exam_type !== "string") throw new Error("exam_type must be a string")
-    if (!Array.isArray(data.questions)) throw new Error("questions must be an array")
-    if (typeof data.questionCount !== "number") throw new Error("questionCount must be a number")
-    if (typeof data.total_marks !== "number") throw new Error("total_marks must be a number")
-    if (typeof data.duration !== "string") throw new Error("duration must be a string")
-    if (typeof data.isPublic !== "boolean") throw new Error("isPublic must be a boolean")
-    if (typeof data.examiner !== "string") throw new Error("examiner must be a string")
-    if (!Array.isArray(data.tags)) throw new Error("tags must be an array of strings")
+    if (typeof data.subject !== "string" || data.subject.trim() === "") {
+      throw new Error("subject must be a non-empty string")
+    }
+    if (data.exam_type && typeof data.exam_type !== "string") {
+      throw new Error("exam_type must be a string if provided")
+    }
+    if (data.date && !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
+      throw new Error("date must be in YYYY-MM-DD format if provided")
+    }
+    if (data.description && typeof data.description !== "string") {
+      throw new Error("description must be a string if provided")
+    }
+    if (!Array.isArray(data.questions)) {
+      throw new Error("questions must be an array")
+    }
+    if (typeof data.questionCount !== "number" || data.questionCount < 1) {
+      throw new Error("questionCount must be a positive number")
+    }
+    if (typeof data.total_marks !== "number" || data.total_marks < 0) {
+      throw new Error("total_marks must be a non-negative number")
+    }
+    if (typeof data.duration !== "string" || data.duration.trim() === "") {
+      throw new Error("duration must be a non-empty string")
+    }
+    if (typeof data.isPublic !== "boolean") {
+      throw new Error("isPublic must be a boolean")
+    }
+    if (!Array.isArray(data.tags)) {
+      throw new Error("tags must be an array of strings")
+    }
     if (!["Easy", "Medium", "Hard"].includes(data.difficulty)) {
       throw new Error("difficulty must be 'Easy', 'Medium', or 'Hard'")
     }
-    if (typeof data.language !== "string") throw new Error("language must be a string")
+    if (typeof data.language !== "string" || data.language.trim() === "") {
+      throw new Error("language must be a non-empty string")
+    }
     if (!["Draft", "Published", "Archived"].includes(data.status)) {
       throw new Error("status must be 'Draft', 'Published', or 'Archived'")
     }
 
-    // Validate questions array
     if (data.questions.length !== data.questionCount) {
       throw new Error("questionCount must match the number of questions provided")
     }
@@ -137,7 +148,6 @@ export default function UploadExamPage() {
       throw new Error("Total marks of questions must match the exam's total_marks")
     }
 
-    // Validate each question
     data.questions.forEach((q: any, index: number) => {
       const requiredQuestionFields = ["question", "question_type", "topic", "explanation", "difficulty", "marks"]
       for (const field of requiredQuestionFields) {
@@ -145,52 +155,41 @@ export default function UploadExamPage() {
           throw new Error(`Question at index ${index} is missing required field: ${field}`)
         }
       }
-
-      if (typeof q.question !== "string") throw new Error(`Question at index ${index}: question must be a string`)
-      if (
-        !["objective", "essay", "comprehension_and_summary", "guided_essay", "theory", "practical"].includes(
-          q.question_type
-        )
-      ) {
-        throw new Error(
-          `Question at index ${index}: question_type must be one of 'objective', 'essay', 'comprehension_and_summary', 'guided_essay', 'theory', 'practical'`
-        )
+      if (typeof q.question !== "string" || q.question.trim() === "") {
+        throw new Error(`Question at index ${index}: question must be a non-empty string`)
       }
-      if (typeof q.topic !== "string") throw new Error(`Question at index ${index}: topic must be a string`)
-      if (typeof q.explanation !== "string") {
-        throw new Error(`Question at index ${index}: explanation must be a string`)
+      if (!["objective", "essay", "comprehension_and_summary", "guided_essay", "theory", "practical"].includes(q.question_type)) {
+        throw new Error(`Question at index ${index}: question_type must be valid`)
+      }
+      if (typeof q.topic !== "string" || q.topic.trim() === "") {
+        throw new Error(`Question at index ${index}: topic must be a non-empty string`)
+      }
+      if (typeof q.explanation !== "string" || q.explanation.trim() === "") {
+        throw new Error(`Question at index ${index}: explanation must be a non-empty string`)
       }
       if (!["Easy", "Medium", "Hard"].includes(q.difficulty)) {
         throw new Error(`Question at index ${index}: difficulty must be 'Easy', 'Medium', or 'Hard'`)
       }
-      if (typeof q.marks !== "number") throw new Error(`Question at index ${index}: marks must be a number`)
+      if (typeof q.marks !== "number" || q.marks <= 0) {
+        throw new Error(`Question at index ${index}: marks must be a positive number`)
+      }
 
       if (q.question_type === "objective") {
-        if (!Array.isArray(q.options)) {
-          throw new Error(`Question at index ${index}: options must be an array`)
-        }
-        if (!Array.isArray(q.correct_answers)) {
-          throw new Error(`Question at index ${index}: correct_answers must be an array`)
-        }
-        if (q.options.length < 2) {
+        if (!Array.isArray(q.options) || q.options.length < 2) {
           throw new Error(`Question at index ${index}: objective questions must have at least 2 options`)
         }
-        if (q.correct_answers.length === 0) {
+        if (!Array.isArray(q.correct_answers) || q.correct_answers.length === 0) {
           throw new Error(`Question at index ${index}: objective questions must have at least 1 correct answer`)
         }
         q.correct_answers.forEach((ans: string) => {
           if (!q.options.includes(ans)) {
-            throw new Error(
-              `Question at index ${index}: correct_answer '${ans}' must be one of the provided options`
-            )
+            throw new Error(`Question at index ${index}: correct_answer '${ans}' must be one of the provided options`)
           }
         })
       }
 
-      if (q.question_type === "essay" || q.question_type === "practical") {
-        if (q.model_answer && typeof q.model_answer !== "string") {
-          throw new Error(`Question at index ${index}: model_answer must be a string`)
-        }
+      if ((q.question_type === "essay" || q.question_type === "practical") && q.model_answer && typeof q.model_answer !== "string") {
+        throw new Error(`Question at index ${index}: model_answer must be a string`)
       }
     })
 
@@ -203,13 +202,12 @@ export default function UploadExamPage() {
     setSuccess(false)
 
     try {
-      // Parse JSON
       const parsedData = JSON.parse(jsonInput)
 
-      // Validate JSON
-      validateExamData(parsedData)
+      if (!validateUserExamData(parsedData)) {
+        throw new Error("Invalid user exam data format")
+      }
 
-      // Fetch subject ID
       const { data: subjectData, error: subjectError } = await supabase
         .from("subjects")
         .select("id")
@@ -217,10 +215,9 @@ export default function UploadExamPage() {
         .single()
 
       if (subjectError || !subjectData) {
-        throw new Error(`Subject '${parsedData.subject}' not found in database.`)
+        throw new Error(`Subject '${parsedData.subject}' not found in database`)
       }
 
-      // Insert questions into question_pool
       const questionInserts = parsedData.questions.map((q: Question) => ({
         question_type: q.question_type,
         topic: q.topic,
@@ -239,8 +236,8 @@ export default function UploadExamPage() {
         learning_objectives: q.learning_objectives,
         estimated_time: q.estimated_time,
         source_reference: q.source_reference,
-        source: "school",
-        created_by: session?.user.id,
+        source: "user",
+        created_by: session?.user?.id ?? null
       }))
 
       const { data: questionData, error: questionError } = await supabase
@@ -249,47 +246,54 @@ export default function UploadExamPage() {
         .select()
 
       if (questionError || !questionData) {
-        throw new Error("Failed to save questions.")
+        throw new Error(`Failed to save questions: ${questionError?.message || "Unknown error"}`)
       }
 
-      // Insert exam into exams table
-      const schoolMetadata = {
-        school: parsedData.school,
-        grade_level: parsedData.grade_level,
+      // Prepare user_metadata
+      const userMetadata = {
+        creator_id: session?.user?.id ?? null,
+        creator_name: session?.user?.name ?? "Anonymous",
         date: parsedData.date,
         exam_type: parsedData.exam_type,
-        status: parsedData.status,
-        examiner: parsedData.examiner,
+        description: parsedData.description
       }
 
+      // Calculate sort_date
+      const sortDate = parsedData.date ? `${parsedData.date}T00:00:00Z` : new Date().toISOString()
+
+      // Insert exam data
       const { data: examData, error: examError } = await supabase
         .from("exams")
         .insert({
-          exam_source: "school",
+          exam_source: "user",
           subject_id: subjectData.id,
+          question_count: parsedData.questionCount,
           total_marks: parsedData.total_marks,
           duration: parsedData.duration,
+          is_public: parsedData.isPublic,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
+          sort_date: sortDate,
           file_url: parsedData.file_url,
           instructions: parsedData.instructions,
-          is_public: parsedData.isPublic,
-          uploaded_at: parsedData.isPublic ? new Date().toISOString() : null,
-          school_metadata: schoolMetadata,
+          tags: parsedData.tags,
+          difficulty: parsedData.difficulty,
+          language: parsedData.language,
+          status: parsedData.status,
+          user_exam_metadata: userMetadata
         })
         .select()
         .single()
 
       if (examError || !examData) {
-        throw new Error("Failed to create exam.")
+        throw new Error(`Failed to create exam: ${examError?.message || "Unknown error"}`)
       }
 
-      // Link questions to exam via exam_questions
       const examQuestions = questionData.map((q: any, index: number) => ({
         exam_id: examData.id,
         question_id: q.id,
         marks: parsedData.questions[index].marks,
-        order: index + 1,
+        order: index + 1
       }))
 
       const { error: linkError } = await supabase
@@ -297,22 +301,16 @@ export default function UploadExamPage() {
         .insert(examQuestions)
 
       if (linkError) {
-        throw new Error("Failed to link questions to exam.")
+        throw new Error(`Failed to link questions to exam: ${linkError.message}`)
       }
 
       setSuccess(true)
       toast({
         title: "Success",
-        description: "Exam uploaded successfully!",
+        description: "User exam uploaded successfully!"
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid JSON format")
-      // Placeholder for future AI correction
-      // if (err) {
-      //   const correctedJson = await aiCorrectJson(jsonInput);
-      //   setJsonInput(correctedJson);
-      //   setError("JSON corrected by AI. Please review and submit again.");
-      // }
     } finally {
       setLoading(false)
     }
@@ -330,12 +328,12 @@ export default function UploadExamPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-6">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">
-          Upload School Exam
+          Upload User Exam
         </h1>
         <Card className="bg-white dark:bg-gray-800 shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl text-gray-800 dark:text-gray-100">
-              Import Exam as JSON
+              Import User Exam as JSON
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -346,60 +344,44 @@ export default function UploadExamPage() {
               value={jsonInput}
               onChange={(e) => setJsonInput(e.target.value)}
               placeholder={`{
-                "id": 1,
-                "school": "St. Mary's High School",
-                "grade_level": "Grade 10",
                 "subject": "Mathematics",
-                "date": "2025-05-15",
-                "exam_type": "midterm_exam",
+                "exam_type": "practice_quiz",
+                "date": "2025-05-14",
+                "description": "Personal math practice quiz",
                 "questions": [
                   {
-                    "id": 1,
-                    "question": "What is the value of x in 3x + 7 = 22?",
+                    "question": "What is 2 + 2?",
                     "question_type": "objective",
-                    "topic": "Algebra",
-                    "subtopic": "Linear Equations",
-                    "options": ["5", "6", "7", "8"],
-                    "correct_answers": ["5"],
-                    "explanation": "Subtract 7 from both sides: 3x = 15, then divide by 3: x = 5.",
-                    "hint": "Isolate x by moving the constant term first.",
+                    "topic": "Arithmetic",
+                    "options": ["3", "4", "5", "6"],
+                    "correct_answers": ["4"],
+                    "explanation": "2 + 2 equals 4.",
                     "difficulty": "Easy",
-                    "marks": 5,
-                    "media_url": "https://example.com/math-diagram.png",
-                    "media_type": "image",
-                    "learning_objectives": ["Solve linear equations"],
-                    "estimated_time": "5 minutes",
-                    "source_reference": "Midterm 2025 Paper 1 Q1"
+                    "marks": 5
                   }
                 ],
                 "questionCount": 1,
                 "total_marks": 5,
-                "duration": "1 hour",
-                "isPublic": false,
-                "examiner": "Mrs. Elizabeth Brown",
-                "created_at": "2025-05-10T09:00:00Z",
-                "updated_at": "2025-05-12T14:30:00Z",
-                "file_url": "https://example.com/st-marys-midterm-2025.pdf",
-                "tags": ["Algebra"],
-                "difficulty": "Medium",
+                "duration": "30 minutes",
+                "isPublic": true,
+                "tags": ["Arithmetic"],
+                "difficulty": "Easy",
                 "language": "English",
-                "status": "Draft",
+                "status": "Published",
                 "instructions": "Answer all questions."
               }`}
-              className="min-h-[200px] font-mono text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+              className="min-h-[300px] font-mono text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             />
-
             {error && (
               <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-800 dark:text-red-300">
                 <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                 <div className="text-sm">{error}</div>
               </div>
             )}
-
             {success && (
               <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md text-green-800 dark:text-green-300">
                 <CheckCircle className="h-5 w-5" />
-                <div>Exam uploaded successfully! Redirecting...</div>
+                <div>Exam uploaded successfully!</div>
               </div>
             )}
           </CardContent>
@@ -407,7 +389,7 @@ export default function UploadExamPage() {
         <div className="mt-6 flex justify-end gap-3">
           <Button
             variant="outline"
-            onClick={() => router.push("/admin/exams")}
+            onClick={() => router.push("/exams")}
             className="border-gray-300 dark:border-gray-600 dark:text-gray-200"
           >
             Cancel

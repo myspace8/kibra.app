@@ -4,7 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { UserNav } from "@/components/user-nav"
 import Link from "next/link"
-import { BookOpen, Users, FolderOpen, Tag, BarChart3, Settings, Home, Menu, X } from "lucide-react"
+import { BookOpen, Users, FolderOpen, Tag, BarChart3, Settings, Home, Menu, X, Upload } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
 
@@ -64,6 +64,32 @@ export default function AdminLayout({
             </li>
             <li>
               <Link
+                href="/admin/upload-school-exam"
+                className={cn(
+                  "flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors",
+                  pathname === "/admin/upload-school-exam" && "bg-gray-200 font-semibold"
+                )}
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <Upload className="h-5 w-5 text-gray-500" />
+                <span>Upload School Exam</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/upload-waec-exam"
+                className={cn(
+                  "flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors",
+                  pathname === "/admin/upload-waec-exam" && "bg-gray-200 font-semibold"
+                )}
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <Upload className="h-5 w-5 text-gray-500" />
+                <span>Upload WAEC Exam</span>
+              </Link>
+            </li>
+            {/* <li>
+              <Link
                 href="/admin/authors"
                 className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors"
                 onClick={() => setIsSidebarOpen(false)}
@@ -81,7 +107,7 @@ export default function AdminLayout({
                 <Tag className="h-5 w-5 text-gray-500" />
                 <span>Categories</span>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 href="/admin/collections"
@@ -92,7 +118,7 @@ export default function AdminLayout({
                 <span>Collections</span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 href="/admin/analytics"
                 className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors"
@@ -111,7 +137,7 @@ export default function AdminLayout({
                 <Settings className="h-5 w-5 text-gray-500" />
                 <span>Settings</span>
               </Link>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </div>

@@ -251,17 +251,16 @@ export default function KibraPractice({ questions: initialQuestions, quizTitle, 
     <div className="space-y-4">
       <div className="flex justify-between items-start">
         {quizTitle && (
-          <div className="max-w-[45vw]">
-            <h1 className="text-sm font-medium leading-tight text-[#808080] text-left">{quizTitle}</h1>
+          <div className="max-w-[35vw] md:max-w-[45vw]">
+            <h1 className="text-xs text-center font-medium leading-tight text-[#808080]">{quizTitle}</h1>
           </div>
         )}
-        <div className="flex items-center gap-2">
-          <div className="bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
-            Q {currentQuestionIndex + 1}/{totalQuestions} ({currentQuestion.difficulty})
-          </div>
+        <div className="flex flex-col items-center text-center gap-2">
           {currentQuestion.source_reference && (
-            <span className="text-xs text-gray-500">{currentQuestion.source_reference}</span>
+            <span className="text-xs text-gray-500 max-w-[35vw]">{currentQuestion.source_reference}</span>
           )}
+          <div className="bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
+            Q {currentQuestionIndex + 1}/{totalQuestions}</div>
         </div>
       </div>
       <div className="relative h-[0.786px]">
@@ -277,9 +276,9 @@ export default function KibraPractice({ questions: initialQuestions, quizTitle, 
         <div className="py-5">
           <div className="flex justify-between items-start mb-4">
             <h2 className="text-base leading-tight tracking-tight">{currentQuestion.question}</h2>
-            {currentQuestion.media_url && (
+            {/* {currentQuestion.media_url && (
               <img src={currentQuestion.media_url} alt="Question media" className="max-w-[200px] mt-2" />
-            )}
+            )} */}
           </div>
           {showHint && currentQuestion.hint && (
             <motion.div

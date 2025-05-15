@@ -2,68 +2,107 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, FileText, User, Settings, LogOut, BookPlus, BookHeart, Lightbulb, HelpCircle, UserPlus } from "lucide-react"
+import { Menu, FileText, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Logo from "@/components/logo"
 import { SourcesModal } from "@/components/learn/sources-modal"
-import { MenuDrawer } from "@/components/learn/menu-drawer"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@radix-ui/react-avatar"
+import { Menuu } from "@/components/learn/menu" // Updated to match enhanced Menuu
 import { UserNav } from "../user-nav"
 import { useSession } from "next-auth/react"
 
+// Interfaces
+interface UserSettings {
+  educationalLevel: "JHS" | "SHS" | "Other"
+  favoriteSubject: string
+}
+
 interface HeaderProps {
   className?: string
-  onSelectQuizSource?: (sourceId: number) => void
+  onSelectQuizSource?: (examId: string) => void
   showActions?: boolean
 }
 
 export function LearnPageHeader({ className, onSelectQuizSource, showActions = true }: HeaderProps) {
+  const { data: session, status } = useSession()
   const [sourcesModalOpen, setSourcesModalOpen] = useState(false)
-  const [menuDrawerOpen, setMenuDrawerOpen] = useState(false)
-  const [educationalLevel, setEducationalLevel] = useState<string>()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [userSettings, setUserSettings] = useState<UserSettings>({
+    educationalLevel: "JHS",
+    favoriteSubject: "Mathematics",
+  })
 
-    const { data: session } = useSession()
-
+  // Load user settings from local storage
   useEffect(() => {
-    const customizations = localStorage.getItem("userCustomizations")
-    if (customizations) {
-      const { educationalLevel } = JSON.parse(customizations)
-      setEducationalLevel(educationalLevel)
+    const settings = localStorage.getItem("userSettings")
+    if (settings) {
+      try {
+        const parsed = JSON.parse(settings)
+        setUserSettings({
+          educationalLevel: parsed.educationalLevel || "JHS",
+          favoriteSubject: parsed.favoriteSubject || "Mathematics",
+        })
+      } catch (err) {
+        console.error("Failed to parse userSettings:", err)
+      }
     }
   }, [])
 
+  // Handle menu open/close with focus management
+  const handleMenuToggle = (open: boolean) => {
+    setMenuOpen(open)
+    if (!open) {
+      // Return focus to menu button when closing
+      document.getElementById("menu-button")?.focus()
+    }
+  }
+
   return (
     <>
-      <header className={cn("w-full border-b bg-background sticky top-0 z-10", className)}>
-        <div className="container flex h-16 items-center justify-between px-3 md:px-6">
-          <Link href="/learn" className="flex items-center gap-2">
+      <header
+        className={cn(
+          "w-full border-b bg-background sticky top-0 z-20 shadow-sm",
+          className
+        )}
+      >
+        <div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link href="/learn" className="flex items-center gap-2" aria-label="Home">
             <Logo />
+            <span className="sr-only">Learn Platform</span>
           </Link>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-2 sm:gap-4">
             {showActions && (
               <>
-                <Button variant="ghost" className="rounded-full" size="icon" aria-label="Menu" onClick={() => setMenuDrawerOpen(true)}>
-                  <Menu className="h-6 w-6" />
+                <Button
+                  id="menu-button"
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  aria-label="Open exam menu"
+                  onClick={() => handleMenuToggle(true)}
+                >
+                  <Menu className="h-5 w-5" />
                 </Button>
-                <Button variant="ghost" size="icon" className="rounded-full" aria-label="Sources" onClick={() => setSourcesModalOpen(true)}>
-                  <FileText className="h-6 w-6" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  aria-label="Open sources modal"
+                  onClick={() => setSourcesModalOpen(true)}
+                >
+                  <FileText className="h-5 w-5" />
                 </Button>
               </>
             )}
             <UserNav />
-            {!session && (
-              <Link href="/signup" className="ml-1">
-                <Button variant="default" className="bg-black hover:bg-black/90 text-white gap-2 rounded-full text-xs h-9">
+            {status === "unauthenticated" && (
+              <Link href="/signup">
+                <Button
+                  variant="default"
+                  className="bg-black hover:bg-black/90 text-white gap-2 rounded-full text-xs h-9 px-3"
+                  aria-label="Sign up"
+                >
                   <UserPlus className="h-4 w-4" />
                   Sign up
                 </Button>
@@ -75,19 +114,20 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
 
       {showActions && (
         <>
-          <SourcesModal 
-            open={sourcesModalOpen} 
-            onOpenChange={setSourcesModalOpen} 
-            educationalLevel={educationalLevel}
+          <SourcesModal
+            open={sourcesModalOpen}
+            onOpenChange={setSourcesModalOpen}
+            educationalLevel={userSettings.educationalLevel}
           />
-          <MenuDrawer
-            open={menuDrawerOpen}
-            onOpenChange={setMenuDrawerOpen}
-            onSelectQuizSource={(sourceId) => {
+          <Menuu
+            open={menuOpen}
+            onOpenChange={handleMenuToggle}
+            onSelectQuizSource={(examId) => {
               if (onSelectQuizSource) {
-                onSelectQuizSource(sourceId)
+                onSelectQuizSource(examId)
               }
             }}
+            // userSettings={userSettings}
           />
         </>
       )}

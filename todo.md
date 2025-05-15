@@ -1,1 +1,2 @@
 - Performance: For large question sets (e.g., WAEC exams), consider lazy loading or pagination.
+- Add the customization to the user table
