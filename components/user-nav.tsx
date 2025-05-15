@@ -73,16 +73,6 @@ export function UserNav() {
             <span>Request books</span>
           </DropdownMenuItem>
         </Link>
-        <Link href="/settings">
-          <DropdownMenuItem
-            className={`rounded-2xl py-2 flex items-center gap-2 ${
-              isActive("/settings") ? "bg-indigo-50 text-indigo-600 font-semibold" : ""
-            }`}
-          >
-            <Settings className="h-4 w-4" />
-            <span>Settings</span>
-          </DropdownMenuItem>
-        </Link>
         <DropdownMenuSeparator />
         <Link href="/feedback">
           <DropdownMenuItem
