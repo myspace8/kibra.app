@@ -23,11 +23,12 @@ import type { Question } from "@/types/question"
 
 type KibraPracticeProps = {
   questions: Question[]
+  waecExamType: string
   quizTitle?: string
   onQuizComplete?: () => void
 }
 
-export default function KibraPractice({ questions: initialQuestions, quizTitle, onQuizComplete }: KibraPracticeProps) {
+export default function KibraPractice({ questions: initialQuestions, waecExamType, quizTitle, onQuizComplete }: KibraPracticeProps) {
   const [questions, setQuestions] = useState<Question[]>(initialQuestions)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -250,14 +251,26 @@ export default function KibraPractice({ questions: initialQuestions, quizTitle, 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-start">
+        <div className="flex flex-col items-center text-center gap-2">
         {quizTitle && (
           <div className="max-w-[35vw] md:max-w-[45vw]">
             <h1 className="text-xs text-center font-medium leading-tight text-[#808080]">{quizTitle}</h1>
           </div>
         )}
+        {currentQuestion.topic && currentQuestion.subtopic && (
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs text-gray-500">{currentQuestion.topic}</span>
+            <span className="text-xs text-gray-500">{currentQuestion.subtopic}</span>
+        </div>
+        )}
+        </div>
         <div className="flex flex-col items-center text-center gap-2">
           {currentQuestion.source_reference && (
-            <span className="text-xs text-gray-500 max-w-[35vw]">{currentQuestion.source_reference}</span>
+            <p className="text-xs text-gray-500 max-w-[35vw]">
+              <span>
+              {currentQuestion.source_reference} ({waecExamType})
+              </span>
+            </p>
           )}
           <div className="bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
             Q {currentQuestionIndex + 1}/{totalQuestions}</div>

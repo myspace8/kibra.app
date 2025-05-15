@@ -9,6 +9,7 @@ import type { Question } from "@/types/question"
 export default function Home() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [quizTitle, setQuizTitle] = useState<string | undefined>(undefined)
+  const [waecExamType, setWaecExamType] = useState<string | undefined>(undefined)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -41,10 +42,12 @@ export default function Home() {
       // Construct quiz title
       const subjectName = examData.subject || ""
       const source = examData.exam_source
-      const institution =
-        source === "school" ? examData.school_exam_metadata?.school || "Unknown School" :
-        source === "waec" ? examData.waec_exam_metadata?.exam_type : "Unknown"
-      setQuizTitle(`${subjectName} - ${institution}`)
+      // const institution =
+      //   source === "school" ? examData.school_exam_metadata?.school || "Unknown School" :
+      //   source === "waec" ? examData.waec_exam_metadata?.exam_type : "Unknown"
+      setQuizTitle(`${subjectName}`)
+      const waecExamType = examData.waec_exam_metadata?.exam_type || "Unknown"
+      setWaecExamType(waecExamType)
 
       // Fetch questions for the exam
       const { data: questionsData, error: questionsError } = await supabase
@@ -130,6 +133,7 @@ export default function Home() {
           {!loading && !error && (
             <KibraPractice
               questions={questions}
+              waecExamType={waecExamType ?? ""}
               quizTitle={quizTitle}
               onQuizComplete={() => {
                 if (quizTitle) {
