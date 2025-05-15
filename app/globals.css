@@ -5,7 +5,7 @@
 @layer utilities {
   .scrollbar-hide {
     -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: 0; /* Firefox */
   }
 
   .scrollbar-hide::-webkit-scrollbar {

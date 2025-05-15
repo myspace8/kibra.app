@@ -333,7 +333,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
 
   const renderExamList = (exams: Exam[]) => {
     return (
-      <div className="space-y-3 mb-8">
+      <div className="space-y-3 pb-8 scrollbar-hide">
         {exams.map((exam) => {
           const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject"
           const institution =
@@ -436,7 +436,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search subjects, institutions, examiners, tags..."
+          placeholder="Search subjects..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -537,7 +537,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[45vh]"}>
+              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[35vh] scrollbar-hide"}>
                 {recommendedExams.length > 0 ? (
                   renderExamList(recommendedExams)
                 ) : (
@@ -567,7 +567,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[45vh]"}>
+              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[35vh]"}>
                 {filteredSchoolExams.length > 0 ? (
                   renderExamList(filteredSchoolExams)
                 ) : (
@@ -597,7 +597,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[45vh]"}>
+              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[35vh]"}>
                 {filteredWaecExams.length > 0 ? (
                   renderExamList(filteredWaecExams)
                 ) : (
@@ -627,7 +627,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[45vh]"}>
+              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[35vh]"}>
                 {filteredUserExams.length > 0 ? (
                   renderExamList(filteredUserExams)
                 ) : (
@@ -670,7 +670,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="pb- max-h-[85vh]">
+      <DrawerContent className="max-h-[85vh]">
         <DrawerHeader>
           <DrawerTitle className="text-xl font-semibold">Practice Exams</DrawerTitle>
         </DrawerHeader>

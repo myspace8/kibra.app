@@ -57,11 +57,9 @@ const steps = [
       "Mathematics",
       "Science",
       "Social Studies",
-      "Culture",
       "ICT",
       "French",
       "Basic Design and Technology",
-      "Religious and Moral Education",
       "Physical Education",
       "Creative Arts",
     ],
@@ -230,8 +228,8 @@ export function CustomizationFlow({ isOpen, onComplete, onClose }: Customization
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent className="max-h-[90vh]">
-        <div className="max-h-[85vh] overflow-y-auto">
+      <DrawerContent className="max-h-[85vh] overflow-auto rounded-t-3xl">
+        <div>
           <Content />
         </div>
       </DrawerContent>
