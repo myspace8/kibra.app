@@ -29,8 +29,8 @@ export default function SignUpPage() {
   const router = useRouter()
 
   const checkUsername = async (username: string) => {
-    if (username.length < 3) {
-      setUsernameError("Username must be at least 3 characters")
+    if (username.length < 4) {
+      setUsernameError("Username must be at least 4 characters")
       return false
     }
 
@@ -46,10 +46,10 @@ export default function SignUpPage() {
       console.log(data);
       
 
-      // if (!data.available) {
-      //   setUsernameError("Username is already taken")
-      //   return false
-      // }
+      if (!data.available) {
+        setUsernameError("Username is already taken")
+        return false
+      }
 
       setUsernameError(null)
       return true
@@ -105,7 +105,7 @@ export default function SignUpPage() {
       }
 
       setMessage("Signup successful! Redirecting...")
-      router.push("/")
+      router.push("/learn")
       router.refresh()
     } catch (error: any) {
       setError(error.message || "An error occurred during signup")
@@ -116,11 +116,12 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-6">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 space-y-6">
-        <div className="flex justify-center">
-          <Image src="/simple-icons_packagist.png" alt="Kibra Logo" width={64} height={64} className="h-16 w-16" />
-        </div>
-        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100">Join Kibra Today</h2>
+      {/* A back to root route button */}
+      <Link href={"/"} className="h-8 bg-black text-white rounded-full py-2 px-3 flex justify-center items-center my-4">
+        <span>Go back</span>
+      </Link>
+      <div className="w-full max-w-md space-y-6 pt-6">
+        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100">Create your account</h2>
         <form onSubmit={handleSignup} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="fullName" className="text-gray-700 dark:text-gray-300">Full Name</Label>
@@ -154,7 +155,7 @@ export default function SignUpPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="student">Student</SelectItem>
-                <SelectItem value="teacher">Teacher</SelectItem>
+                <SelectItem disabled value="teacher">Teacher</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -200,10 +201,10 @@ export default function SignUpPage() {
               onChange={(e) => {
                 const value = e.target.value.trim()
                 setUsername(value)
-                if (value.length >= 3) {
+                if (value.length >= 4) {
                   debouncedCheckUsername(value)
                 } else {
-                  setUsernameError("Username must be at least 3 characters")
+                  setUsernameError("Username must be at least 4 characters")
                 }
               }}
               required
@@ -224,10 +225,10 @@ export default function SignUpPage() {
           {message && <p className="text-sm text-green-500 text-center">{message}</p>}
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white"
+            className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-full"
             disabled={loading || isCheckingUsername || !!usernameError || !passwordValid}
           >
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? "Creating account..." : "Sign up"}
           </Button>
         </form>
         <p className="text-center text-xs text-gray-500 dark:text-gray-400">
