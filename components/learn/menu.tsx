@@ -6,14 +6,11 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/u
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
 import { Search, CheckCircle, Clock, ArrowRight, Building2, Globe, User, Loader2, Filter } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { supabase } from "@/lib/supabase"
 import { useSession } from "next-auth/react"
-import { toast } from "@/components/ui/use-toast"
 
 // Interfaces
 interface Subject {
@@ -333,7 +330,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
 
   const renderExamList = (exams: Exam[]) => {
     return (
-      <div className="space-y-3 pb-8 scrollbar-hide">
+      <div className="space-y-3 pb-8" style={{scrollbarWidth: "thin"}}>
         {exams.map((exam) => {
           const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject"
           const institution =
@@ -363,7 +360,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
             <button
               key={exam.id}
               className={cn(
-                "flex w-full items-center justify-between rounded-lg border p-4 text-left transition-colors",
+                "flex w-full items-center justify-between border-b py-4 md:px-0 px-2 text-left transition-colors",
                 exam.completed
                   ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-900/20"
                   : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-gray-950 dark:hover:border-gray-700"
@@ -409,7 +406,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                     </div>
                     {exam.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {exam.tags.slice(0, 4).map((tag) => (
+                        {exam.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
                             className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
@@ -422,7 +419,6 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </div>
                 </div>
               </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
             </button>
           )
         })}
@@ -431,64 +427,16 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
   }
 
   const content = (
-    <div className="p-4">
+    <div className="py-4">
       {/* Search Bar */}
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="relative mb-4 border-b">
         <Input
           placeholder="Search subjects..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="pl-3 border-0 rounded-none focus:ring-0 focus:border-b-0 focus:border-none dark:bg-gray-950 dark:text-white"
         />
-      </div>
-
-      {/* Filters */}
-      <div className="mb-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowFilters(!showFilters)}
-          className="w-full flex justify-between"
-        >
-          <span>Filters</span>
-          <Filter className="h-4 w-4" />
-        </Button>
-        {showFilters && (
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            <Select
-              value={filterDifficulty}
-              onValueChange={(value) =>
-                setFilterDifficulty(value as "All" | "Easy" | "Medium" | "Hard")
-              }
-            >
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="Difficulty" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Difficulties</SelectItem>
-                <SelectItem value="Easy">Easy</SelectItem>
-                <SelectItem value="Medium">Medium</SelectItem>
-                <SelectItem value="Hard">Hard</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={filterExamType}
-              onValueChange={setFilterExamType}
-            >
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="Exam Type" />
-              </SelectTrigger>
-              <SelectContent>
-                {examTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+        <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       </div>
 
       {/* Tabs */}
@@ -497,83 +445,32 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
         onValueChange={(value) => setActiveTab(value as "recommended" | "school" | "waec" | "user")}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-2 rounded-full h-9">
-          <TabsTrigger value="waec" className="flex items-center gap-1.5 rounded-full">
-            <Globe className="h-3.5 w-3.5" />
-            <span className="text-xs">BECE {"/"} WASCCE</span>
-          </TabsTrigger>
-          {/* <TabsTrigger value="recommended" className="flex items-center gap-1.5 rounded-full">
-            <span className="text-xs">Recommended</span>
-          </TabsTrigger> */}
-          <TabsTrigger value="school" className="flex items-center gap-1.5 rounded-full">
-            <Building2 className="h-3.5 w-3.5" />
-            <span className="text-xs">School-Based Exams</span>
-          </TabsTrigger>
-          {/* <TabsTrigger value="user" className="flex items-center gap-1.5 rounded-full">
-            <User className="h-3.5 w-3.5" />
-            <span className="text-xs">Others</span>
-          </TabsTrigger> */}
-        </TabsList>
-
+        <div className="px-2 md:px-0">
+          <TabsList className="grid w-full grid-cols-2 rounded-full h-12">
+            <TabsTrigger value="waec" className="flex items-center gap-1.5 rounded-full h-10">
+              <Globe className="h-3.5 w-3.5" />
+              <span className="text-xs">BECE {"/"} WASCCE</span>
+            </TabsTrigger>
+            <TabsTrigger value="school" className="flex items-center gap-1.5 rounded-full h-10">
+              <Building2 className="h-3.5 w-3.5" />
+              <span className="text-xs">School-Based</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {!loading && !error && (
           <>
-            <TabsContent value="recommended" className="m-0">
-              <div className="flex justify-between items-center my-2">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Recommended for You
-                </h3>
-                <Select
-                  value={sortBy}
-                  onValueChange={(value) => setSortBy(value as "name" | "difficulty" | "date")}
-                >
-                  <SelectTrigger className="w-[140px] h-8 text-xs">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="name">Sort by Name</SelectItem>
-                    <SelectItem value="difficulty">Sort by Difficulty</SelectItem>
-                    <SelectItem value="date">Sort by Date</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[35vh] scrollbar-hide"}>
-                {recommendedExams.length > 0 ? (
-                  renderExamList(recommendedExams)
-                ) : (
-                  <div className="py-8 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      No recommended exams found. Try adjusting your settings.
-                    </p>
-                  </div>
-                )}
-              </ScrollArea>
-            </TabsContent>
-
             <TabsContent value="school" className="m-0">
               <div className="flex justify-between items-center my-2">
-                <h3 className="text-sm font-medium text-muted-foreground">School Exams</h3>
-                <Select
-                  value={sortBy}
-                  onValueChange={(value) => setSortBy(value as "name" | "difficulty" | "date")}
-                >
-                  <SelectTrigger className="w-[140px] h-8 text-xs">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="name">Sort by Name</SelectItem>
-                    <SelectItem value="difficulty">Sort by Difficulty</SelectItem>
-                    <SelectItem value="date">Sort by Date</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[35vh]"}>
+              <ScrollArea className={isDesktop ? "h-[45vh]" : "h-[45vh]"}>
                 {filteredSchoolExams.length > 0 ? (
                   renderExamList(filteredSchoolExams)
                 ) : (
                   <div className="py-8 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      No school exams found.
+                    <p className="flex flex-col text-sm text-muted-foreground">
+                      No school-based exams found
+                    <span>Please come back later</span>
                     </p>
                   </div>
                 )}
@@ -582,58 +479,15 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
 
             <TabsContent value="waec" className="m-0">
               <div className="flex justify-between items-center my-2">
-                <h3 className="text-sm font-medium text-muted-foreground">WAEC Exams</h3>
-                <Select
-                  value={sortBy}
-                  onValueChange={(value) => setSortBy(value as "name" | "difficulty" | "date")}
-                >
-                  <SelectTrigger className="w-[140px] h-8 text-xs">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="name">Sort by Name</SelectItem>
-                    <SelectItem value="difficulty">Sort by Difficulty</SelectItem>
-                    <SelectItem value="date">Sort by Date</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[35vh]"}>
+              <ScrollArea className={isDesktop ? "h-[45vh]" : "h-[45vh]"}>
                 {filteredWaecExams.length > 0 ? (
                   renderExamList(filteredWaecExams)
                 ) : (
                   <div className="py-8 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      No WAEC exams found.
-                    </p>
-                  </div>
-                )}
-              </ScrollArea>
-            </TabsContent>
-
-            <TabsContent value="user" className="m-0">
-              <div className="flex justify-between items-center my-2">
-                <h3 className="text-sm font-medium text-muted-foreground">User-Created Exams</h3>
-                <Select
-                  value={sortBy}
-                  onValueChange={(value) => setSortBy(value as "name" | "difficulty" | "date")}
-                >
-                  <SelectTrigger className="w-[140px] h-8 text-xs">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="name">Sort by Name</SelectItem>
-                    <SelectItem value="difficulty">Sort by Difficulty</SelectItem>
-                    <SelectItem value="date">Sort by Date</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[35vh]"}>
-                {filteredUserExams.length > 0 ? (
-                  renderExamList(filteredUserExams)
-                ) : (
-                  <div className="py-8 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      No user-created exams found.
+                    <p className="flex flex-col text-sm text-muted-foreground">
+                      No WASCCE {"/"} BECE found
+                    <span>Please come back later</span>
                     </p>
                   </div>
                 )}
@@ -661,7 +515,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col">
-          <DialogTitle className="text-xl font-semibold p-4">Practice Exams</DialogTitle>
+          <DialogTitle className="text-xl font-semibold p-4">Select Exam</DialogTitle>
           <div className="flex-1 overflow-hidden">{content}</div>
         </DialogContent>
       </Dialog>
@@ -670,9 +524,9 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]">
+      <DrawerContent className="h-auto rounded-t-3xl">
         <DrawerHeader>
-          <DrawerTitle className="text-xl font-semibold">Practice Exams</DrawerTitle>
+          <DrawerTitle className="text-xl font-semibold">Select Exam</DrawerTitle>
         </DrawerHeader>
         {content}
       </DrawerContent>
