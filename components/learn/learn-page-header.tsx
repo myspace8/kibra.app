@@ -71,7 +71,7 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
             <span className="sr-only">Learn Platform</span>
           </Link>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2">
             {showActions && (
               <>
                 <Button

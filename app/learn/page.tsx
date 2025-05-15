@@ -33,6 +33,7 @@ export default function Home() {
         .select(`
           id,
           subject_id,
+          subject,
           school_exam_metadata,
           waec_exam_metadata,
           difficulty,
@@ -47,7 +48,7 @@ export default function Home() {
       }
 
       // Construct quiz title
-      const subjectName = examData.subjects.name || ""
+      const subjectName = examData.subject || ""
       const source = examData.exam_source
       const institution =
         source === "school" ? examData.school_exam_metadata?.school || "Unknown School" :
