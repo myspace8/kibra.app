@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import KibraPractice from "@/components/learn/kibra-practice"
 import { LearnPageHeader } from "@/components/learn/learn-page-header"
-import { CustomizationFlow } from "@/components/learn/customization-flow"
 import { supabase } from "@/lib/supabase"
 import type { Question } from "@/types/question"
 
@@ -12,14 +11,6 @@ export default function Home() {
   const [quizTitle, setQuizTitle] = useState<string | undefined>(undefined)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [showCustomization, setShowCustomization] = useState(false)
-
-  useEffect(() => {
-    const hasCustomizations = localStorage.getItem("userCustomizations")
-    if (!hasCustomizations) {
-      setShowCustomization(true)
-    }
-  }, [])
 
   const handleSelectQuizSource = async (examId: number) => {
     setLoading(true)
@@ -121,11 +112,6 @@ export default function Home() {
     }
   }
 
-  const handleCustomizationComplete = (data: any) => {
-    localStorage.setItem("userCustomizations", JSON.stringify(data))
-    setShowCustomization(false)
-  }
-
   return (
     <>
       <LearnPageHeader onSelectQuizSource={handleSelectQuizSource} />
@@ -154,10 +140,6 @@ export default function Home() {
           )}
         </div>
       </main>
-      <CustomizationFlow 
-        isOpen={showCustomization} 
-        onComplete={handleCustomizationComplete}
-      />
     </>
   )
 }
