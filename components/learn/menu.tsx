@@ -80,7 +80,7 @@ const getUserSettings = (): UserSettings => {
 export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
   const { data: session } = useSession()
   const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState<"recommended" | "school" | "waec" | "user">("recommended")
+  const [activeTab, setActiveTab] = useState<"waec" | "school" | "recommended" | "user">("waec")
   const [sortBy, setSortBy] = useState<"name" | "difficulty" | "date">("date")
   const [filterDifficulty, setFilterDifficulty] = useState<"All" | "Easy" | "Medium" | "Hard">("All")
   const [filterExamType, setFilterExamType] = useState<string>("All")
@@ -333,7 +333,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
 
   const renderExamList = (exams: Exam[]) => {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 mb-8">
         {exams.map((exam) => {
           const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject"
           const institution =
@@ -390,6 +390,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                     {subject} {examType} {examDate && `(${examDate})`}
                   </h3>
                   <div className="mt-1 flex flex-col gap-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1">
                       {exam.exam_source === "school" && <Building2 className="h-3 w-3" />}
                       {exam.exam_source === "waec" && <Globe className="h-3 w-3" />}
@@ -404,12 +405,14 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                     <div className="flex items-center gap-1">
                       <span>{exam.question_count} questions </span> {(exam.exam_source !== "waec" && exam.exam_source !== "school") && <span>• {exam.difficulty}</span>}
                     </div>
+
+                    </div>
                     {exam.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {exam.tags.slice(0, 3).map((tag) => (
+                        {exam.tags.slice(0, 4).map((tag) => (
                           <span
                             key={tag}
-                            className="px-1.5 py-0.5 text-xs bg-gray-100 dark:bg-gray-800 rounded-full"
+                            className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
                           >
                             {tag}
                           </span>
@@ -494,23 +497,24 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
         onValueChange={(value) => setActiveTab(value as "recommended" | "school" | "waec" | "user")}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="recommended" className="flex items-center gap-1.5">
-            <span className="text-xs">For You</span>
-          </TabsTrigger>
-          <TabsTrigger value="school" className="flex items-center gap-1.5">
-            <Building2 className="h-3.5 w-3.5" />
-            <span className="text-xs">School</span>
-          </TabsTrigger>
-          <TabsTrigger value="waec" className="flex items-center gap-1.5">
+        <TabsList className="grid w-full grid-cols-2 rounded-full h-9">
+          <TabsTrigger value="waec" className="flex items-center gap-1.5 rounded-full">
             <Globe className="h-3.5 w-3.5" />
-            <span className="text-xs">WAEC</span>
+            <span className="text-xs">BECE {"/"} WASCCE</span>
           </TabsTrigger>
-          <TabsTrigger value="user" className="flex items-center gap-1.5">
+          {/* <TabsTrigger value="recommended" className="flex items-center gap-1.5 rounded-full">
+            <span className="text-xs">Recommended</span>
+          </TabsTrigger> */}
+          <TabsTrigger value="school" className="flex items-center gap-1.5 rounded-full">
+            <Building2 className="h-3.5 w-3.5" />
+            <span className="text-xs">School-Based Exams</span>
+          </TabsTrigger>
+          {/* <TabsTrigger value="user" className="flex items-center gap-1.5 rounded-full">
             <User className="h-3.5 w-3.5" />
-            <span className="text-xs">User</span>
-          </TabsTrigger>
+            <span className="text-xs">Others</span>
+          </TabsTrigger> */}
         </TabsList>
+
 
         {!loading && !error && (
           <>
@@ -533,7 +537,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[50vh]" : "h-[45vh]"}>
+              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[45vh]"}>
                 {recommendedExams.length > 0 ? (
                   renderExamList(recommendedExams)
                 ) : (
@@ -563,13 +567,13 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[50vh]" : "h-[45vh]"}>
+              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[45vh]"}>
                 {filteredSchoolExams.length > 0 ? (
                   renderExamList(filteredSchoolExams)
                 ) : (
                   <div className="py-8 text-center">
                     <p className="text-sm text-muted-foreground">
-                      No school exams found matching your criteria.
+                      No school exams found.
                     </p>
                   </div>
                 )}
@@ -593,13 +597,13 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[50vh]" : "h-[45vh]"}>
+              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[45vh]"}>
                 {filteredWaecExams.length > 0 ? (
                   renderExamList(filteredWaecExams)
                 ) : (
                   <div className="py-8 text-center">
                     <p className="text-sm text-muted-foreground">
-                      No WAEC exams found matching your criteria.
+                      No WAEC exams found.
                     </p>
                   </div>
                 )}
@@ -623,13 +627,13 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <ScrollArea className={isDesktop ? "h-[50vh]" : "h-[45vh]"}>
+              <ScrollArea className={isDesktop ? "h-[40vh]" : "h-[45vh]"}>
                 {filteredUserExams.length > 0 ? (
                   renderExamList(filteredUserExams)
                 ) : (
                   <div className="py-8 text-center">
                     <p className="text-sm text-muted-foreground">
-                      No user-created exams found matching your criteria.
+                      No user-created exams found.
                     </p>
                   </div>
                 )}
@@ -666,7 +670,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="px-4 pb-6 max-h-[90vh]">
+      <DrawerContent className="pb- max-h-[85vh]">
         <DrawerHeader>
           <DrawerTitle className="text-xl font-semibold">Practice Exams</DrawerTitle>
         </DrawerHeader>
