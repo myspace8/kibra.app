@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation"
 import { Search, UserPlus } from "lucide-react"
 import { UserNav } from "@/components/user-nav"
 import Link from "next/link"
-import Logo from "./logo"
+import Logo from "@/components/logo"
 import { useSession } from "next-auth/react"
 import { Button } from "./ui/button"
 

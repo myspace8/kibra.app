@@ -1,6 +1,7 @@
 import React from 'react';
 
-const Logo = () => {
+export default function Logo() {
+  // This is a simple logo component that renders a black circle with a white arc and the text "kibra_" in the center.
   return (
     <svg width="45" height="45" viewBox="10 0 100 100" xmlns="http://www.w3.org/2000/svg">
       {/* Black Circle */}
@@ -13,5 +14,3 @@ const Logo = () => {
     </svg>
   );
 };
-
-export default Logo; 
