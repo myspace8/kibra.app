@@ -379,7 +379,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
             <h2 className="text-2xl font-semibold tracking-tight">Welcome to Kibra.</h2>
           )}
           <p className="text-2xl leading-tight text-gray-600 dark:text-gray-400 mb-6">
-            What will you practice today?
+            Learn by solving
           </p>
         </div>
         <div className="w-full max-w-2xl space-y-4 m-auto">
