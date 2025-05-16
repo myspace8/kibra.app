@@ -459,7 +459,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
       {/* Search Bar */}
       <div className="relative mb-4 border-b">
         <Input
-          placeholder="Search subjects..."
+          placeholder="Search subject or topic..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-3 border-0 rounded-none focus:ring-0 focus:border-b-0 focus:border-none dark:bg-gray-950 dark:text-white"
@@ -515,7 +515,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   <div className="py-8 text-center">
                     <p className="flex flex-col text-sm text-muted-foreground">
                       No WASCCE {"/"} BECE found
-                    {/* <span>Please come back later</span> */}
+                    <span>Check spelling or search different topic</span>
                     </p>
                   </div>
                 )}
