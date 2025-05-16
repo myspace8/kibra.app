@@ -10,6 +10,8 @@ import { SourcesModal } from "@/components/learn/sources-modal"
 import { Menuu } from "@/components/learn/menu" // Updated to match enhanced Menuu
 import { UserNav } from "../user-nav"
 import { useSession } from "next-auth/react"
+import { TextSearch } from "lucide-react"
+import { LucideTextSearch } from "lucide-react"
 
 // Interfaces
 interface UserSettings {
@@ -74,17 +76,15 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
           <div className="flex items-center gap-2">
             {showActions && (
               <>
-                <Button
+                <button
                   id="menu-button"
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 inline-flex items-center justify-center gap-2 whitespace-nowrap ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0 h-10 w-10 px-4 py-2"
                   aria-label="Open exam menu"
                   onClick={() => handleMenuToggle(true)}
                 >
-                  <Menu className="h-5 w-5" />
-                </Button>
-                <Button
+                  <TextSearch className="h-6 w-6" />
+                </button>
+                {/* <Button
                   variant="ghost"
                   size="icon"
                   className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -92,7 +92,7 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
                   onClick={() => setSourcesModalOpen(true)}
                 >
                   <FileText className="h-5 w-5" />
-                </Button>
+                </Button> */}
               </>
             )}
             <UserNav />
