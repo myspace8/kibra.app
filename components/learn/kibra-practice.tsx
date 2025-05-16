@@ -15,20 +15,71 @@ import {
   HelpCircle,
   EyeOff,
   BookOpen,
+  Building2,
+  Globe,
+  User,
+  Clock,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { ReviewMode } from "@/components/learn/review-mode"
 import type { Question } from "@/types/question"
+import { useSession } from "next-auth/react"
+import { supabase } from "@/lib/supabase"
 
 type KibraPracticeProps = {
-  questions: Question[]
-  waecExamType: string
-  quizTitle?: string
-  onQuizComplete?: () => void
+  questions: Question[];
+  open: boolean;
+  onSelectQuizSource?: (examId: string) => void;
+  waecExamType: string;
+  quizTitle?: string;
+  onQuizComplete?: () => void;
+  // setMenuOpen?: (open: boolean) => void;
+};
+
+// Interfaces
+interface Subject {
+  id: number
+  name: string
 }
 
-export default function KibraPractice({ questions: initialQuestions, waecExamType, quizTitle, onQuizComplete }: KibraPracticeProps) {
+
+interface Exam {
+  id: string
+  exam_source: "school" | "waec" | "user"
+  subject_id: number
+  question_count: number
+  total_marks: number
+  sort_date: string
+  difficulty: "Easy" | "Medium" | "Hard"
+  tags: string[]
+  school_exam_metadata?: {
+    school: string
+    grade_level: string
+    date: string
+    exam_type: string
+    examiner: string
+    school_location?: { region: string; city?: string; country?: string }
+  }
+  waec_exam_metadata?: {
+    exam_type: "BECE" | "WASSCE"
+    exam_year: number
+    exam_session: "May/June" | "November/December"
+    region: string
+    syllabus_version: string
+  }
+  user_exam_metadata?: {
+    creator_id: string
+    creator_name: string
+    date?: string
+    exam_type?: string
+    description?: string
+  }
+  completed: boolean
+}
+
+export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, onQuizComplete, onSelectQuizSource }: KibraPracticeProps) {
+  const { data: session } = useSession()
   const [questions, setQuestions] = useState<Question[]>(initialQuestions)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -44,6 +95,11 @@ export default function KibraPractice({ questions: initialQuestions, waecExamTyp
   const [showHint, setShowHint] = useState(false)
   const [userAnswers, setUserAnswers] = useState<Record<number, string | string[]>>({})
   const [eliminatedOptions, setEliminatedOptions] = useState<Record<number, string[]>>({})
+
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [subjects, setSubjects] = useState<Subject[]>([])
+  const [exams, setExams] = useState<Exam[]>([])
 
   useEffect(() => {
     setQuestions(initialQuestions)
@@ -62,6 +118,69 @@ export default function KibraPractice({ questions: initialQuestions, waecExamTyp
     setUserAnswers({})
     setEliminatedOptions({})
   }, [initialQuestions])
+
+  useEffect(() => {
+    console.log("useEffect triggered, open:", open, "userId:", session?.user?.id);
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data: subjectsData, error: subjectsError } = await supabase
+          .from("subjects")
+          .select("id, name")
+          .order("name");
+        if (subjectsError) throw new Error("Failed to fetch subjects: " + subjectsError.message);
+        console.log("Subjects fetched:", subjectsData);
+        setSubjects(subjectsData);
+
+        const { data: examsData, error: examsError } = await supabase
+          .from("exams")
+          .select(`
+            id,
+            exam_source,
+            subject_id,
+            question_count,
+            total_marks,
+            sort_date,
+            difficulty,
+            tags,
+            school_exam_metadata,
+            waec_exam_metadata,
+            user_exam_metadata
+          `)
+          .eq("status", "Published")
+          .limit(3)
+          .order("sort_date", { ascending: false });
+        if (examsError) throw new Error("Failed to fetch exams: " + examsError.message);
+        console.log("Exams fetched:", examsData);
+        const formattedExams: Exam[] = examsData.map((exam: any) => ({
+          id: exam.id,
+          exam_source: exam.exam_source,
+          subject_id: exam.subject_id,
+          question_count: exam.question_count,
+          total_marks: exam.total_marks,
+          sort_date: exam.sort_date,
+          difficulty: exam.difficulty,
+          tags: exam.tags,
+          school_exam_metadata: exam.school_exam_metadata,
+          waec_exam_metadata: exam.waec_exam_metadata,
+          user_exam_metadata: exam.user_exam_metadata,
+          completed: false,
+        }));
+        setExams(formattedExams);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred while fetching exams.");
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (open) fetchData();
+  }, [open]);
+
+
 
   const currentQuestion = questions[currentQuestionIndex]
   const totalQuestions = questions.length
@@ -235,40 +354,150 @@ export default function KibraPractice({ questions: initialQuestions, waecExamTyp
     )
   }
 
+  const handleExamClick = (examId: string) => {
+    console.log("Selected exam:", examId);
+    if (onSelectQuizSource) {
+      onSelectQuizSource(examId);
+    }
+  };
+
   if (!currentQuestion) {
+    console.log("Rendering exam list, exams:", exams);
+    const currentHour = new Date().getHours();
+    const greeting = currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
+    const userName = session?.user?.name?.split(" ")[0] || "User";
+
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
-        <BookOpen className="h-16 w-16 text-primary/50 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">No Questions Available</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          There are no questions available for this quiz. Please select a different quiz or try again later.
-        </p>
-        <Button onClick={() => window.location.reload()}>Return to Home</Button>
-      </div>
-    )
+      <>
+        <div className="flex flex-col items-center justify-center p-6 text-center">
+          {session ? (
+            <h2 className="text-2xl font-semibold leading-tight tracking-tight">
+              {greeting}, {userName}.
+            </h2>
+          ) : (
+            <h2 className="text-2xl font-semibold tracking-tight">Welcome to Kibra.</h2>
+          )}
+          <p className="text-2xl leading-tight text-gray-600 dark:text-gray-400 mb-6">
+            What will you practice today?
+          </p>
+        </div>
+        <div className="w-full max-w-2xl space-y-4 m-auto">
+          {exams.length === 0 ? (
+            <p className="text-center text-gray-500">No exams available. Please try again later.</p>
+          ) : (
+            <div className="space-y-3 pb-8" style={{ scrollbarWidth: "thin" }}>
+              {exams.map((exam) => {
+                const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject";
+                const institution =
+                  exam.exam_source === "school"
+                    ? exam.school_exam_metadata?.school || "Unknown School"
+                    : exam.exam_source === "waec"
+                      ? exam.waec_exam_metadata?.region || "WAEC"
+                      : exam.user_exam_metadata?.creator_name || "User Created";
+                const examType =
+                  exam.exam_source === "school"
+                    ? exam.school_exam_metadata?.exam_type
+                    : exam.exam_source === "waec"
+                      ? exam.waec_exam_metadata?.exam_type
+                      : exam.user_exam_metadata?.exam_type || "Custom";
+                const examDate =
+                  exam.exam_source === "school"
+                    ? exam.school_exam_metadata?.date
+                    : exam.exam_source === "waec"
+                      ? `${exam.waec_exam_metadata?.exam_year} ${exam.waec_exam_metadata?.exam_session}`
+                      : exam.user_exam_metadata?.date || "";
+
+                return (
+                  <button
+                    key={exam.id}
+                    className={cn(
+                      "flex w-full items-center justify-between border-b py-4 px-2 text-left transition-colors",
+                      exam.completed
+                        ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-900/20"
+                        : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-gray-950 dark:hover:border-gray-700"
+                    )}
+                    onClick={() => handleExamClick(exam.id)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={cn(
+                          "mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
+                          exam.completed
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                        )}
+                      >
+                        {exam.completed ? (
+                          <CheckCircle className="h-4 w-4" />
+                        ) : (
+                          <Clock className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium">
+                          {subject} {examType} {examDate && `(${examDate})`}
+                        </h3>
+                        <div className="mt-1 flex flex-col gap-1 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
+                              {exam.exam_source === "school" && <Building2 className="h-3 w-3" />}
+                              {exam.exam_source === "waec" && <Globe className="h-3 w-3" />}
+                              {exam.exam_source === "user" && <User className="h-3 w-3" />}
+                              <span>{institution}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span>{exam.question_count} questions </span>
+                              {(exam.exam_source !== "waec" && exam.exam_source !== "school") && (
+                                <span>• {exam.difficulty}</span>
+                              )}
+                            </div>
+                          </div>
+                          {exam.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {exam.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </>
+    );
   }
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-start">
         <div className="flex flex-col items-center text-center gap-2">
-        {quizTitle && (
-          <div className="max-w-[35vw] md:max-w-[45vw]">
-            <h1 className="text-xs text-center font-medium leading-tight text-[#808080]">{quizTitle}</h1>
-          </div>
-        )}
-        {currentQuestion.topic && currentQuestion.subtopic && (
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-xs text-gray-500">{currentQuestion.topic}</span>
-            <span className="text-xs text-gray-500">{currentQuestion.subtopic}</span>
-        </div>
-        )}
+          {quizTitle && (
+            <div className="max-w-[35vw] md:max-w-[45vw]">
+              <h1 className="text-xs text-center font-medium leading-tight text-[#808080]">{quizTitle}</h1>
+            </div>
+          )}
+          {currentQuestion.topic && currentQuestion.subtopic && (
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-xs text-gray-500">{currentQuestion.topic}</span>
+              <span className="text-xs text-gray-500">{currentQuestion.subtopic}</span>
+            </div>
+          )}
         </div>
         <div className="flex flex-col items-center text-center gap-2">
           {currentQuestion.source_reference && (
             <p className="text-xs text-gray-500 max-w-[35vw]">
               <span>
-              {currentQuestion.source_reference} ({waecExamType})
+                {currentQuestion.source_reference} ({waecExamType})
               </span>
             </p>
           )}

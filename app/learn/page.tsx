@@ -1,25 +1,26 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import KibraPractice from "@/components/learn/kibra-practice"
-import { LearnPageHeader } from "@/components/learn/learn-page-header"
-import { supabase } from "@/lib/supabase"
-import type { Question } from "@/types/question"
+import { useState } from "react";
+import KibraPractice from "@/components/learn/kibra-practice";
+import { LearnPageHeader } from "@/components/learn/learn-page-header";
+import { supabase } from "@/lib/supabase";
+import type { Question } from "@/types/question";
 
 export default function Home() {
-  const [questions, setQuestions] = useState<Question[]>([])
-  const [quizTitle, setQuizTitle] = useState<string | undefined>(undefined)
-  const [waecExamType, setWaecExamType] = useState<string | undefined>(undefined)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [quizTitle, setQuizTitle] = useState<string | undefined>(undefined);
+  const [waecExamType, setWaecExamType] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(true); // Set to true initially
 
-  const handleSelectQuizSource = async (examId: number) => {
-    setLoading(true)
-    setError(null)
-    setQuestions([]) // Clear previous questions
+  const handleSelectQuizSource = async (examId: string) => {
+    setLoading(true);
+    setError(null);
+    setQuestions([]);
+    setMenuOpen(false); // Close menu here
 
     try {
-      // Fetch exam details to get the subject and metadata
       const { data: examData, error: examError } = await supabase
         .from("exams")
         .select(`
@@ -33,23 +34,17 @@ export default function Home() {
           subjects (name)
         `)
         .eq("id", examId)
-        .single()
+        .single();
 
       if (examError || !examData) {
-        throw new Error("Failed to fetch exam details: " + (examError?.message || "Exam not found"))
+        throw new Error("Failed to fetch exam details: " + (examError?.message || "Exam not found"));
       }
 
-      // Construct quiz title
-      const subjectName = examData.subject || ""
-      const source = examData.exam_source
-      // const institution =
-      //   source === "school" ? examData.school_exam_metadata?.school || "Unknown School" :
-      //   source === "waec" ? examData.waec_exam_metadata?.exam_type : "Unknown"
-      setQuizTitle(`${subjectName}`)
-      const waecExamType = examData.waec_exam_metadata?.exam_type || "Unknown"
-      setWaecExamType(waecExamType)
+      const subjectName = examData.subject || "";
+      setQuizTitle(`${subjectName}`);
+      const waecExamType = examData.waec_exam_metadata?.exam_type || "Unknown";
+      setWaecExamType(waecExamType);
 
-      // Fetch questions for the exam
       const { data: questionsData, error: questionsError } = await supabase
         .from("exam_questions")
         .select(`
@@ -78,14 +73,13 @@ export default function Home() {
           )
         `)
         .eq("exam_id", examId)
-        .order("order", { ascending: true })
+        .order("order", { ascending: true });
 
       if (questionsError || !questionsData) {
-        throw new Error("Failed to fetch questions: " + (questionsError?.message || "No questions found"))
+        throw new Error("Failed to fetch questions: " + (questionsError?.message || "No questions found"));
       }
 
-      // Map Supabase data to the Question type expected by KibraPractice
-      const formattedQuestions: Question[] = questionsData.map((q: any, index: number) => ({
+      const formattedQuestions: Question[] = questionsData.map((q: any) => ({
         id: q.question_id,
         question: q.question_pool.question,
         question_type: q.question_pool.question_type,
@@ -105,19 +99,29 @@ export default function Home() {
         estimated_time: q.question_pool.estimated_time,
         source_reference: q.question_pool.source_reference,
         ai_feedback: q.question_pool.ai_feedback,
-      }))
+      }));
 
-      setQuestions(formattedQuestions)
+      setQuestions(formattedQuestions);
+      setMenuOpen(false); // Close menu after selecting exam
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred while loading the quiz.")
+      setError(err instanceof Error ? err.message : "An error occurred while loading the quiz.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  const handleMenuToggle = (open: boolean) => {
+    setMenuOpen(open);
+    if (!open) {
+      document.getElementById("menu-button")?.focus();
+    }
+  };
 
   return (
     <>
-      <LearnPageHeader onSelectQuizSource={handleSelectQuizSource} />
+      <LearnPageHeader
+        onSelectQuizSource={handleSelectQuizSource}
+      />
       <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 px-3">
         <div className="max-w-4xl mx-auto">
           {loading && (
@@ -131,19 +135,21 @@ export default function Home() {
             </div>
           )}
           {!loading && !error && (
-            <KibraPractice
-              questions={questions}
-              waecExamType={waecExamType ?? ""}
-              quizTitle={quizTitle}
-              onQuizComplete={() => {
-                if (quizTitle) {
-                  console.log(`Quiz completed: ${quizTitle}`)
-                }
-              }}
-            />
+          <KibraPractice
+          open={menuOpen}
+          questions={questions}
+          waecExamType={waecExamType ?? ""}
+          quizTitle={quizTitle}
+          onQuizComplete={() => {
+            if (quizTitle) {
+              console.log(`Quiz completed: ${quizTitle}`);
+            }
+          }}
+          onSelectQuizSource={handleSelectQuizSource}
+        />
           )}
         </div>
       </main>
     </>
-  )
+  );
 }

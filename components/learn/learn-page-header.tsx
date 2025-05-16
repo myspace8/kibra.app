@@ -65,7 +65,7 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
           className
         )}
       >
-        <div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 m-auto">
           <Link href="/learn" className="flex items-center gap-2" aria-label="Home">
             <Logo />
             <span className="sr-only">Learn Platform</span>

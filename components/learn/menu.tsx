@@ -487,7 +487,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   <div className="py-8 text-center">
                     <p className="flex flex-col text-sm text-muted-foreground">
                       No WASCCE {"/"} BECE found
-                    <span>Please come back later</span>
+                    {/* <span>Please come back later</span> */}
                     </p>
                   </div>
                 )}
