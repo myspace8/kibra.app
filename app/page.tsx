@@ -32,7 +32,7 @@ export default function Home() {
           >
             Education, beyond the limits of traditional schooling!
           </motion.p>
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -42,7 +42,7 @@ export default function Home() {
                 Sign up
               </Button>
             </Link>
-          </motion.div>
+          </motion.div> */}
         </div>
       </section>
 

@@ -96,7 +96,7 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
               </>
             )}
             <UserNav />
-            {status === "unauthenticated" && (
+            {/* {status === "unauthenticated" && (
               <Link href="/signup">
                 <Button
                   variant="default"
@@ -107,7 +107,7 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
                   Sign up
                 </Button>
               </Link>
-            )}
+            )} */}
           </div>
         </div>
       </header>

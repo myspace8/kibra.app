@@ -51,14 +51,14 @@ export function DiscoverPageHeader() {
               <Search className="h-5 w-5" />
             </Link>
             <UserNav />
-            {!session && (
+            {/* {!session && (
               <Link href="/signup">
                 <Button variant="default" className="bg-black hover:bg-black/90 text-white gap-2 rounded-full text-xs h-9">
                   <UserPlus className="h-4 w-4" />
                   Sign up
                 </Button>
               </Link>
-            )}
+            )} */}
           </div>
         </div>
       </div>
