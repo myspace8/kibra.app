@@ -19,6 +19,8 @@ import {
   Globe,
   User,
   Clock,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -95,6 +97,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   const [showHint, setShowHint] = useState(false)
   const [userAnswers, setUserAnswers] = useState<Record<number, string | string[]>>({})
   const [eliminatedOptions, setEliminatedOptions] = useState<Record<number, string[]>>({})
+  const [showDetails, setShowDetails] = useState(true)
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -362,7 +365,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   };
 
   if (!currentQuestion) {
-    console.log("Rendering exam list, exams:", exams);
     const currentHour = new Date().getHours();
     const greeting = currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
     const userName = session?.user?.name?.split(" ")[0] || "User";
@@ -477,33 +479,70 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     );
   }
 
+  const QuizHeader = ({ quizTitle, topic, subtopic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (
+    <div className="flex flex-col items-center gap-2">
+      {quizTitle && (
+        <h1 className="text-xs font-medium text-center text-gray-500 max-w-[35vw] md:max-w-[45vw] leading-tight">
+          {quizTitle}
+        </h1>
+      )}
+      {(topic || subtopic) && (
+        <div className="flex flex-col items-center gap-1">
+          {topic && <span className="text-xs text-gray-500">{topic}</span>}
+          {subtopic && <span className="text-xs text-gray-500">{subtopic}</span>}
+        </div>
+      )}
+    </div>
+  );
+
+  const QuizFooter = ({ sourceReference, waecExamType, currentIndex, total }: { sourceReference?: string; waecExamType?: string; currentIndex: number; total: number }) => (
+    <div className="flex flex-col items-center gap-2">
+      {sourceReference && (
+        <p className="text-xs text-gray-500 max-w-[35vw] text-center">
+          {sourceReference} ({waecExamType || ""})
+        </p>
+      )}
+      <span className="bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
+        Q {currentIndex + 1}/{total}
+      </span>
+    </div>
+  );
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-start">
-        <div className="flex flex-col items-center text-center gap-2">
-          {quizTitle && (
-            <div className="max-w-[35vw] md:max-w-[45vw]">
-              <h1 className="text-xs text-center font-medium leading-tight text-[#808080]">{quizTitle}</h1>
-            </div>
+      <div className="flex items-center justify-between w-full relative pb-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowDetails(!showDetails)}
+          className="flex items-center gap-2 hover:bg-gray-400 dark:hover:bg-gray-800 absolute bottom-[-15px] right-0"
+          aria-label={showDetails ? "Hide question details" : "Show question details"}
+        >
+          {showDetails ? (
+            <>
+              <ChevronUp size={16} className="text-gray-500" />
+            </>
+          ) : (
+            <>
+              <ChevronDown size={16} className="text-gray-500" />
+            </>
           )}
-          {currentQuestion.topic && currentQuestion.subtopic && (
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-xs text-gray-500">{currentQuestion.topic}</span>
-              <span className="text-xs text-gray-500">{currentQuestion.subtopic}</span>
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col items-center text-center gap-2">
-          {currentQuestion.source_reference && (
-            <p className="text-xs text-gray-500 max-w-[35vw]">
-              <span>
-                {currentQuestion.source_reference} ({waecExamType})
-              </span>
-            </p>
-          )}
-          <div className="bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
-            Q {currentQuestionIndex + 1}/{totalQuestions}</div>
-        </div>
+        </Button>
+        {showDetails && (
+          <div className="flex items-center justify-between w-full gap-2">
+            <QuizHeader
+              quizTitle={quizTitle}
+              topic={currentQuestion.topic}
+              subtopic={currentQuestion.subtopic}
+            />
+            <QuizFooter
+              sourceReference={currentQuestion.source_reference}
+              waecExamType={waecExamType}
+              currentIndex={currentQuestionIndex}
+              total={totalQuestions}
+            />
+          </div>
+        )}
       </div>
       <div className="relative h-[0.786px]">
         <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
