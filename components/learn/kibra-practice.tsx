@@ -101,6 +101,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showMoreTags, setShowMoreTags] = useState<Record<string, boolean>>({})
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [exams, setExams] = useState<Exam[]>([])
 
@@ -152,7 +153,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
             waec_exam_metadata,
             user_exam_metadata
           `)
-          .eq("status", "Published")
+          .eq("status", "Published") // Todo: Customize this filter based on the user's ultimate needs
           .limit(3)
           .order("sort_date", { ascending: false });
         if (examsError) throw new Error("Failed to fetch exams: " + examsError.message);
@@ -454,18 +455,43 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                               )}
                             </div>
                           </div>
-                          {exam.tags.length > 0 && (
+                            {exam.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1">
-                              {exam.tags.slice(0, 3).map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
-                                >
-                                  {tag}
-                                </span>
+                              {exam.tags.slice(0, showMoreTags[exam.id] ? 18 : 3).map((tag) => (
+                              <span
+                              key={tag}
+                              className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
+                              >
+                              {tag}
+                              </span>
                               ))}
+                              {exam.tags.length > 3 && (
+                              <span
+                              onClick={(e) => {
+                              e.stopPropagation();
+                              setShowMoreTags((prev) => ({
+                                ...prev,
+                                [exam.id]: !prev[exam.id],
+                              }));
+                              }}
+                              role="button"
+                              tabIndex={0}
+                              className="px-1.5 py-0.5 text-xs w-max bg-gray-200 dark:bg-gray-700 rounded-full text-primary cursor-pointer"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                setShowMoreTags((prev) => ({
+                                  ...prev,
+                                  [exam.id]: !prev[exam.id],
+                                }));
+                                }
+                              }}
+                              >
+                              {showMoreTags[exam.id] ? "Less" : `+${exam.tags.length - 3} more`}
+                              </span>
+                              )}
                             </div>
-                          )}
+                            )}
                         </div>
                       </div>
                     </div>
