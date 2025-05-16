@@ -21,6 +21,8 @@ import {
   Clock,
   ChevronUp,
   ChevronDown,
+  Loader2,
+  RefreshCw,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -36,7 +38,6 @@ type KibraPracticeProps = {
   waecExamType: string;
   quizTitle?: string;
   onQuizComplete?: () => void;
-  // setMenuOpen?: (open: boolean) => void;
 };
 
 // Interfaces
@@ -44,7 +45,6 @@ interface Subject {
   id: number
   name: string
 }
-
 
 interface Exam {
   id: string
@@ -123,68 +123,66 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     setEliminatedOptions({})
   }, [initialQuestions])
 
+  const fetchData = async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const { data: subjectsData, error: subjectsError } = await supabase
+        .from("subjects")
+        .select("id, name")
+        .order("name")
+      if (subjectsError) throw new Error("Failed to fetch subjects: " + subjectsError.message)
+      console.log("Subjects fetched:", subjectsData)
+      setSubjects(subjectsData)
+
+      const { data: examsData, error: examsError } = await supabase
+        .from("exams")
+        .select(`
+          id,
+          exam_source,
+          subject_id,
+          question_count,
+          total_marks,
+          sort_date,
+          difficulty,
+          tags,
+          school_exam_metadata,
+          waec_exam_metadata,
+          user_exam_metadata
+        `)
+        .eq("status", "Published")
+        .limit(3)
+        .order("sort_date", { ascending: false })
+      if (examsError) throw new Error("Failed to fetch exams: " + examsError.message)
+      console.log("Exams fetched:", examsData)
+      const formattedExams: Exam[] = examsData.map((exam: any) => ({
+        id: exam.id,
+        exam_source: exam.exam_source,
+        subject_id: exam.subject_id,
+        question_count: exam.question_count,
+        total_marks: exam.total_marks,
+        sort_date: exam.sort_date,
+        difficulty: exam.difficulty,
+        tags: exam.tags,
+        school_exam_metadata: exam.school_exam_metadata,
+        waec_exam_metadata: exam.waec_exam_metadata,
+        user_exam_metadata: exam.user_exam_metadata,
+        completed: false,
+      }))
+      setExams(formattedExams)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred while fetching exams.")
+      console.error("Fetch error:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    console.log("useEffect triggered, open:", open, "userId:", session?.user?.id);
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const { data: subjectsData, error: subjectsError } = await supabase
-          .from("subjects")
-          .select("id, name")
-          .order("name");
-        if (subjectsError) throw new Error("Failed to fetch subjects: " + subjectsError.message);
-        console.log("Subjects fetched:", subjectsData);
-        setSubjects(subjectsData);
-
-        const { data: examsData, error: examsError } = await supabase
-          .from("exams")
-          .select(`
-            id,
-            exam_source,
-            subject_id,
-            question_count,
-            total_marks,
-            sort_date,
-            difficulty,
-            tags,
-            school_exam_metadata,
-            waec_exam_metadata,
-            user_exam_metadata
-          `)
-          .eq("status", "Published") // Todo: Customize this filter based on the user's ultimate needs
-          .limit(3)
-          .order("sort_date", { ascending: false });
-        if (examsError) throw new Error("Failed to fetch exams: " + examsError.message);
-        console.log("Exams fetched:", examsData);
-        const formattedExams: Exam[] = examsData.map((exam: any) => ({
-          id: exam.id,
-          exam_source: exam.exam_source,
-          subject_id: exam.subject_id,
-          question_count: exam.question_count,
-          total_marks: exam.total_marks,
-          sort_date: exam.sort_date,
-          difficulty: exam.difficulty,
-          tags: exam.tags,
-          school_exam_metadata: exam.school_exam_metadata,
-          waec_exam_metadata: exam.waec_exam_metadata,
-          user_exam_metadata: exam.user_exam_metadata,
-          completed: false,
-        }));
-        setExams(formattedExams);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred while fetching exams.");
-        console.error("Fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (open) fetchData();
-  }, [open]);
-
-
+    console.log("useEffect triggered, open:", open, "userId:", session?.user?.id)
+    if (open) fetchData()
+  }, [open])
 
   const currentQuestion = questions[currentQuestionIndex]
   const totalQuestions = questions.length
@@ -359,16 +357,16 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   }
 
   const handleExamClick = (examId: string) => {
-    console.log("Selected exam:", examId);
+    console.log("Selected exam:", examId)
     if (onSelectQuizSource) {
-      onSelectQuizSource(examId);
+      onSelectQuizSource(examId)
     }
-  };
+  }
 
   if (!currentQuestion) {
-    const currentHour = new Date().getHours();
-    const greeting = currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
-    const userName = session?.user?.name?.split(" ")[0] || "User";
+    const currentHour = new Date().getHours()
+    const greeting = currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening"
+    const userName = session?.user?.name?.split(" ")[0] || "User"
 
     return (
       <>
@@ -385,30 +383,47 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
           </p>
         </div>
         <div className="w-full max-w-2xl space-y-4 m-auto">
-          {exams.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-4">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : error ? (
+            <div className="text-center text-gray-500">
+              <p className="mb-2">Failed to load exams: {error}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchData}
+                className="gap-2"
+              >
+                <RefreshCw size={16} />
+                Retry
+              </Button>
+            </div>
+          ) : exams.length === 0 ? (
             <p className="text-center text-gray-500">No exams available. Please try again later.</p>
           ) : (
             <div className="space-y-3 pb-8" style={{ scrollbarWidth: "thin" }}>
               {exams.map((exam) => {
-                const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject";
+                const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject"
                 const institution =
                   exam.exam_source === "school"
                     ? exam.school_exam_metadata?.school || "Unknown School"
                     : exam.exam_source === "waec"
                       ? exam.waec_exam_metadata?.region || "WAEC"
-                      : exam.user_exam_metadata?.creator_name || "User Created";
+                      : exam.user_exam_metadata?.creator_name || "User Created"
                 const examType =
                   exam.exam_source === "school"
                     ? exam.school_exam_metadata?.exam_type
                     : exam.exam_source === "waec"
                       ? exam.waec_exam_metadata?.exam_type
-                      : exam.user_exam_metadata?.exam_type || "Custom";
+                      : exam.user_exam_metadata?.exam_type || "Custom"
                 const examDate =
                   exam.exam_source === "school"
                     ? exam.school_exam_metadata?.date
                     : exam.exam_source === "waec"
                       ? `${exam.waec_exam_metadata?.exam_year} ${exam.waec_exam_metadata?.exam_session}`
-                      : exam.user_exam_metadata?.date || "";
+                      : exam.user_exam_metadata?.date || ""
 
                 return (
                   <button
@@ -455,54 +470,54 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                               )}
                             </div>
                           </div>
-                            {exam.tags.length > 0 && (
+                          {exam.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1">
                               {exam.tags.slice(0, showMoreTags[exam.id] ? 18 : 3).map((tag) => (
-                              <span
-                              key={tag}
-                              className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
-                              >
-                              {tag}
-                              </span>
+                                <span
+                                  key={tag}
+                                  className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
+                                >
+                                  {tag}
+                                </span>
                               ))}
                               {exam.tags.length > 3 && (
-                              <span
-                              onClick={(e) => {
-                              e.stopPropagation();
-                              setShowMoreTags((prev) => ({
-                                ...prev,
-                                [exam.id]: !prev[exam.id],
-                              }));
-                              }}
-                              role="button"
-                              tabIndex={0}
-                              className="px-1.5 py-0.5 text-xs w-max bg-gray-200 dark:bg-gray-700 rounded-full text-primary cursor-pointer"
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                e.preventDefault();
-                                setShowMoreTags((prev) => ({
-                                  ...prev,
-                                  [exam.id]: !prev[exam.id],
-                                }));
-                                }
-                              }}
-                              >
-                              {showMoreTags[exam.id] ? "Less" : `+${exam.tags.length - 3} more`}
-                              </span>
+                                <span
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setShowMoreTags((prev) => ({
+                                      ...prev,
+                                      [exam.id]: !prev[exam.id],
+                                    }))
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                  className="px-1.5 py-0.5 text-xs w-max bg-gray-200 dark:bg-gray-700 rounded-full text-primary cursor-pointer"
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                      e.preventDefault()
+                                      setShowMoreTags((prev) => ({
+                                        ...prev,
+                                        [exam.id]: !prev[exam.id],
+                                      }))
+                                    }
+                                  }}
+                                >
+                                  {showMoreTags[exam.id] ? "Less" : `+${exam.tags.length - 3} more`}
+                                </span>
                               )}
                             </div>
-                            )}
+                          )}
                         </div>
                       </div>
                     </div>
                   </button>
-                );
+                )
               })}
             </div>
           )}
         </div>
       </>
-    );
+    )
   }
 
   const QuizHeader = ({ quizTitle, topic, subtopic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (
@@ -519,7 +534,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
         </div>
       )}
     </div>
-  );
+  )
 
   const QuizFooter = ({ sourceReference, waecExamType, currentIndex, total }: { sourceReference?: string; waecExamType?: string; currentIndex: number; total: number }) => (
     <div className="flex flex-col items-center gap-2">
@@ -532,7 +547,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
         Q {currentIndex + 1}/{total}
       </span>
     </div>
-  );
+  )
 
   return (
     <div className="space-y-4">
