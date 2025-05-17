@@ -15,7 +15,7 @@ export interface userUploadedExamData {
   updated_at: string; // ISO timestamp, e.g., 2025-05-13T08:09:00Z
   file_url?: string; // Optional: URL to uploaded PDF or file
   description: string; // Brief description, e.g., "A challenging math test with algebra focus"
-  tags: string[]; // e.g., ["Algebra", "Practice", "Grade 10"]
+  topics: string[]; // e.g., ["Algebra", "Practice", "Grade 10"]
   difficulty: "Easy" | "Medium" | "Hard"; // Self-assessed difficulty
   language: string; // e.g., English
   is_verified: boolean; // AI or admin-verified quality

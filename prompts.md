@@ -30,7 +30,7 @@ Generate a JSON object for a WAEC exam that adheres to the following schema and 
 - `duration`: String, duration of the exam (e.g., "30 minutes").
 - `file_url`: String, URL to a file related to the exam.
 - `isPublic`: Boolean, whether the exam is publicly accessible (true or false).
-- `tags`: Array of strings, topics covered by the questions (e.g., ["Algebra", "Geometry"]).
+- `topics`: Array of strings, topics covered by the questions (e.g., ["Algebra", "Geometry"]).
 - `difficulty`: String, overall exam difficulty ("Easy", "Medium", "Hard").
 - `language`: String, set to "English".
 - `status`: String, set to "Published".
@@ -50,7 +50,7 @@ Generate a JSON object for a WAEC exam that adheres to the following schema and 
   - `duration`: Duration of the exam (e.g., "2 hours").
   - `file_url`: URL to a file related to the exam.
   - `isPublic`: Boolean indicating if the exam is public.
-  - `tags`: Array of strings representing topics covered by the questions.
+  - `topics`: Array of strings representing topics covered by the questions.
   - `difficulty`: Overall difficulty of the exam ("Easy", "Medium", "Hard").
   - `language`: Set to "English".
   - `status`: Set to "Published".
@@ -59,7 +59,7 @@ Generate a JSON object for a WAEC exam that adheres to the following schema and 
 - Ensure questions are educationally accurate, relevant to [SUBJECT], and aligned with [EXAM_TYPE] (e.g., BECE for JHS, WASSCE for SHS).
 - Distribute difficulty levels across questions (e.g., for 5 questions, include a mix like 2 Easy, 2 Medium, 1 Hard).
 - Each question must have exactly 4 options and 1 correct answer.
-- `tags` should reflect the topics of the questions.
+- `topics` should reflect the topics of the questions.
 - `total_marks` must equal the sum of `marks` from all questions.
 - `questionCount` must match the number of questions.
 - `duration` should be reasonable for the number of questions (e.g., 5 questions → "30 minutes").

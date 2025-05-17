@@ -65,7 +65,7 @@ interface Question {
 - `duration`: String, duration of the exam (e.g., "30 minutes").
 - `file_url`: String, URL to a file related to the exam.
 - `isPublic`: Boolean, whether the exam is publicly accessible (true or false).
-- `tags`: Array of strings, topics covered by the questions (e.g., ["Algebra", "Geometry"]).
+- `topics`: Array of strings, topics covered by the questions (e.g., ["Algebra", "Geometry"]).
 - `difficulty`: String, overall exam difficulty ("Easy", "Medium", "Hard").
 - `language`: String, set to "English".
 - `status`: String, set to "Published".
@@ -85,7 +85,7 @@ interface Question {
   - `duration`: Duration of the exam (e.g., "2 hours").
   - `file_url`: URL to a file related to the exam.
   - `isPublic`: Boolean indicating if the exam is public.
-  - `tags`: Array of strings representing topics covered by the questions.
+  - `topics`: Array of strings representing topics covered by the questions.
   - `difficulty`: Overall difficulty of the exam ("Easy", "Medium", "Hard").
   - `language`: Set to "English".
   - `status`: Set to "Published".
@@ -94,12 +94,12 @@ interface Question {
 - Ensure questions are educationally accurate, relevant to [SUBJECT], and aligned with [EXAM_TYPE] (e.g., BECE for JHS, WASSCE for SHS).
 - Distribute difficulty levels across questions (e.g., for 5 questions, include a mix like 2 Easy, 2 Medium, 1 Hard).
 - Each question must have exactly 4 options and 1 correct answer.
-- `tags` should reflect the topics of the questions.
+- `topics` should reflect the topics of the questions.
 - Ensure `total_marks` is the sum of marks for all questions.
 - Ensure `questionCount` matches the number of questions in the `questions` array.
 - Ensure `file_url` is a valid URL 
 - Ensure `isPublic` is a boolean value. 
-- Ensure `tags` is an array of strings.
+- Ensure `topics` is an array of strings.
 - Ensure `difficulty` is one of "Easy", "Medium", or "Hard".
 - Ensure `language` is a string.
 - Ensure `status` is one of "Draft", "Published", or "Archived".
@@ -126,7 +126,7 @@ interface WAECExamData {
   duration: string
   file_url?: string
   isPublic: boolean
-  tags: string[]
+  topics: string[]
   difficulty: "Easy" | "Medium" | "Hard"
   language: string
   status: "Draft" | "Published" | "Archived"
@@ -147,7 +147,7 @@ export default function UploadWAECExam() {
     const requiredFields = [
       "exam_type", "exam_year", "exam_session", "region", "subject",
       "syllabus_version", "questions", "questionCount", "total_marks", "duration",
-      "isPublic", "tags", "difficulty", "language", "status"
+      "isPublic", "topics", "difficulty", "language", "status"
     ]
     for (const field of requiredFields) {
       if (!(field in data)) {
@@ -188,8 +188,8 @@ export default function UploadWAECExam() {
     if (typeof data.isPublic !== "boolean") {
       throw new Error("isPublic must be a boolean")
     }
-    if (!Array.isArray(data.tags)) {
-      throw new Error("tags must be an array of strings")
+    if (!Array.isArray(data.topics)) {
+      throw new Error("topics must be an array of strings")
     }
     if (!["Easy", "Medium", "Hard"].includes(data.difficulty)) {
       throw new Error("difficulty must be 'Easy', 'Medium', or 'Hard'")
@@ -306,7 +306,7 @@ export default function UploadWAECExam() {
         duration: string
         file_url?: string
         isPublic: boolean
-        tags: string[]
+        topics: string[]
         difficulty: "Easy" | "Medium" | "Hard"
         language: string
         status: "Draft" | "Published" | "Archived"
@@ -320,7 +320,7 @@ export default function UploadWAECExam() {
         duration: string
         file_url?: string
         isPublic: boolean
-        tags: string[]
+        topics: string[]
         difficulty: "Easy" | "Medium" | "Hard"
         language: string
         status: "Draft" | "Published" | "Archived"
@@ -344,7 +344,7 @@ export default function UploadWAECExam() {
           sort_date: calculateSortDate(parsedData.exam_year, parsedData.exam_session), // Purpose: for sorting exams by date. This is used in the frontent to display the exams in a more user-friendly way. For example, if the exam is in May/June 2025, the sort_date will be "2025-06-01T00:00:00Z". This allows us to sort exams by their exam year and session.
           file_url: parsedData.file_url,
           instructions: parsedData.instructions,
-          tags: parsedData.tags,
+          topics: parsedData.topics,
           difficulty: parsedData.difficulty,
           language: parsedData.language,
           status: parsedData.status,
@@ -470,7 +470,7 @@ export default function UploadWAECExam() {
                 "total_marks": 5,
                 "duration": "2 hours",
                 "isPublic": true,
-                "tags": ["Algebra", "Equations"],
+                "topics": ["Algebra", "Equations"],
                 "difficulty": "Medium",
                 "language": "English",
                 "status": "Published",

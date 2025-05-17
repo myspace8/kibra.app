@@ -65,7 +65,7 @@ interface SchoolExamData {
     city?: string
     country?: string
   }
-  tags: string[]
+  topics: string[]
   difficulty: "Easy" | "Medium" | "Hard"
   language: string
   status: "Draft" | "Published" | "Archived"
@@ -101,7 +101,7 @@ export default function UploadSchoolExamPage() {
     const requiredFields = [
       "school", "grade_level", "subject", "date", "exam_type", "questions",
       "questionCount", "total_marks", "duration", "isPublic", "examiner",
-      "tags", "difficulty", "language", "status"
+      "topics", "difficulty", "language", "status"
     ]
     for (const field of requiredFields) {
       if (!(field in data)) {
@@ -142,8 +142,8 @@ export default function UploadSchoolExamPage() {
     if (typeof data.examiner !== "string" || data.examiner.trim() === "") {
       throw new Error("examiner must be a non-empty string")
     }
-    if (!Array.isArray(data.tags)) {
-      throw new Error("tags must be an array of strings")
+    if (!Array.isArray(data.topics)) {
+      throw new Error("topics must be an array of strings")
     }
     if (!["Easy", "Medium", "Hard"].includes(data.difficulty)) {
       throw new Error("difficulty must be 'Easy', 'Medium', or 'Hard'")
@@ -296,7 +296,7 @@ export default function UploadSchoolExamPage() {
           sort_date: `${parsedData.date}T00:00:00Z`,
           file_url: parsedData.file_url,
           instructions: parsedData.instructions,
-          tags: parsedData.tags,
+          topics: parsedData.topics,
           difficulty: parsedData.difficulty,
           language: parsedData.language,
           status: parsedData.status,
@@ -390,7 +390,7 @@ export default function UploadSchoolExamPage() {
                 "total_marks": 5,
                 "duration": "45 minutes",
                 "isPublic": false,
-                "tags": ["Earth Science"],
+                "topics": ["Earth Science"],
                 "difficulty": "Easy",
                 "language": "English",
                 "status": "Published",

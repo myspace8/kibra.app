@@ -54,7 +54,7 @@ interface Exam {
   total_marks: number
   sort_date: string
   difficulty: "Easy" | "Medium" | "Hard"
-  tags: string[]
+  topics: string[]
   school_exam_metadata?: {
     school: string
     grade_level: string
@@ -101,7 +101,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showMoreTags, setShowMoreTags] = useState<Record<string, boolean>>({})
+  const [showMoretopics, setShowMoretopics] = useState<Record<string, boolean>>({})
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [exams, setExams] = useState<Exam[]>([])
 
@@ -146,7 +146,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
           total_marks,
           sort_date,
           difficulty,
-          tags,
+          topics,
           school_exam_metadata,
           waec_exam_metadata,
           user_exam_metadata
@@ -164,7 +164,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
         total_marks: exam.total_marks,
         sort_date: exam.sort_date,
         difficulty: exam.difficulty,
-        tags: exam.tags,
+        topics: exam.topics,
         school_exam_metadata: exam.school_exam_metadata,
         waec_exam_metadata: exam.waec_exam_metadata,
         user_exam_metadata: exam.user_exam_metadata,
@@ -470,9 +470,9 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                               )}
                             </div>
                           </div>
-                          {exam.tags.length > 0 && (
+                          {exam.topics.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1">
-                              {exam.tags.slice(0, showMoreTags[exam.id] ? 18 : 3).map((tag) => (
+                              {exam.topics.slice(0, showMoretopics[exam.id] ? 18 : 3).map((tag) => (
                                 <span
                                   key={tag}
                                   className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
@@ -480,11 +480,11 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                                   {tag}
                                 </span>
                               ))}
-                              {exam.tags.length > 3 && (
+                              {exam.topics.length > 3 && (
                                 <span
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    setShowMoreTags((prev) => ({
+                                    setShowMoretopics((prev) => ({
                                       ...prev,
                                       [exam.id]: !prev[exam.id],
                                     }))
@@ -495,14 +495,14 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter" || e.key === " ") {
                                       e.preventDefault()
-                                      setShowMoreTags((prev) => ({
+                                      setShowMoretopics((prev) => ({
                                         ...prev,
                                         [exam.id]: !prev[exam.id],
                                       }))
                                     }
                                   }}
                                 >
-                                  {showMoreTags[exam.id] ? "Less" : `+${exam.tags.length - 3} more`}
+                                  {showMoretopics[exam.id] ? "Less" : `+${exam.topics.length - 3} more`}
                                 </span>
                               )}
                             </div>

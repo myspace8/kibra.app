@@ -16,7 +16,7 @@ export interface schoolExamData {
   created_at: string; // ISO timestamp, e.g., 2025-05-13T10:00:00Z
   updated_at: string; // ISO timestamp, e.g., 2025-05-13T10:00:00Z
   file_url?: string; // Optional: URL to uploaded PDF if applicable
-  tags: string[]; // e.g., ["Algebra", "Geometry"]
+  topics: string[]; // e.g., ["Algebra", "Geometry"]
   difficulty: "Easy" | "Medium" | "Hard"; // Difficulty level
   language: string; // e.g., English, Spanish
   status: "Draft" | "Published" | "Archived"; // Exam lifecycle status

@@ -853,7 +853,7 @@ const questionSamples = [
   "duration": "1 hours",
   "file_url": "https://example.com/files/wassce_physics_2024_revised.pdf",
   "isPublic": true,
-  "tags": ["Mechanics", "Thermal Physics", "Electricity", "Optics", "Electromagnetism", "Nuclear Physics", "Waves", "Energy"],
+  "topics": ["Mechanics", "Thermal Physics", "Electricity", "Optics", "Electromagnetism", "Nuclear Physics", "Waves", "Energy"],
   "difficulty": "Medium",
   "language": "English",
   "status": "Published",

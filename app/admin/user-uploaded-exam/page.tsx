@@ -56,7 +56,7 @@ interface UserExamData {
   total_marks: number
   duration: string
   isPublic: boolean
-  tags: string[]
+  topics: string[]
   difficulty: "Easy" | "Medium" | "Hard"
   language: string
   status: "Draft" | "Published" | "Archived"
@@ -91,7 +91,7 @@ export default function UploadUserExam() {
 
     const requiredFields = [
       "subject", "questions", "questionCount", "total_marks", "duration",
-      "isPublic", "tags", "difficulty", "language", "status"
+      "isPublic", "topics", "difficulty", "language", "status"
     ]
     for (const field of requiredFields) {
       if (!(field in data)) {
@@ -126,8 +126,8 @@ export default function UploadUserExam() {
     if (typeof data.isPublic !== "boolean") {
       throw new Error("isPublic must be a boolean")
     }
-    if (!Array.isArray(data.tags)) {
-      throw new Error("tags must be an array of strings")
+    if (!Array.isArray(data.topics)) {
+      throw new Error("topics must be an array of strings")
     }
     if (!["Easy", "Medium", "Hard"].includes(data.difficulty)) {
       throw new Error("difficulty must be 'Easy', 'Medium', or 'Hard'")
@@ -276,7 +276,7 @@ export default function UploadUserExam() {
           sort_date: sortDate,
           file_url: parsedData.file_url,
           instructions: parsedData.instructions,
-          tags: parsedData.tags,
+          topics: parsedData.topics,
           difficulty: parsedData.difficulty,
           language: parsedData.language,
           status: parsedData.status,
@@ -364,7 +364,7 @@ export default function UploadUserExam() {
                 "total_marks": 5,
                 "duration": "30 minutes",
                 "isPublic": true,
-                "tags": ["Arithmetic"],
+                "topics": ["Arithmetic"],
                 "difficulty": "Easy",
                 "language": "English",
                 "status": "Published",

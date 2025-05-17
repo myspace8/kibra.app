@@ -23,12 +23,12 @@
        .eq("difficulty", studentLevel);
      ```
 
-   - **By Tags**: If the `tags` column contains metadata like topics or exam types (e.g., "mechanics", "organic chemistry", "mock"), filter exams by tags relevant to the student’s study focus.
+   - **By topics**: If the `topics` column contains metadata like topics or exam types (e.g., "mechanics", "organic chemistry", "mock"), filter exams by topics relevant to the student’s study focus.
      ```javascript
      const { data: examsData } = await supabase
        .from("exams")
-       .select("id, subject_id, tags")
-       .contains("tags", ["mechanics"]);
+       .select("id, subject_id, topics")
+       .contains("topics", ["mechanics"]);
      ```
 
    - **By School or Exam Metadata**: Use `school_exam_metadata` or `waec_exam_metadata` to filter exams specific to the student’s school or curriculum.
@@ -104,25 +104,25 @@
 ### 5. **Dynamic Query Based on User Input**
    Allow the student to specify preferences (e.g., via a form or API parameters) to dynamically adjust the query.
 
-   - **Example**: Let the student select subjects, difficulty, or tags via a frontend interface, then build the query dynamically.
+   - **Example**: Let the student select subjects, difficulty, or topics via a frontend interface, then build the query dynamically.
      ```javascript
      const studentPreferences = {
        subjects: ["Physics", "Chemistry"],
        difficulty: "intermediate",
-       tags: ["mechanics"],
+       topics: ["mechanics"],
        limit: 10
      };
 
      let query = supabase
        .from("exams")
-       .select("id, subject_id, difficulty, tags")
+       .select("id, subject_id, difficulty, topics")
        .in("subject", studentPreferences.subjects);
 
      if (studentPreferences.difficulty) {
        query = query.eq("difficulty", studentPreferences.difficulty);
      }
-     if (studentPreferences.tags) {
-       query = query.contains("tags", studentPreferences.tags);
+     if (studentPreferences.topics) {
+       query = query.contains("topics", studentPreferences.topics);
      }
      if (studentPreferences.limit) {
        query = query.limit(studentPreferences.limit);
@@ -197,7 +197,7 @@ const { data: examsData, error: examsError } = await supabase
     total_marks,
     sort_date,
     difficulty,
-    tags,
+    topics,
     user_exam_metadata
   `)
   .in("subject", studentPreferences.subjects)
@@ -274,9 +274,9 @@ To reach this 90% engagement goal, you need to customize the exam selection to a
        .eq("user_exam_metadata.student_id", studentId)
        .gte("user_exam_metadata.score", 70); // Recommend exams for subjects where the student scored well
      ```
-   - Incorporate tags to match specific topics the student is studying (e.g., "mechanics" for Physics).
+   - Incorporate topics to match specific topics the student is studying (e.g., "mechanics" for Physics).
      ```javascript
-     .contains("tags", ["mechanics"])
+     .contains("topics", ["mechanics"])
      ```
 
 3. **Optimal Number of Exams**:
@@ -293,7 +293,7 @@ To reach this 90% engagement goal, you need to customize the exam selection to a
      ```
 
 5. **Predictive Modeling (Advanced)**:
-   - If you have access to historical click data or user behavior (e.g., via a `clicks` table or analytics), build a simple recommendation algorithm to predict which exams are most likely to be clicked based on features like `subject`, `difficulty`, or `tags`.
+   - If you have access to historical click data or user behavior (e.g., via a `clicks` table or analytics), build a simple recommendation algorithm to predict which exams are most likely to be clicked based on features like `subject`, `difficulty`, or `topics`.
    - For example, calculate a “relevance score” based on the student’s past interactions:
      ```javascript
      const enrichedData = examsData.map(exam => ({
@@ -355,7 +355,7 @@ const { data: examsData, error: examsError } = await supabase
     total_marks,
     sort_date,
     difficulty,
-    tags,
+    topics,
     user_exam_metadata
   `)
   .in("subject", studentPreferences.subjects)
@@ -370,7 +370,7 @@ const formattedExams = examsData.map(exam => ({
   id: exam.id,
   title: `${exam.subject_id} Exam (${exam.difficulty})`,
   details: `${exam.question_count} questions, ${exam.total_marks} marks`,
-  tags: exam.tags.join(", "),
+  topics: exam.topics.join(", "),
   action: "Start Exam"
 }));
 
@@ -381,7 +381,7 @@ return {
 ```
 
 ### Notes
-- **Data Dependency**: The effectiveness of personalization depends on the quality of data in `user_exam_metadata`, `tags`, or related tables. Ensure these fields are populated with meaningful data.
+- **Data Dependency**: The effectiveness of personalization depends on the quality of data in `user_exam_metadata`, `topics`, or related tables. Ensure these fields are populated with meaningful data.
 - **Supabase Features**: Use Supabase’s Row-Level Security to ensure students only see their own `user_exam_metadata`.
 - **Testing the Goal**: Achieving exactly 90% engagement requires experimentation and data analysis. Start with a smaller goal (e.g., 70%) and iterate based on analytics.
 - **Edge Cases**: Handle cases where no exams match the criteria (e.g., return a fallback set of exams or a message like “No exams available, try adjusting filters”).
