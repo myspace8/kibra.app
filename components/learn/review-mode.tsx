@@ -126,9 +126,9 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
                   <span className="text-xs text-gray-500">Difficulty: {currentQuestion.difficulty}</span>
                 </div>
                 <h2 className="text-base font-bold leading-tight tracking-tight">{currentQuestion.question}</h2>
-                {currentQuestion.media_url && (
+                {/* {currentQuestion.media_url && (
                   <img src={currentQuestion.media_url} alt="Question media" className="max-w-[200px] mt-2" />
-                )}
+                )} */}
               </div>
             </div>
             {currentQuestion.question_type === "objective" && currentQuestion.options && (
