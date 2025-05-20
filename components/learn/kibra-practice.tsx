@@ -32,6 +32,7 @@ import type { Question } from "@/types/question"
 import { useSession } from "next-auth/react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
+import { quizData } from "@/data/quiz-data"
 
 type KibraPracticeProps = {
   questions: Question[];
@@ -323,7 +324,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
           <div className="bg-gradient-to-br from-primary/90 to-primary p-6 text-white">
             <h2 className="text-2xl font-bold tracking-tight mb-1">Quiz Completed!</h2>
             <p className="text-white/80 text-base">
-              {quizTitle ? `You've completed "${quizTitle}"` : "You've completed all questions"}. Here's how you did:
+                {quizTitle ? `You've completed "${quizTitle} ${waecExamYear}"` : "You've completed all questions"}. Here's how you did:
             </p>
           </div>
           <div className="p-6 flex flex-col items-center">
