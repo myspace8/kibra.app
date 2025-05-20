@@ -105,6 +105,12 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [exams, setExams] = useState<Exam[]>([])
 
+  const renderQuestionText = (text: string) => {
+    // Simple parsing for <u> tags to underline text
+    return { __html: text.replace(/<u>(.*?)<\/u>/g, '<span style="text-decoration: underline; text-underline-offset: 2px;">$1</span>') };
+  };
+
+
   useEffect(() => {
     setQuestions(initialQuestions)
     setCurrentQuestionIndex(0)
@@ -381,7 +387,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
 
     return (
       <>
-        <div className="flex flex-col items-center justify-center p-6 text-center">
+        <div className="flex flex-col underline-offset-2 items-center justify-center p-6 text-center">
           {session ? (
             <h2 className="text-2xl font-semibold leading-tight tracking-tight">
               {greeting}, {userName}.
@@ -608,7 +614,9 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
       <Card className="overflow-hidden border-0 rounded-none bg-inherit shadow-none">
         <div className="py-5">
           <div className="flex justify-between items-start mb-4">
-            <h2 className="text-base leading-tight tracking-tight">{currentQuestion.question}</h2>
+            <h2 className="text-base leading-tight tracking-tight"
+             dangerouslySetInnerHTML={renderQuestionText(currentQuestion.question)}
+              />
             {/* {currentQuestion.media_url && (
               <img src={currentQuestion.media_url} alt="Question media" className="max-w-[200px] mt-2" />
             )} */}
