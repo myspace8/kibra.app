@@ -23,6 +23,7 @@ import {
   ChevronDown,
   Loader2,
   RefreshCw,
+  Home,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -30,6 +31,7 @@ import { ReviewMode } from "@/components/learn/review-mode"
 import type { Question } from "@/types/question"
 import { useSession } from "next-auth/react"
 import { supabase } from "@/lib/supabase"
+import Link from "next/link"
 
 type KibraPracticeProps = {
   questions: Question[];
@@ -38,6 +40,8 @@ type KibraPracticeProps = {
   waecExamType?: string;
   quizTitle?: string;
   onQuizComplete?: () => void;
+  waecExamYear?: string; // Add waecExamYear to the props
+
 };
 
 // Interfaces
@@ -80,7 +84,7 @@ interface Exam {
   completed: boolean
 }
 
-export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, onQuizComplete, onSelectQuizSource }: KibraPracticeProps) {
+export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, waecExamYear, onQuizComplete, onSelectQuizSource }: KibraPracticeProps) {
   const { data: session } = useSession()
   const [questions, setQuestions] = useState<Question[]>(initialQuestions)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -364,8 +368,12 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
               </Button>
               <Button onClick={resetQuiz} variant="outline" className="gap-2 px-4 py-2 text-sm font-medium hover:scale-105">
                 <RotateCcw size={16} />
-                Restart Quiz
+                Restart
               </Button>
+              <Link href={"/learn"} className="text-primary underline-offset-4 hover:underline px-4 py-2 hover:scale-105 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
+                <Home />
+                <span>Go Home</span>
+              </Link>
             </div>
           </div>
         </Card>
@@ -557,7 +565,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     <div className="flex flex-col items-center gap-2">
       {sourceReference && (
         <p className="text-xs text-gray-500 max-w-[35vw] text-center">
-          {sourceReference} ({waecExamType || ""})
+          {sourceReference} ({waecExamType || ""}{waecExamYear ? `, ${waecExamYear}` : ""})
         </p>
       )}
       <span className="bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
@@ -568,12 +576,16 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
 
   return (
     <div className="space-y-4">
+      <Link href="/learn" className="flex items-center gap-2 w-max p-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+        <ChevronLeft size={16} />
+        {/* <span className="text-sm font-medium">Go back</span> */}
+      </Link>
       <div className="flex items-center justify-between w-full relative pb-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setShowDetails(!showDetails)}
-          className="flex items-center gap-2 hover:bg-gray-400 dark:hover:bg-gray-800 absolute bottom-[-15px] right-0"
+          className="flex items-center gap-2 hover:bg-gray-200 border-black dark:hover:bg-gray-800 absolute bottom-[-15px] right-0 transition-colors"
           aria-label={showDetails ? "Hide question details" : "Show question details"}
         >
           {showDetails ? (
@@ -615,8 +627,8 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
         <div className="py-5">
           <div className="flex justify-between items-start mb-4">
             <h2 className="text-base leading-tight tracking-tight"
-             dangerouslySetInnerHTML={renderQuestionText(currentQuestion.question)}
-              />
+              dangerouslySetInnerHTML={renderQuestionText(currentQuestion.question)}
+            />
             {/* {currentQuestion.media_url && (
               <img src={currentQuestion.media_url} alt="Question media" className="max-w-[200px] mt-2" />
             )} */}

@@ -30,6 +30,7 @@ export default function ExamPage({ params }: PageProps) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [quizTitle, setQuizTitle] = useState<string>("");
   const [waecExamType, setWaecExamType] = useState<string>("");
+  const [waecExamYear, setWaecExamYear] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,11 +61,15 @@ export default function ExamPage({ params }: PageProps) {
         const exam: Exam = examData as Exam;
         const subjectName = examData.subject;
         const source = exam.exam_source;
+        const examYear = source === "waec" ? exam.waec_exam_metadata?.exam_year : null;
         const institution =
           source === "waec" ? exam.waec_exam_metadata?.region || "WAEC" : "Unknown";
         setQuizTitle(`${subjectName} - ${institution} (${source})`);
         if (exam.exam_source === "waec" && exam.waec_exam_metadata) {
           setWaecExamType(exam.waec_exam_metadata.exam_type);
+        }
+        if (exam.exam_source === "waec" && exam.waec_exam_metadata) {
+          setWaecExamYear(exam.waec_exam_metadata.exam_year.toString());
         }
 
         // Fetch questions
@@ -159,6 +164,7 @@ export default function ExamPage({ params }: PageProps) {
         open={true}
         waecExamType={waecExamType}
         quizTitle={quizTitle}
+        waecExamYear={waecExamYear}
       />
     </div>
   );
