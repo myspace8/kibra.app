@@ -37,6 +37,7 @@ import { quizData } from "@/data/quiz-data"
 type KibraPracticeProps = {
   questions: Question[];
   open: boolean;
+  examId?: string; // Add examId as an optional prop
   onSelectQuizSource?: (examId: string) => void;
   waecExamType?: string;
   quizTitle?: string;
@@ -85,7 +86,7 @@ interface Exam {
   completed: boolean
 }
 
-export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, waecExamYear, onQuizComplete, onSelectQuizSource }: KibraPracticeProps) {
+export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, waecExamYear, examId, onQuizComplete, onSelectQuizSource }: KibraPracticeProps) {
   const { data: session } = useSession()
   const [questions, setQuestions] = useState<Question[]>(initialQuestions)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -220,41 +221,63 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   }
 
   const confirmAnswer = () => {
-    if (!tentativeOption) return
-    setSelectedOption(tentativeOption)
-    setShowExplanation(true)
+    if (!tentativeOption) return;
+    setSelectedOption(tentativeOption);
+    setShowExplanation(true);
     if (!answeredQuestions.includes(currentQuestion.id)) {
       const isCorrect = Array.isArray(currentQuestion.correct_answers)
         ? currentQuestion.correct_answers.includes(tentativeOption)
-        : tentativeOption === currentQuestion.correct_answers
-      setAnsweredQuestions((prev) => [...prev, currentQuestion.id])
+        : tentativeOption === currentQuestion.correct_answers;
+      setAnsweredQuestions((prev) => [...prev, currentQuestion.id]);
       setUserAnswers((prev) => ({
         ...prev,
         [currentQuestion.id]: tentativeOption,
-      }))
+      }));
       if (isCorrect) {
-        setCorrectAnswers((prev) => [...prev, currentQuestion.id])
-        setScore((prev) => prev + (currentQuestion.marks || 1))
+        setCorrectAnswers((prev) => [...prev, currentQuestion.id]);
+        setScore((prev) => prev + (currentQuestion.marks || 1));
       }
-      if (answeredQuestions.length + 1 === totalQuestions) {
-        setQuizCompleted(true)
-        if (onQuizComplete) onQuizComplete()
+      const newAnsweredCount = answeredQuestions.length + 1;
+      if (newAnsweredCount === totalQuestions) {
+        console.log("Quiz completed, setting quizCompleted to true", { newAnsweredCount, totalQuestions });
+        setQuizCompleted(true);
+        if (onQuizComplete) onQuizComplete();
       }
     }
-    setTentativeOption(null)
-    setShowHint(false)
-  }
+    setTentativeOption(null);
+    setShowHint(false);
+  };
 
-  const handleNextQuestion = () => {
-    if (isLastQuestion && quizCompleted) setShowResults(true)
-    else if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
-      setSelectedOption(null)
-      setTentativeOption(null)
-      setShowExplanation(answeredQuestions.includes(questions[currentQuestionIndex + 1].id))
-      setShowHint(false)
+
+  const handleNextQuestion = async () => {
+    console.log("handleNextQuestion called", { isLastQuestion, quizCompleted, currentQuestionIndex, totalQuestions, answeredQuestions });
+    if (isLastQuestion && quizCompleted) {
+      if (examId) {
+        console.log("Incrementing completion count for examId:", examId);
+        try {
+          const { error } = await supabase
+            .rpc("increment_exam_completion", { p_exam_id: examId });
+
+          if (error) {
+            console.error("Failed to increment exam completion count:", error.message);
+          } else {
+            console.log("Successfully incremented completion count for examId:", examId);
+          }
+        } catch (err) {
+          console.error("Error incrementing exam completion:", err);
+        }
+      } else {
+        console.error("examId is undefined");
+      }
+      setShowResults(true);
+    } else if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedOption(null);
+      setTentativeOption(null);
+      setShowExplanation(answeredQuestions.includes(questions[currentQuestionIndex + 1].id));
+      setShowHint(false);
     }
-  }
+  };
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
@@ -322,7 +345,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <Card className="overflow-hidden border-0 shadow-lg">
           <div className="bg-gradient-to-br from-primary/90 to-primary p-6 text-white">
-            <h2 className="text-2xl font-bold tracking-tight mb-1">Quiz Completed!</h2>
+            <h2 className="text-2xl font-bold tracking-tight mb-1">Completed!</h2>
             <p className="text-white/80 text-base">
                 {quizTitle ? `You've completed "${quizTitle} ${waecExamYear}"` : "You've completed all questions"}. Here's how you did:
             </p>
@@ -566,7 +589,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     <div className="flex flex-col items-center gap-2">
       {sourceReference && (
         <p className="text-xs text-gray-500 max-w-[35vw] text-center">
-          {sourceReference} ({waecExamType || ""}{waecExamYear ? `, ${waecExamYear}` : ""})
+          {"Trial"} ({waecExamType || ""}{waecExamYear ? `, ${waecExamYear}` : ""})
         </p>
       )}
       <span className="bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">

@@ -398,7 +398,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-sm font-medium text-left">
-                    {subject} {examType} {examDate && `(${examDate})`}
+                    {subject} {examType} {examDate && `(${examDate})`} Trial
                   </h3>
                   <div className="mt-1 flex flex-col gap-1 text-xs text-muted-foreground">
                     <div className="flex items-center gap-3">

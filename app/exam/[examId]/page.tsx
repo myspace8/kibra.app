@@ -162,6 +162,7 @@ export default function ExamPage({ params }: PageProps) {
       <KibraPractice
         questions={questions}
         open={true}
+        examId={examId} // Pass examId as a prop
         waecExamType={waecExamType}
         quizTitle={quizTitle}
         waecExamYear={waecExamYear}
