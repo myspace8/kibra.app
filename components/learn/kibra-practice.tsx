@@ -754,11 +754,11 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                   <p className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">
                     {currentQuestion.explanation}
                   </p>
-                  {currentQuestion.ai_feedback && (
+                  {/* {currentQuestion.ai_feedback && (
                     <p className="mt-2 text-blue-700 dark:text-blue-300 text-xs">
                       Feedback: {currentQuestion.ai_feedback}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </motion.div>
             )}
