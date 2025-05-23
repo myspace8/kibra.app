@@ -11,9 +11,9 @@ import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { supabase } from "@/lib/supabase"
 import { useSession } from "next-auth/react"
-import { toast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { toast } from "react-hot-toast";
 
 // Interfaces
 interface Subject {
@@ -336,16 +336,9 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
     e.stopPropagation();
     const shareUrl = `${window.location.origin}/exam/${examId}`;
     navigator.clipboard.writeText(shareUrl).then(() => {
-      toast({
-        title: "Link Copied",
-        description: "Share this link with your friends!",
-      });
-    }).catch((err) => {
-      toast({
-        title: "Error",
-        description: "Failed to copy link: " + err.message,
-        variant: "destructive",
-      });
+      toast.success("Link Copied! Share this link with your friends!");
+        }).catch((err) => {
+      toast.error("Failed to copy link: " + err.message);
     });
   };
 

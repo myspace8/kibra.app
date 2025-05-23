@@ -4,7 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { NavigationProvider } from "@/contexts/navigation-context"
 import { AuthProvider } from "./providers"
-import { Toast, ToastProvider } from "@/components/ui/toast";
+import { Toaster } from "react-hot-toast"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,9 +20,7 @@ export default function RootLayout({
           <NavigationProvider>
             <AuthProvider>
               {children}
-              <ToastProvider>
-                <Toast />
-              </ToastProvider>
+                <Toaster />
             </AuthProvider>
           </NavigationProvider>
         </ThemeProvider>
