@@ -237,7 +237,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
             <ChevronRight size={14} />
           </Button>
         </div>
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <Button
             variant="outline"
             className="gap-2 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 hover:border-purple-300 hover:from-purple-100 hover:to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 dark:border-purple-800 dark:hover:border-purple-700 w-full"
@@ -253,7 +253,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
               <p className="text-purple-900 dark:text-purple-200 text-xs leading-relaxed">{aiNote}</p>
             </div>
           )}
-        </div>
+        </div> */}
       </motion.div>
     )
   }
@@ -327,7 +327,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
           <ArrowLeft size={16} />
           Back to Results
         </Button>
-        <Button
+        {/* <Button
           variant="outline"
           className="gap-2 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 hover:border-purple-300 hover:from-purple-100 hover:to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 dark:border-purple-800 dark:hover:border-purple-700 w-full"
           onClick={handleGenerateAINote}
@@ -335,7 +335,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
         >
           <Sparkles size={16} className="text-purple-500" />
           {generatingNote ? "Generating..." : "Generate AI Study Note"}
-        </Button>
+        </Button> */}
       </div>
     </motion.div>
   )
