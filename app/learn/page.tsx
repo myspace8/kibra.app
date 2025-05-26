@@ -151,7 +151,7 @@ export default function Learn() {
         `)
         .eq("id", examId)
         .eq("status", "Published")
-        .limit(3)
+        .limit(2)
         .order("sort_date", { ascending: false })
         .single();
 
@@ -272,15 +272,16 @@ export default function Learn() {
                 ) : (
                   <h2 className="text-2xl font-semibold tracking-tight">Welcome to Kibra.</h2>
                 )}
-                <p className="text-2xl leading-tight text-gray-600 dark:text-gray-400 mb-6">
-                  Learn by solving
-                </p>
+                <p className="text-sm leading-tight text-gray-600 dark:text-gray-400 mb-6">
+                Quickly test your proficiency level on topics WAEC mostly set questions from 
+                </p> 
               </div>
               <div className="w-full max-w-2xl space-y-4 m-auto">
                 {exams.length === 0 ? (
                   <p className="text-center text-gray-500">No exams available. Please try again later.</p>
                 ) : (
                   <div className="space-y-3 pb-8" style={{ scrollbarWidth: "thin" }}>
+                    <h3>Recommeded tests</h3>
                     {exams.map((exam) => {
                       // const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject";
                       const institution =
