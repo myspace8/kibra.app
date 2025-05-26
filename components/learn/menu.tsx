@@ -417,7 +417,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                         {exam.topics.slice(0, showMoretopics[exam.id] ? 18 : 3).map((tag) => (
                           <span
                             key={tag}
-                            className="px-1.5 py-0.5 text-xs w-max bg-gray-100 dark:bg-gray-800 rounded-full"
+                            className="py-0.5 text-xs underline underline-offset-4"
                           >
                             {tag}
                           </span>
