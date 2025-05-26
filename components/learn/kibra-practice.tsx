@@ -577,56 +577,66 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     )
   }
 
-  const QuizHeader = ({ quizTitle, topic, subtopic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (
+  const QuizHeader = ({ quizTitle, topic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (
     <div className="flex flex-col items-center gap-2">
       {quizTitle && (
         <h1 className="text-xs font-medium text-center text-gray-500 max-w-[35vw] md:max-w-[45vw] leading-tight">
           {quizTitle}
         </h1>
       )}
-      {(topic || subtopic) && (
-        <div className="flex flex-col items-center gap-1">
-          {topic && <span className="text-xs text-gray-500">{topic}</span>}
-          {subtopic && <span className="text-xs text-gray-500">{subtopic}</span>}
+      {(topic) && (
+        <div className="flex flex-col items-center gap-1 max-w-[64%]">
+          {topic && <span className="text-xs text-gray-500 text-center">{topic}</span>}
         </div>
       )}
     </div>
   )
 
-  const QuizFooter = ({ sourceReference, waecExamType, currentIndex, total }: { sourceReference?: string; waecExamType?: string; currentIndex: number; total: number }) => (
+  const QuizFooter = ({ sourceReference, waecExamType }: { sourceReference?: string; waecExamType?: string; currentIndex: number; total: number }) => (
     <div className="flex flex-col items-center gap-2">
       {sourceReference && (
         <p className="text-xs text-gray-500 max-w-[35vw] text-center">
-          {"Trial"} ({waecExamType || ""}{waecExamYear ? `, ${waecExamYear}` : ""})
+          {"Trial"} <br /> ({waecExamType || ""}{waecExamYear ? `, ${waecExamYear}` : ""})
         </p>
       )}
-      <span className="bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
-        Q {currentIndex + 1}/{total}
-      </span>
+
     </div>
   )
 
   return (
     <div className="space-y-4">
-      <Link href="/learn" className="flex items-center gap-2 w-max p-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-        <ChevronLeft size={16} />
-      </Link>
-      <div className="flex items-center justify-between w-full relative pb-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowDetails(!showDetails)}
-          className="flex items-center gap-2 hover:bg-gray-200 border-black dark:hover:bg-gray-800 absolute bottom-[-15px] right-0 transition-colors"
-          aria-label={showDetails ? "Hide question details" : "Show question details"}
-        >
-          {showDetails ? <ChevronUp size={16} className="text-gray-500" /> : <ChevronDown size={16} className="text-gray-500" />}
-        </Button>
-        {showDetails && (
-          <div className="flex items-center justify-between w-full gap-2">
-            <QuizHeader quizTitle={quizTitle} topic={currentQuestion.topic} subtopic={currentQuestion.subtopic} />
-            <QuizFooter sourceReference={currentQuestion.source_reference} waecExamType={waecExamType} currentIndex={currentQuestionIndex} total={totalQuestions} />
+      <div className="flex flex-col items-start gap-3">
+        <div className="flex items-start justify-between w-full">
+          <Link href="/learn" className="flex items-center gap-2 w-max p-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <ChevronLeft size={16} />
+          </Link>
+          <div className="flex items-center justify-between w-full relative">
+
+            {showDetails && (
+              <div className="flex items-start justify-between w-full gap-2">
+                <QuizHeader quizTitle={quizTitle} topic={currentQuestion.topic} />
+                <QuizFooter sourceReference={currentQuestion.source_reference} waecExamType={waecExamType} currentIndex={currentQuestionIndex} total={totalQuestions} />
+              </div>
+            )}
           </div>
-        )}
+
+        </div>
+        <div className="flex justify-between w-full">
+          <div className="flex justify-center items-center bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
+            Q {currentQuestionIndex + 1}/{totalQuestions}
+          </div>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowDetails(!showDetails)}
+            className="flex items-center gap-2 hover:bg-gray-200 border-black dark:hover:bg-gray-800 absolut bottom-[-15px] right-0 transition-colors"
+            aria-label={showDetails ? "Hide question details" : "Show question details"}
+          >
+            {showDetails ? <ChevronUp size={16} className="text-gray-500" /> : <ChevronDown size={16} className="text-gray-500" />}
+          </Button>
+        </div>
+
       </div>
       <div className="relative h-[0.786px]">
         <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
@@ -722,21 +732,24 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
           )}
           <AnimatePresence>
             {showExplanation && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="mt-5 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800"
-              >
-                <div className="p-3">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <AlertCircle size={14} className="text-blue-600 dark:text-blue-400" />
-                    <h3 className="font-semibold text-blue-800 dark:text-blue-300 text-xs">Explanation</h3>
+              <>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-5 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800"
+                >
+                  <div className="p-3">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <AlertCircle size={14} className="text-blue-600 dark:text-blue-400" />
+                      <h3 className="font-semibold text-blue-800 dark:text-blue-300 text-xs">Explanation</h3>
+                    </div>
+                    <p className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">{currentQuestion.explanation}</p>
                   </div>
-                  <p className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">{currentQuestion.explanation}</p>
-                </div>
-              </motion.div>
+                </motion.div>
+                <div className="min-h-[12vh]"></div>
+              </>
             )}
           </AnimatePresence>
           <div className="hidden mt-5 md:flex justify-between">

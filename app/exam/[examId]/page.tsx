@@ -64,7 +64,7 @@ export default function ExamPage({ params }: PageProps) {
         const examYear = source === "waec" ? exam.waec_exam_metadata?.exam_year : null;
         const institution =
           source === "waec" ? exam.waec_exam_metadata?.region || "WAEC" : "Unknown";
-        setQuizTitle(`${subjectName} - ${institution} (${source})`);
+        setQuizTitle(`${subjectName}`);
         if (exam.exam_source === "waec" && exam.waec_exam_metadata) {
           setWaecExamType(exam.waec_exam_metadata.exam_type);
         }
