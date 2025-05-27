@@ -622,9 +622,58 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
 
         </div>
         <div className="flex justify-between w-full">
-          <div className="flex justify-center items-center bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs">
-            Q {currentQuestionIndex + 1}/{totalQuestions}
-          </div>
+          <>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex justify-center items-center bg-primary/10 text-primary font-medium rounded-full px-3 py-1 text-xs"
+            >
+              Q {currentQuestionIndex + 1}/{totalQuestions}
+            </button>
+            {isModalOpen && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-3">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-semibold">Jump to Question</h2>
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                      aria-label="Close modal"
+                    >
+                      <XCircle size={20} />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-5 gap-3">
+                    {questions.map((_, index) => {
+                      const isAnswered = answeredQuestions.includes(questions[index].id);
+                      const isCorrect = correctAnswers.includes(questions[index].id);
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setCurrentQuestionIndex(index);
+                            setIsModalOpen(false);
+                          }}
+                          className={cn(
+                            "w-10 h-10 flex items-center justify-center rounded-full text-sm font-medium transition-colors",
+                            isAnswered
+                              ? isCorrect
+                                ? "bg-green-500 text-white"
+                                : "bg-red-500 text-white"
+                              : index === currentQuestionIndex
+                                ? "bg-primary text-white"
+                                : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                          )}
+                          aria-label={`Go to question ${index + 1}`}
+                        >
+                          {index + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
 
           <Button
             variant="ghost"
