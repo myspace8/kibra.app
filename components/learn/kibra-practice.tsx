@@ -606,7 +606,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   return (
     <div className="space-y-4">
       <div className="flex flex-col items-start gap-3">
-        <div className="flex items-start justify-between w-full">
+        <div className="flex items-start justify-between w-full gap-2">
           <Link href="/learn" className="flex items-center gap-2 w-max p-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
             <ChevronLeft size={16} />
           </Link>
