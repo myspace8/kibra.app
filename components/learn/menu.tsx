@@ -347,7 +347,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                       {exam.topics.slice(0, showMoretopics[exam.id] ? 18 : 3).map((tag) => (
                         <span
                           key={tag}
-                          className="py-0.5 text-xs underline underline-offset-4"
+                          className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md dark:bg-green-900/30 dark:text-green-400"
                         >
                           {tag}
                         </span>
@@ -364,7 +364,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                           }}
                           role="button"
                           tabIndex={0}
-                          className="px-1.5 py-0.5 text-xs w-max bg-gray-200 dark:bg-gray-700 rounded-full text-primary cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
