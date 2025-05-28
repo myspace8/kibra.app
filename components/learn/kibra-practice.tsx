@@ -13,11 +13,6 @@ import {
   AlertCircle,
   HelpCircle,
   EyeOff,
-  BookOpen,
-  Building2,
-  Globe,
-  User,
-  Clock,
   ChevronUp,
   ChevronDown,
   Loader2,
@@ -31,7 +26,6 @@ import type { Question } from "@/types/question"
 import { useSession } from "next-auth/react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
-import { quizData } from "@/data/quiz-data"
 
 type KibraPracticeProps = {
   questions: Question[];
@@ -43,53 +37,13 @@ type KibraPracticeProps = {
   onQuizComplete?: () => void;
   waecExamYear?: string;
 };
-
-interface Subject {
-  id: number
-  name: string
-}
-
-interface Exam {
-  id: string
-  exam_source: "school" | "waec" | "user"
-  subject_id: number
-  question_count: number
-  total_marks: number
-  sort_date: string
-  difficulty: "Easy" | "Medium" | "Hard"
-  topics: string[]
-  school_exam_metadata?: {
-    school: string
-    grade_level: string
-    date: string
-    exam_type: string
-    examiner: string
-    school_location?: { region: string; city?: string; country?: string }
-  }
-  waec_exam_metadata?: {
-    exam_type: "BECE" | "WASSCE"
-    exam_year: number
-    exam_session: "May/June" | "November/December"
-    region: string
-    syllabus_version: string
-  }
-  user_exam_metadata?: {
-    creator_id: string
-    creator_name: string
-    date?: string
-    exam_type?: string
-    description?: string
-  }
-  completed: boolean
-}
-
 interface Student {
   id: number;
   name: string;
   code: string;
 }
 
-export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, waecExamYear, examId, onQuizComplete, onSelectQuizSource }: KibraPracticeProps) {
+export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, waecExamYear, examId, onQuizComplete }: KibraPracticeProps) {
   const { data: session } = useSession()
   const [questions, setQuestions] = useState<Question[]>(initialQuestions)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -107,12 +61,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   const [userAnswers, setUserAnswers] = useState<Record<number, string | string[]>>({})
   const [eliminatedOptions, setEliminatedOptions] = useState<Record<number, string[]>>({})
   const [showDetails, setShowDetails] = useState(true)
-
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [showMoretopics, setShowMoretopics] = useState<Record<string, boolean>>({})
-  const [subjects, setSubjects] = useState<Subject[]>([])
-  const [exams, setExams] = useState<Exam[]>([])
   const [students, setStudents] = useState<Student[]>([])
 
   // Modal and form state
@@ -172,66 +120,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     setUserAnswers({})
     setEliminatedOptions({})
   }, [initialQuestions])
-
-  const fetchData = async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const [subjectsData, examsData, studentsData] = await Promise.all([
-        supabase.from("subjects").select("id, name").order("name"),
-        supabase.from("exams").select(`
-          id,
-          exam_source,
-          subject_id,
-          question_count,
-          total_marks,
-          sort_date,
-          difficulty,
-          topics,
-          school_exam_metadata,
-          waec_exam_metadata,
-          user_exam_metadata
-        `).eq("status", "Published").limit(3).order("sort_date", { ascending: false }),
-        supabase.from("students").select("id, name, code"),
-      ])
-
-      if (subjectsData.error) throw new Error("Failed to fetch subjects: " + subjectsData.error.message)
-      if (examsData.error) throw new Error("Failed to fetch exams: " + examsData.error.message)
-      if (studentsData.error) throw new Error("Failed to fetch students: " + studentsData.error.message)
-
-      console.log("Subjects fetched:", subjectsData.data)
-      setSubjects(subjectsData.data)
-
-      const completedExamsFromStorage = loadCompletedExams();
-      const formattedExams: Exam[] = examsData.data.map((exam: any) => ({
-        id: exam.id,
-        exam_source: exam.exam_source,
-        subject_id: exam.subject_id,
-        question_count: exam.question_count,
-        total_marks: exam.total_marks,
-        sort_date: exam.sort_date,
-        difficulty: exam.difficulty,
-        topics: exam.topics,
-        school_exam_metadata: exam.school_exam_metadata,
-        waec_exam_metadata: exam.waec_exam_metadata,
-        user_exam_metadata: exam.user_exam_metadata,
-        completed: completedExamsFromStorage.includes(exam.id),
-      }))
-      setExams(formattedExams)
-
-      setStudents(studentsData.data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred while fetching data.")
-      console.error("Fetch error:", err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (open) fetchData()
-  }, [open])
 
   const currentQuestion = questions[currentQuestionIndex]
   const totalQuestions = questions.length
@@ -401,15 +289,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     }
   }
 
-  if (!initialQuestions || initialQuestions.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          No questions available. Please select an exam.
-        </p>
-      </div>
-    );
-  }
 
   if (showReviewMode) {
     return (
@@ -599,7 +478,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
           {"Trial"} <br /> ({waecExamType || ""}{waecExamYear ? `, ${waecExamYear}` : ""})
         </p>
       )}
-
     </div>
   )
 
@@ -611,7 +489,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
             <ChevronLeft size={16} />
           </Link>
           <div className="flex items-center justify-between w-full relative">
-
             {showDetails && (
               <div className="flex items-start justify-between w-full gap-2">
                 <QuizHeader quizTitle={quizTitle} topic={currentQuestion.topic} />
@@ -619,7 +496,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
               </div>
             )}
           </div>
-
         </div>
         <div className="flex justify-between w-full">
           <>
@@ -685,7 +561,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
             {showDetails ? <ChevronUp size={16} className="text-gray-500" /> : <ChevronDown size={16} className="text-gray-500" />}
           </Button>
         </div>
-
       </div>
       <div className="relative h-[0.786px]">
         <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
@@ -797,7 +672,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                     <p className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">{currentQuestion.explanation}</p>
                   </div>
                 </motion.div>
-                <div className="min-h-[12vh]"></div>
+                <div className="min-h-[12vh] md:min-h-0"></div>
               </>
             )}
           </AnimatePresence>

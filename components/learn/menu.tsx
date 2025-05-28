@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Search, CheckCircle, Clock, ArrowRight, Building2, Globe, User, Loader2, Filter, Link2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
@@ -25,6 +24,7 @@ interface Exam {
   id: string
   exam_source: "school" | "waec" | "user"
   subject_id: number
+  exam_type: "BECE" | "WASSCE"
   question_count: number
   total_marks: number
   sort_date: string
@@ -34,12 +34,10 @@ interface Exam {
     school: string
     grade_level: string
     date: string
-    exam_type: string
     examiner: string
     school_location?: { region: string; city?: string; country?: string }
   }
   waec_exam_metadata?: {
-    exam_type: "BECE" | "WASSCE"
     exam_year: number
     exam_session: "May/June" | "November/December"
     region: string
@@ -49,15 +47,9 @@ interface Exam {
     creator_id: string
     creator_name: string
     date?: string
-    exam_type?: string
     description?: string
   }
   completed: boolean
-}
-
-interface UserSettings {
-  educationalLevel: "JHS" | "SHS" | "Other"
-  favoriteSubject: string
 }
 
 interface MenuProps {
@@ -66,21 +58,9 @@ interface MenuProps {
   onSelectQuizSource?: (examId: string) => void
 }
 
-// Utility to get user settings from local storage
-const getUserSettings = (): UserSettings => {
-  if (typeof window === "undefined") {
-    return { educationalLevel: "JHS", favoriteSubject: "Mathematics" }
-  }
-  const settings = localStorage.getItem("userSettings")
-  return settings
-    ? JSON.parse(settings)
-    : { educationalLevel: "JHS", favoriteSubject: "Mathematics" }
-}
-
-export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
+export function Menuu({ open, onOpenChange }: MenuProps) {
   const { data: session } = useSession()
   const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState<"waec" | "school" | "recommended" | "user">("waec")
   const [sortBy, setSortBy] = useState<"name" | "difficulty" | "date">("date")
   const [filterDifficulty, setFilterDifficulty] = useState<"All" | "Easy" | "Medium" | "Hard">("All")
   const [filterExamType, setFilterExamType] = useState<string>("All")
@@ -88,12 +68,10 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showFilters, setShowFilters] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const [showMoretopics, setShowMoretopics] = useState<Record<string, boolean>>({})
 
   // Fetch user settings
-  const userSettings = getUserSettings()
 
   // Fetch initial data
   useEffect(() => {
@@ -137,6 +115,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
           id: exam.id,
           exam_source: exam.exam_source,
           subject_id: exam.subject_id,
+          exam_type: exam.exam_type,
           question_count: exam.question_count,
           total_marks: exam.total_marks,
           sort_date: exam.sort_date,
@@ -183,6 +162,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                 id: newExam.id,
                 exam_source: newExam.exam_source,
                 subject_id: newExam.subject_id,
+                exam_type: newExam.exam_type,
                 question_count: newExam.question_count,
                 total_marks: newExam.total_marks,
                 sort_date: newExam.sort_date,
@@ -214,25 +194,6 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
       supabase.removeChannel(channel)
     }
   }, [open, session?.user?.id])
-
-  // Memoized recommended exams
-  const recommendedExams = useMemo(() => {
-    return exams
-      .filter((exam) => {
-        const subjectName = subjects.find((s) => s.id === exam.subject_id)?.name
-        const isSubjectMatch = subjectName === userSettings.favoriteSubject
-        const isLevelMatch =
-          (userSettings.educationalLevel === "JHS" &&
-            (exam.waec_exam_metadata?.exam_type === "BECE" ||
-              exam.school_exam_metadata?.grade_level === "JHS")) ||
-          (userSettings.educationalLevel === "SHS" &&
-            (exam.waec_exam_metadata?.exam_type === "WASSCE" ||
-              exam.school_exam_metadata?.grade_level === "SHS"))
-        return isSubjectMatch && isLevelMatch && !exam.completed
-      })
-      .sort((a, b) => new Date(b.sort_date).getTime() - new Date(a.sort_date).getTime())
-      .slice(0, 5)
-  }, [exams, subjects, userSettings])
 
   // Filter and sort exams
   const filterAndSortExams = useCallback(
@@ -272,10 +233,10 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
       if (filterExamType !== "All") {
         filtered = filtered.filter((exam) =>
           exam.exam_source === "school"
-            ? exam.school_exam_metadata?.exam_type === filterExamType
+            ? exam.exam_type === filterExamType
             : exam.exam_source === "waec"
-              ? exam.waec_exam_metadata?.exam_type === filterExamType
-              : exam.user_exam_metadata?.exam_type === filterExamType
+              ? exam.exam_type === filterExamType
+              : exam.exam_type === filterExamType
         )
       }
 
@@ -296,41 +257,11 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
     [searchQuery, sortBy, filterDifficulty, filterExamType, subjects]
   )
 
-  // Filtered exams by source
-  const filteredSchoolExams = useMemo(
-    () => filterAndSortExams(exams.filter((exam) => exam.exam_source === "school")),
-    [exams, filterAndSortExams]
-  )
   const filteredWaecExams = useMemo(
     () => filterAndSortExams(exams.filter((exam) => exam.exam_source === "waec")),
     [exams, filterAndSortExams]
   )
-  const filteredUserExams = useMemo(
-    () => filterAndSortExams(exams.filter((exam) => exam.exam_source === "user")),
-    [exams, filterAndSortExams]
-  )
 
-  // Unique exam types for filter
-  const examTypes = useMemo(() => {
-    const types = new Set<string>()
-    exams.forEach((exam) => {
-      if (exam.exam_source === "school" && exam.school_exam_metadata?.exam_type) {
-        types.add(exam.school_exam_metadata.exam_type)
-      } else if (exam.exam_source === "waec" && exam.waec_exam_metadata?.exam_type) {
-        types.add(exam.waec_exam_metadata.exam_type)
-      } else if (exam.exam_source === "user" && exam.user_exam_metadata?.exam_type) {
-        types.add(exam.user_exam_metadata.exam_type)
-      }
-    })
-    return ["All", ...Array.from(types).sort()]
-  }, [exams])
-
-  const handleExamClick = (examId: string) => {
-    if (onSelectQuizSource) {
-      onSelectQuizSource(examId)
-    }
-    onOpenChange(false)
-  }
 
   const handleCopyLink = (examId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -359,10 +290,10 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
               : exam.user_exam_metadata?.creator_name || "Unknown"
           const examType =
             exam.exam_source === "school"
-              ? exam.school_exam_metadata?.exam_type
+              ? exam.exam_type
               : exam.exam_source === "waec"
-                ? exam.waec_exam_metadata?.exam_type
-                : exam.user_exam_metadata?.exam_type || "Custom"
+                ? exam.exam_type
+                : exam.exam_type || "Custom"
           const examDate =
             exam.exam_source === "school"
               ? exam.school_exam_metadata?.date
@@ -380,7 +311,6 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                   ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-900/20"
                   : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-gray-950 dark:hover:border-gray-700"
               )}
-              onClick={() => handleExamClick(exam.id)}
             >
               <div
                 className={cn(
@@ -393,7 +323,7 @@ export function Menuu({ open, onOpenChange, onSelectQuizSource }: MenuProps) {
                 {exam.completed ? (
                   <CheckCircle className="h-4 w-4" />
                 ) : (
-                  <Clock className="h-4 w-4" />
+                  <Clock className="h-4 w-4 text-blue-400" />
                 )}
               </div>
               <div className="flex-1">

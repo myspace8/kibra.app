@@ -2,16 +2,12 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, FileText, UserPlus } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Logo from "@/components/logo"
 import { SourcesModal } from "@/components/learn/sources-modal"
 import { Menuu } from "@/components/learn/menu" // Updated to match enhanced Menuu
 import { UserNav } from "../user-nav"
-import { useSession } from "next-auth/react"
 import { TextSearch } from "lucide-react"
-import { LucideTextSearch } from "lucide-react"
 
 // Interfaces
 interface UserSettings {
@@ -25,8 +21,7 @@ interface HeaderProps {
   showActions?: boolean
 }
 
-export function LearnPageHeader({ className, onSelectQuizSource, showActions = true }: HeaderProps) {
-  const { data: session, status } = useSession()
+export function LearnPageHeader({ className, showActions = true }: HeaderProps) {
   const [sourcesModalOpen, setSourcesModalOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [userSettings, setUserSettings] = useState<UserSettings>({
@@ -84,30 +79,9 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
                 >
                   <TextSearch className="h-6 w-6" />
                 </button>
-                {/* <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-                  aria-label="Open sources modal"
-                  onClick={() => setSourcesModalOpen(true)}
-                >
-                  <FileText className="h-5 w-5" />
-                </Button> */}
               </>
             )}
             <UserNav />
-            {/* {status === "unauthenticated" && (
-              <Link href="/signup">
-                <Button
-                  variant="default"
-                  className="bg-black hover:bg-black/90 text-white gap-2 rounded-full text-xs h-9 px-3"
-                  aria-label="Sign up"
-                >
-                  <UserPlus className="h-4 w-4" />
-                  Sign up
-                </Button>
-              </Link>
-            )} */}
           </div>
         </div>
       </header>
@@ -122,12 +96,6 @@ export function LearnPageHeader({ className, onSelectQuizSource, showActions = t
           <Menuu
             open={menuOpen}
             onOpenChange={handleMenuToggle}
-            onSelectQuizSource={(examId) => {
-              if (onSelectQuizSource) {
-                onSelectQuizSource(examId)
-              }
-            }}
-            // userSettings={userSettings}
           />
         </>
       )}

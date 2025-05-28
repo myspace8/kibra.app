@@ -21,6 +21,7 @@ interface Exam {
   exam_source: "school" | "waec" | "user";
   subject_id: number;
   subject: string;
+  exam_type: string;
   question_count: number;
   total_marks: number;
   sort_date: string;
@@ -30,12 +31,10 @@ interface Exam {
     school: string;
     grade_level: string;
     date: string;
-    exam_type: string;
     examiner: string;
     school_location?: { region: string; city?: string; country?: string };
   };
   waec_exam_metadata?: {
-    exam_type: "BECE" | "WASSCE";
     exam_year: number;
     exam_session: "May/June" | "November/December";
     region: string;
@@ -45,7 +44,6 @@ interface Exam {
     creator_id: string;
     creator_name: string;
     date?: string;
-    exam_type?: string;
     description?: string;
   };
   completed: boolean;
@@ -53,12 +51,8 @@ interface Exam {
 
 export default function Learn() {
   const { data: session } = useSession();
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [quizTitle, setQuizTitle] = useState<string | undefined>(undefined);
-  const [waecExamType, setWaecExamType] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(true); // Start as true to show loading state initially
   const [error, setError] = useState<string | null>(null);
-  const [menuOpen, setMenuOpen] = useState(true); // Set to true initially
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [showMoretopics, setShowMoretopics] = useState<Record<string, boolean>>({});
@@ -86,6 +80,7 @@ export default function Learn() {
             id,
             exam_source,
             subject_id,
+            exam_type,
             subject,
             question_count,
             total_marks,
@@ -106,6 +101,7 @@ export default function Learn() {
           id: exam.id,
           exam_source: exam.exam_source,
           subject_id: exam.subject_id,
+          exam_type: exam.exam_type,
           subject: exam.subject,
           question_count: exam.question_count || 0,
           total_marks: exam.total_marks || 0,
@@ -129,119 +125,13 @@ export default function Learn() {
     fetchExams();
   }, [session?.user?.id]);
 
-  // Fetch specific exam data when selected
-  const fetchData = async (examId: string) => {
-    setLoading(true);
-    setError(null);
-    setQuestions([]);
-    setMenuOpen(false); // Close menu here
-
-    try {
-      const { data: examData, error: examError } = await supabase
-        .from("exams")
-        .select(`
-          id,
-          exam_source,
-          subject_id,
-          subject,
-          subjects (name),
-          school_exam_metadata,
-          waec_exam_metadata,
-          difficulty
-        `)
-        .eq("id", examId)
-        .eq("status", "Published")
-        .limit(2)
-        .order("sort_date", { ascending: false })
-        .single();
-
-      if (examError || !examData) {
-        throw new Error("Failed to fetch exam details: " + (examError?.message || "Exam not found"));
-      }
-
-      const subjectName = examData.subject || "Unknown Subject";
-      const institution =
-        examData.exam_source === "school"
-          ? examData.school_exam_metadata?.school || "Unknown School"
-          : examData.exam_source === "waec"
-          ? examData.waec_exam_metadata?.region || "WAEC"
-          : "User Created";
-      setQuizTitle(`${subjectName} - ${institution}`);
-      if (examData.exam_source === "waec" && examData.waec_exam_metadata) {
-        setWaecExamType(examData.waec_exam_metadata.exam_type);
-      }
-
-      const { data: questionsData, error: questionsError } = await supabase
-        .from("exam_questions")
-        .select(`
-          question_id,
-          marks,
-          order,
-          question_pool (
-            id,
-            question,
-            question_type,
-            topic,
-            subtopic,
-            options,
-            correct_answers,
-            model_answer,
-            explanation,
-            hint,
-            difficulty,
-            media_url,
-            media_type,
-            keywords,
-            learning_objectives,
-            estimated_time,
-            source_reference,
-            ai_feedback
-          )
-        `)
-        .eq("exam_id", examId)
-        .order("order", { ascending: true });
-
-      if (questionsError || !questionsData) {
-        throw new Error("Failed to fetch questions: " + (questionsError?.message || "No questions found"));
-      }
-
-      const formattedQuestions: Question[] = questionsData.map((q: any) => ({
-        id: q.question_id,
-        question: q.question_pool.question || "",
-        question_type: q.question_pool.question_type || "objective",
-        topic: q.question_pool.topic || "",
-        subtopic: q.question_pool.subtopic || "",
-        options: q.question_pool.options || [],
-        correct_answers: q.question_pool.correct_answers || "",
-        model_answer: q.question_pool.model_answer || "",
-        explanation: q.question_pool.explanation || "",
-        hint: q.question_pool.hint || "",
-        difficulty: q.question_pool.difficulty || "Medium",
-        marks: q.marks || 1,
-        media_url: q.question_pool.media_url || "",
-        media_type: q.question_pool.media_type || "",
-        keywords: q.question_pool.keywords || [],
-        learning_objectives: q.question_pool.learning_objectives || [],
-        estimated_time: q.question_pool.estimated_time || 0,
-        source_reference: q.question_pool.source_reference || "",
-        ai_feedback: q.question_pool.ai_feedback || "",
-      }));
-
-      setQuestions(formattedQuestions);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred while loading the quiz.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const currentHour = new Date().getHours();
   const greeting = currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
   const userName = session?.user?.name?.split(" ")[0] || "User";
 
   return (
     <>
-      <LearnPageHeader onSelectQuizSource={fetchData} />
+      <LearnPageHeader />
       <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 px-3">
         <div className="max-w-4xl mx-auto">
           {loading && (
@@ -264,7 +154,7 @@ export default function Learn() {
 
           {!loading && !error && (
             <>
-              <div className="flex flex-col items-center justify-center p-6 text-center">
+              <div className="flex flex-col md:items-center justify-center py-6 md:p-6 md:text-center">
                 {session ? (
                   <h2 className="text-2xl font-semibold leading-tight tracking-tight">
                     {greeting}, {userName}.
@@ -273,7 +163,7 @@ export default function Learn() {
                   <h2 className="text-2xl font-semibold tracking-tight">Welcome to Kibra.</h2>
                 )}
                 <p className="text-sm leading-tight text-gray-600 dark:text-gray-400 mb-6">
-                Quickly test your proficiency level on topics WAEC mostly set questions from 
+                Quickly test your skills on WAEC-Based topics
                 </p> 
               </div>
               <div className="w-full max-w-2xl space-y-4 m-auto">
@@ -292,10 +182,10 @@ export default function Learn() {
                           : exam.user_exam_metadata?.creator_name || "User Created";
                       const examType =
                         exam.exam_source === "school"
-                          ? exam.school_exam_metadata?.exam_type
+                          ? exam.exam_type
                           : exam.exam_source === "waec"
-                          ? exam.waec_exam_metadata?.exam_type
-                          : exam.user_exam_metadata?.exam_type || "Custom";
+                          ? exam.exam_type
+                          : exam.exam_type || "Custom";
                       const examDate =
                         exam.exam_source === "school"
                           ? exam.school_exam_metadata?.date
@@ -323,7 +213,7 @@ export default function Learn() {
                                 : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
                             )}
                           >
-                            {exam.completed ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
+                            {exam.completed ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4 text-blue-400" />}
                           </div>
                           <div className="flex-1">
                             <h3 className="text-sm font-medium">
@@ -349,7 +239,7 @@ export default function Learn() {
                                   {exam.topics.slice(0, showMoretopics[exam.id] ? 18 : 3).map((tag) => (
                                     <span
                                       key={tag}
-                                      className="py-0.5 text-xs underline underline-offset-2"
+                                      className="py-0.5 text-xs underline underline-offset-4"
                                     >
                                       {tag}
                                     </span>

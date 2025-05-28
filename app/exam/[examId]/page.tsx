@@ -12,8 +12,8 @@ interface Exam {
   exam_source: "school" | "waec" | "user";
   subject_id: number;
   subject: string;
+  exam_type?: string; // Updated to use exam_type as a column
   waec_exam_metadata?: {
-    exam_type: "BECE" | "WASSCE";
     exam_year: number;
     exam_session: "May/June" | "November/December";
     region: string;
@@ -22,8 +22,8 @@ interface Exam {
 }
 
 interface PageProps {
-    params: Promise<{ examId: string }>; // Update type to reflect params as a Promise
-  }
+  params: Promise<{ examId: string }>; // Update type to reflect params as a Promise
+}
 
 export default function ExamPage({ params }: PageProps) {
   const { examId } = use(params); 
@@ -48,6 +48,7 @@ export default function ExamPage({ params }: PageProps) {
             exam_source,
             subject_id,
             subject,
+            exam_type, 
             waec_exam_metadata,
             subjects (name)
           `)
@@ -58,15 +59,15 @@ export default function ExamPage({ params }: PageProps) {
           throw new Error("Failed to fetch exam: " + (examError?.message || "Exam not found"));
         }
 
-        const exam: Exam = examData as Exam;
+        const exam: Exam = examData as unknown as Exam;
         const subjectName = examData.subject;
         const source = exam.exam_source;
         const examYear = source === "waec" ? exam.waec_exam_metadata?.exam_year : null;
         const institution =
           source === "waec" ? exam.waec_exam_metadata?.region || "WAEC" : "Unknown";
         setQuizTitle(`${subjectName}`);
-        if (exam.exam_source === "waec" && exam.waec_exam_metadata) {
-          setWaecExamType(exam.waec_exam_metadata.exam_type);
+        if (exam.exam_source === "waec" && exam.exam_type) {  // Updated to use exam_type column
+          setWaecExamType(exam.exam_type);
         }
         if (exam.exam_source === "waec" && exam.waec_exam_metadata) {
           setWaecExamYear(exam.waec_exam_metadata.exam_year.toString());
