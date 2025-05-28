@@ -121,6 +121,25 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     setEliminatedOptions({})
   }, [initialQuestions])
 
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const { data, error } = await supabase.from("students").select("id, name, code");
+        if (error) {
+          console.error("Error fetching students:", error.message);
+          setFormError("Failed to load student list. Please try again later.");
+          return;
+        }
+        setStudents(data || []);
+      } catch (err) {
+        console.error("Error fetching students:", err);
+        setFormError("An unexpected error occurred while loading students.");
+      }
+    };
+  
+    fetchStudents();
+  }, []);
+
   const currentQuestion = questions[currentQuestionIndex]
   const totalQuestions = questions.length
   const progress = (answeredQuestions.length / totalQuestions) * 100
@@ -307,69 +326,149 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     return (
       <>
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
-              <h2 className="text-lg font-semibold mb-4">Send Result to Sir Joe</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Meet Sir Joe—An Intelligent assistant wingman to conquer any topic or subject with epic skills! 🎯
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md shadow-2xl"
+              role="dialog"
+              aria-labelledby="modal-title"
+              aria-describedby="modal-description"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 id="modal-title" className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                  Send Result to Sir Joe
+                </h2>
+                <button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setSelectedName("");
+                    setCode("");
+                    setFormError(null);
+                    setSubmitSuccess(null);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  aria-label="Close modal"
+                >
+                  <XCircle size={24} />
+                </button>
+              </div>
+              <p id="modal-description" className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Submit your quiz results to Sir Joe, your AI-powered learning assistant! Ensure your name and code are correct.
               </p>
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <label htmlFor="student-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Select Your Name
-                  </label>
-                  <select
-                    id="student-name"
-                    value={selectedName}
-                    onChange={(e) => setSelectedName(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                  <label
+                    htmlFor="student-name"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
-                    <option value="">Select a name</option>
-                    {students.map((student) => (
-                      <option key={student.id} value={student.name}>
-                        {student.name}
-                      </option>
-                    ))}
-                  </select>
+                    Your Name
+                  </label>
+                  {students.length === 0 ? (
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Loading student list...
+                    </div>
+                  ) : (
+                    <select
+                      id="student-name"
+                      value={selectedName}
+                      onChange={(e) => {
+                        setSelectedName(e.target.value);
+                        setFormError(null);
+                      }}
+                      className={cn(
+                        "mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary sm:text-sm transition-all",
+                        !selectedName && formError && "border-red-500"
+                      )}
+                      aria-invalid={!!formError && !selectedName}
+                      aria-describedby="student-name-error"
+                    >
+                      <option value="">Select your name</option>
+                      {students.map((student) => (
+                        <option key={student.id} value={student.name}>
+                          {student.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  {!selectedName && formError && (
+                    <p id="student-name-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
+                      {formError}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <label htmlFor="code" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Enter Your 4-Digit Code
+                  <label
+                    htmlFor="code"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    4-Digit Code
                   </label>
                   <input
                     id="code"
                     type="text"
                     value={code}
-                    onChange={(e) => setCode(e.target.value)}
+                    onChange={(e) => {
+                      setCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 4));
+                      setFormError(null);
+                    }}
                     maxLength={4}
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                    placeholder="e.g., 1234"
+                    className={cn(
+                      "mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary sm:text-sm transition-all",
+                      formError && code.length !== 4 && "border-red-500"
+                    )}
+                    placeholder="Enter your 4-digit code"
+                    aria-invalid={!!formError && code.length !== 4}
+                    aria-describedby="code-error"
                   />
+                  {formError && code.length !== 4 && (
+                    <p id="code-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
+                      {formError}
+                    </p>
+                  )}
                 </div>
-                {formError && (
-                  <p className="text-sm text-red-600 dark:text-red-400" dangerouslySetInnerHTML={{ __html: formError }} />
+                {formError && !formError.includes("Please") && (
+                  <p
+                    className="text-sm text-red-600 dark:text-red-400"
+                    dangerouslySetInnerHTML={{
+                      __html: formError.includes("WhatsApp")
+                        ? formError
+                        : "Invalid name or code. Please try again.",
+                    }}
+                  />
                 )}
                 {submitSuccess && (
-                  <p className="text-sm text-green-600 dark:text-green-400">{submitSuccess}</p>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2"
+                  >
+                    <CheckCircle size={16} />
+                    {submitSuccess}
+                  </motion.p>
                 )}
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-3">
                   <Button
                     variant="outline"
                     onClick={() => {
-                      setIsModalOpen(false)
-                      setSelectedName("")
-                      setCode("")
-                      setFormError(null)
-                      setSubmitSuccess(null)
+                      setIsModalOpen(false);
+                      setSelectedName("");
+                      setCode("");
+                      setFormError(null);
+                      setSubmitSuccess(null);
                     }}
                     disabled={isSubmitting}
+                    className="px-4 py-2 text-sm"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={handleSendResult}
-                    disabled={isSubmitting}
-                    className="flex items-center gap-2"
+                    disabled={isSubmitting || students.length === 0}
+                    className="px-4 py-2 text-sm flex items-center gap-2 bg-primary hover:bg-primary/90"
                   >
                     {isSubmitting ? (
                       <>
@@ -385,30 +484,39 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                   </Button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-2xl mx-auto"
+        >
           <Card className="overflow-hidden border-0 shadow-lg">
             <div className="bg-gradient-to-br from-primary/90 to-primary p-6 text-white">
-              <h2 className="text-2xl font-bold tracking-tight mb-1">Completed!</h2>
-              <p className="text-white/80 text-base">
-                {quizTitle ? `You've completed "${quizTitle} ${waecExamYear}"` : "You've completed all questions"}. Here's how you did:
+              <h2 className="text-2xl font-bold tracking-tight mb-2">Quiz Completed!</h2>
+              <p className="text-white/90 text-sm">
+                {quizTitle
+                  ? `You've completed "${quizTitle} ${waecExamYear}"`
+                  : "You've completed all questions"}
+                . Here's your performance summary:
               </p>
             </div>
-            <div className="p-6 flex flex-col items-center">
-              <div className="relative mb-6">
-                <div className="w-28 h-28 rounded-full bg-primary/10 flex items-center justify-center">
-                  <div className="text-4xl font-bold text-primary">
+            <div className="p-6 flex flex-col items-center gap-6">
+              <div className="relative">
+                <div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="text-5xl font-bold text-primary">
                     {score}/{questions.reduce((sum, q) => sum + (q.marks || 1), 0)}
                   </div>
                 </div>
-                <div className="absolute -top-2 -right-2">
-                  <Award size={32} className="text-yellow-500 drop-shadow-md" />
-                </div>
+                <Award
+                  size={36}
+                  className="absolute -top-2 -right-2 text-yellow-500 drop-shadow-md"
+                />
               </div>
-              <div className="text-center mb-6 max-w-md">
-                <h3 className="text-lg font-semibold mb-2">
+              <div className="text-center max-w-md">
+                <h3 className="text-xl font-semibold mb-3">
                   {correctAnswers.length === totalQuestions
                     ? "Perfect Score! 🎉"
                     : score >= questions.reduce((sum, q) => sum + (q.marks || 1), 0) * 0.8
@@ -417,7 +525,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                         ? "Good Job! 👍"
                         : "Keep Learning! 📚"}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                   {correctAnswers.length === totalQuestions
                     ? "You’ve mastered these concepts brilliantly!"
                     : score >= questions.reduce((sum, q) => sum + (q.marks || 1), 0) * 0.8
@@ -432,28 +540,34 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                   </p>
                 )}
               </div>
-              <div className="flex flex-wrap gap-3 justify-center">
-                <Button onClick={enterReviewMode} className="gap-2 px-4 py-2 text-sm font-medium hover:scale-105">
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Button
+                  onClick={enterReviewMode}
+                  className="px-5 py-2 text-sm font-medium bg-primary hover:bg-primary/90"
+                >
                   Review Answers
                 </Button>
                 <Button
                   onClick={() => setIsModalOpen(true)}
                   variant="outline"
-                  className="gap-2 px-4 py-2 text-sm font-medium hover:scale-105"
+                  className="px-5 py-2 text-sm font-medium flex items-center gap-2"
                 >
                   <Send size={16} />
-                  Send your result to Sir Joe
+                  Send Result to Sir Joe
                 </Button>
-                <Link href={"/learn"} className="text-primary underline-offset-4 hover:underline px-4 py-2 hover:scale-105 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
-                  <Home />
-                  <span>Go Home</span>
+                <Link
+                  href="/learn"
+                  className="px-5 py-2 text-sm font-medium text-primary flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+                >
+                  <Home size={16} />
+                  Go Home
                 </Link>
               </div>
             </div>
           </Card>
         </motion.div>
       </>
-    )
+    );
   }
 
   const QuizHeader = ({ quizTitle, topic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (

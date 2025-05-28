@@ -8,6 +8,12 @@ import { Toaster } from "react-hot-toast"
 
 const inter = Inter({ subsets: ["latin"] })
 
+// Define metadata if needed
+export const metadata = {
+  title: "Test your skills on WAEC-Based Questions",
+  description: "Your App Description",
+}
+
 export default function RootLayout({
   children,
 }: {
