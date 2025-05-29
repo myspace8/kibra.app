@@ -43,7 +43,7 @@ interface Exam {
 }
 
 // Hardcoded subjects for BECE and WASSCE
-const BECE_SUBJECTS = ["Mathematics", "Integrated Science", "English Language", "Computing"]
+const BECE_SUBJECTS = ["Mathematics", "Integrated Science", "English Language", "Computing", "Social Studies"]
 const WASSCE_SUBJECTS = ["Mathematics", "English Language", "Computing", "Science", "Financial Accounting"]
 
 export default function Learn() {
@@ -52,14 +52,22 @@ export default function Learn() {
   const [error, setError] = useState<string | null>(null)
   const [exams, setExams] = useState<Exam[]>([])
   const [showMoretopics, setShowMoretopics] = useState<Record<string, boolean>>({})
-  const [selectedExamType, setSelectedExamType] = useState<"BECE" | "WASSCE">("BECE")
-  const [selectedSubject, setSelectedSubject] = useState<string>("Recommended")
+  const [selectedExamType, setSelectedExamType] = useState<"BECE" | "WASSCE">(() => {
+    return (localStorage.getItem("selectedExamType") as "BECE" | "WASSCE") || "BECE"
+  })
+  const [selectedSubject, setSelectedSubject] = useState<string>(() => {
+    const storedSubject = localStorage.getItem("selectedSubject")
+    const subjects = selectedExamType === "BECE" ? BECE_SUBJECTS : WASSCE_SUBJECTS
+    return storedSubject && subjects.includes(storedSubject) ? storedSubject : "Recommended"
+  })
 
   const getFilteredExams = () => {
     let filtered = exams.filter((exam) => exam.exam_type === selectedExamType)
 
     if (selectedSubject !== "Recommended") {
       filtered = filtered.filter((exam) => exam.subject === selectedSubject)
+    } else {
+      filtered = filtered.slice(0, 5) // Limit to 5 exams for "Recommended"
     }
 
     return filtered
@@ -120,9 +128,18 @@ export default function Learn() {
     fetchExams()
   }, [session?.user?.id])
 
-  // Reset selected subject when exam type changes
+  // Persist selected subject and exam type to localStorage
   useEffect(() => {
-    setSelectedSubject("Recommended")
+    localStorage.setItem("selectedExamType", selectedExamType)
+    localStorage.setItem("selectedSubject", selectedSubject)
+  }, [selectedExamType, selectedSubject])
+
+  // Reset selected subject only when exam type changes manually
+  useEffect(() => {
+    const subjects = selectedExamType === "BECE" ? BECE_SUBJECTS : WASSCE_SUBJECTS
+    if (!subjects.includes(selectedSubject) && selectedSubject !== "Recommended") {
+      setSelectedSubject("Recommended")
+    }
   }, [selectedExamType])
 
   const currentHour = new Date().getHours()
@@ -131,10 +148,11 @@ export default function Learn() {
 
   // Determine subjects to display based on exam type
   const subjectsToDisplay = selectedExamType === "BECE" ? BECE_SUBJECTS : WASSCE_SUBJECTS
+
   return (
     <>
       <LearnPageHeader />
-      <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 px-3">
+      <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 px-3 ">
         <div className="max-w-4xl mx-auto">
           {loading && (
             <div className="flex justify-center py-8">
@@ -158,11 +176,11 @@ export default function Learn() {
             <>
               <div className="flex flex-col md:items-center justify-center py-6 md:p-6 md:text-center">
                 {session ? (
-                  <h2 className="text-2xl font-semibold leading-tight tracking-tight">
+                  <h2 className="text-2xl font-semibold leading-tight">
                     {greeting}, {userName}.
                   </h2>
                 ) : (
-                  <h2 className="text-2xl font-semibold tracking-tight">Welcome to Kibra.</h2>
+                  <h2 className="text-2xl font-semibold">Welcome to Kibra.</h2>
                 )}
                 <p className="text-sm leading-tight text-gray-600 dark:text-gray-400 mb-6">
                   Quickly test your skills on WAEC-Based topics
@@ -264,7 +282,8 @@ export default function Learn() {
                                 {exam.completed ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100 mb-2">
+
+                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                                   {exam.subject} {examType} {examDate && `(${examDate}) Trial`}
                                 </h3>
                                 <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
@@ -312,11 +331,26 @@ export default function Learn() {
                     </div>
                   )
                 })()}
+                {/* Ad Placeholder */}
+                <div className="mt-6 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg text-center">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Ad Placeholder</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500">300x250px</p>
+                </div>
               </div>
             </>
           )}
         </div>
       </main>
+      {/* Footer */}
+      <footer className="w-full bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-4">
+        <div className="max-w-4xl mx-auto text-center text-sm text-gray-600 dark:text-gray-400">
+          <p>© 2025 Kibra. All rights reserved. | 2025</p>
+          <div className="mt-2 space-x-4">
+            <a href="/terms" className="hover:underline">Terms</a>
+            <a href="/privacy" className="hover:underline">Privacy</a>
+          </div>
+        </div>
+      </footer>
     </>
   )
 }

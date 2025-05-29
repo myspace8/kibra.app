@@ -326,7 +326,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     return (
       <>
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0  bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -495,7 +495,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
         >
           <Card className="overflow-hidden border-0 shadow-lg">
             <div className="bg-gradient-to-br from-primary/90 to-primary p-6 text-white">
-              <h2 className="text-2xl font-bold tracking-tight mb-2">Quiz Completed!</h2>
+              <h2 className="text-2xl font-bold mb-2">Quiz Completed!</h2>
               <p className="text-white/90 text-sm">
                 {quizTitle
                   ? `You've completed "${quizTitle} ${waecExamYear}"`
@@ -688,7 +688,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
       <Card className="overflow-hidden border-0 rounded-none bg-inherit shadow-none">
         <div className="py-5">
           <div className="flex justify-between items-start mb-4">
-            <h2 className="text-base leading-tight tracking-tight" dangerouslySetInnerHTML={renderQuestionText(currentQuestion.question)} />
+            <h2 className="text-base leading-tight" dangerouslySetInnerHTML={renderQuestionText(currentQuestion.question)} />
           </div>
           {showHint && currentQuestion.hint && (
             <motion.div

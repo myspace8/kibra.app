@@ -344,12 +344,12 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                   </div>
                   {exam.topics.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {exam.topics.slice(0, showMoretopics[exam.id] ? 18 : 3).map((tag) => (
+                      {exam.topics.slice(0, showMoretopics[exam.id] ? 18 : 3).map((topic) => (
                         <span
-                          key={tag}
+                          key={topic}
                           className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md dark:bg-green-900/30 dark:text-green-400"
                         >
-                          {tag}
+                          {topic}
                         </span>
                       ))}
                       {exam.topics.length > 3 && (
