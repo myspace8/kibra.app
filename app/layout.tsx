@@ -10,8 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 // Define metadata if needed
 export const metadata = {
-  title: "Test your skills on WAEC-Based Questions",
-  description: "Your App Description",
+  title: "Kibra: Test your skills on WAEC-Based topics - Prepare better for your exams",
 }
 
 export default function RootLayout({
