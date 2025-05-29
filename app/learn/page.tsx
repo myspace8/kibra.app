@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useSession } from "next-auth/react"
-import { CheckCircle, Clock, Globe, Loader2, RefreshCw, Filter, X } from "lucide-react"
+import { CheckCircle, Clock, Globe, Loader2, RefreshCw, Filter, X, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { LearnPageHeader } from "@/components/learn/learn-page-header"
 
 // Interfaces
@@ -46,29 +47,102 @@ interface Exam {
   completed: boolean
 }
 
-// Hardcoded subjects for BECE and WASSCE
-const BECE_SUBJECTS = ["Mathematics", "Integrated Science", "English Language", "Computing", "Social Studies"]
-const WASSCE_SUBJECTS = ["Mathematics", "English Language", "Computing", "Science", "Financial Accounting"]
+// WAEC-based subjects for BECE and WASSCE (2025, Ghana)
+const BECE_SUBJECTS = [
+  "English Language",
+  "Mathematics",
+  "Integrated Science",
+  "Social Studies",
+  "Information and Communication Technology" // Official WAEC term for "Computing"
+];
 
-// Hardcoded topics
-const ALL_TOPICS = [
-  "Programming", "Computer Fundamentals", "Digital Citizenship", "Energy", "Atmosphere",
-  "Photosynthesis", "Algebra", "Geometry", "Statistics", "Trigonometry", "Grammar",
-  "Comprehension", "Essay Writing", "Literature", "Physics", "Chemistry", "Biology",
-  "Environmental Science", "Calculus", "Data Structures", "Algorithms", "Database Systems",
-  "Web Development", "Software Engineering", "Advanced Grammar", "Literary Analysis",
-  "Creative Writing", "Critical Thinking", "Advanced Physics", "Organic Chemistry",
-  "Molecular Biology", "Research Methods"
-]
+const WASSCE_SUBJECTS = [
+  "English Language",
+  "Mathematics",
+  "Integrated Science",
+  "Elective ICT", // Official WAEC elective, replacing "Computing"
+  "Financial Accounting"
+];
+
+// WAEC-based topics by subject for BECE (aligned with 2025 syllabus)
+const BECE_TOPICS_BY_SUBJECT: Record<string, string[]> = {
+  "English Language": [
+    "Grammar and Structure",
+    "Reading Comprehension",
+    "Essay and Letter Writing",
+    "Literature (Prose, Drama, Poetry)"
+  ],
+  "Mathematics": [
+    "Arithmetic (Fractions, Percentages, Ratios)",
+    "Algebra (Equations, Expressions)",
+    "Geometry (Shapes, Measurements)",
+    "Probability and Statistics"
+  ],
+  "Integrated Science": [
+    "Physical Science (Energy, Forces)",
+    "Life Science (Photosynthesis, Human Systems)",
+    "Earth Science (Atmosphere, Resources)",
+    "Scientific Investigation"
+  ],
+  "Social Studies": [
+    "Governance and Citizenship",
+    "Cultural Heritage",
+    "Geography (Physical and Human)",
+    "Economic Development"
+  ],
+  "Information and Communication Technology": [
+    "Computer Fundamentals (Hardware, Software)",
+    "Application Software (Word Processing, Spreadsheets)",
+    "Networking and Internet",
+    "Digital Citizenship (Ethics, Safety)",
+    "Emerging Technologies (AI, Programming)"
+  ]
+};
+
+// WAEC-based topics by subject for WASSCE (aligned with 2025 syllabus)
+const WASSCE_TOPICS_BY_SUBJECT: Record<string, string[]> = {
+  "English Language": [
+    "Advanced Grammar and Usage",
+    "Reading Comprehension and Summary",
+    "Essay Writing (Argumentative, Expository)",
+    "Literature (African and Non-African Prose, Drama, Poetry)"
+  ],
+  "Mathematics": [
+    "Algebra (Equations, Matrices)",
+    "Geometry and Trigonometry",
+    "Statistics and Probability",
+    "Calculus (Differentiation, Integration)"
+  ],
+  "Integrated Science": [
+    "Physics (Mechanics, Electricity)",
+    "Chemistry (Organic, Inorganic)",
+    "Biology (Ecology, Genetics)",
+    "Scientific Methods and Applications"
+  ],
+  "Elective ICT": [
+    "Computer Hardware and Software",
+    "Networking and Data Communication",
+    "Application Packages (Word, Excel, Databases)",
+    "Web Technologies",
+    "Basic Programming (Visual Basic, Python)"
+  ],
+  "Financial Accounting": [
+    "Principles of Accounting",
+    "Financial Statements and Analysis",
+    "Bookkeeping and Ledger Accounts",
+    "Cost and Management Accounting"
+  ]
+};
 
 export default function Learn() {
   const { data: session } = useSession()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [exams, setExams] = useState<Exam[]>([])
-  const [showMoretopics, setShowMoretopics] = useState<Record<string, boolean>>({})
+  const [showMoreTopics, setShowMoreTopics] = useState<Record<string, boolean>>({})
   const [selectedExamType, setSelectedExamType] = useState<"BECE" | "WASSCE">(() => {
-    return (localStorage.getItem("selectedExamType") as "BECE" | "WASSCE") || "BECE"
+    const stored = localStorage.getItem("selectedExamType")
+    return stored === "BECE" || stored === "WASSCE" ? stored : "BECE"
   })
   const [selectedSubject, setSelectedSubject] = useState<string>(() => {
     const storedSubject = localStorage.getItem("selectedSubject")
@@ -76,10 +150,27 @@ export default function Learn() {
     return storedSubject && (subjects.includes(storedSubject) || storedSubject === "For you") ? storedSubject : "For you"
   })
   const [selectedTopics, setSelectedTopics] = useState<string[]>(() => {
-    const storedTopics = localStorage.getItem("selectedTopics")
-    return storedTopics ? JSON.parse(storedTopics) : []
+    let storedTopics: string[] = []
+    try {
+      const stored = localStorage.getItem("selectedTopics")
+      if (stored) {
+        storedTopics = JSON.parse(stored)
+        if (!Array.isArray(storedTopics)) {
+          storedTopics = []
+        }
+      }
+    } catch (e) {
+      console.error("Error parsing selectedTopics from localStorage:", e)
+      storedTopics = []
+    }
+    return storedTopics
   })
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [expandedSubjects, setExpandedSubjects] = useState<Record<string, boolean>>({})
+
+  const getTopicsBySubject = () => {
+    return selectedExamType === "BECE" ? BECE_TOPICS_BY_SUBJECT : WASSCE_TOPICS_BY_SUBJECT
+  }
 
   const getFilteredExams = () => {
     let filtered = exams.filter((exam) => exam.exam_type === selectedExamType)
@@ -88,7 +179,7 @@ export default function Learn() {
       if (selectedTopics.length > 0) {
         filtered = filtered.filter((exam) => exam.topics.some((topic) => selectedTopics.includes(topic)))
       } else {
-        filtered = filtered.slice(0, 5) // Show all exams limited to 5 if no topics
+        filtered = filtered.slice(0, 5)
       }
     } else {
       filtered = filtered.filter((exam) => exam.subject === selectedSubject)
@@ -108,6 +199,30 @@ export default function Learn() {
   const clearSelectedTopics = () => {
     setSelectedTopics([])
     localStorage.setItem("selectedTopics", JSON.stringify([]))
+  }
+
+  const toggleSubjectExpansion = (subject: string) => {
+    setExpandedSubjects((prev) => ({
+      ...prev,
+      [subject]: !prev[subject],
+    }))
+  }
+
+  const selectAllTopicsForSubject = (subject: string, topics: string[]) => {
+    setSelectedTopics((prev) => {
+      const currentTopics = new Set(prev)
+      const allSelected = topics.every((topic) => currentTopics.has(topic))
+      let newTopics: string[]
+
+      if (allSelected) {
+        newTopics = prev.filter((topic) => !topics.includes(topic))
+      } else {
+        newTopics = [...prev, ...topics.filter((topic) => !currentTopics.has(topic))]
+      }
+
+      localStorage.setItem("selectedTopics", JSON.stringify(newTopics))
+      return newTopics
+    })
   }
 
   useEffect(() => {
@@ -170,10 +285,33 @@ export default function Learn() {
   }, [selectedExamType, selectedSubject])
 
   useEffect(() => {
+    localStorage.setItem("selectedTopics", JSON.stringify(selectedTopics))
+  }, [selectedTopics])
+
+  useEffect(() => {
     const subjects = selectedExamType === "BECE" ? BECE_SUBJECTS : WASSCE_SUBJECTS
     if (!subjects.includes(selectedSubject) && selectedSubject !== "For you") {
       setSelectedSubject("For you")
+      localStorage.setItem("selectedSubject", "For you")
     }
+
+    // Initialize expanded state for subjects
+    const topicsBySubject = getTopicsBySubject()
+    const initialExpandedState: Record<string, boolean> = {}
+    Object.keys(topicsBySubject).forEach((subject) => {
+      initialExpandedState[subject] = false
+    })
+    setExpandedSubjects(initialExpandedState)
+
+    // Validate selectedTopics against current exam type
+    const validTopics = Object.values(topicsBySubject).flat()
+    setSelectedTopics((prev) => {
+      const filteredTopics = prev.filter((topic) => validTopics.includes(topic))
+      if (filteredTopics.length !== prev.length) {
+        localStorage.setItem("selectedTopics", JSON.stringify(filteredTopics))
+      }
+      return filteredTopics
+    })
   }, [selectedExamType])
 
   const currentHour = new Date().getHours()
@@ -224,7 +362,13 @@ export default function Learn() {
                 <div className="flex items-center justify-between">
                   <Tabs
                     value={selectedExamType}
-                    onValueChange={(value) => setSelectedExamType(value as "BECE" | "WASSCE")}
+                    onValueChange={(value) => {
+                      const newExamType = value as "BECE" | "WASSCE"
+                      setSelectedExamType(newExamType)
+                      // Clear selected topics when exam type changes
+                      setSelectedTopics([])
+                      localStorage.setItem("selectedTopics", JSON.stringify([]))
+                    }}
                   >
                     <TabsList className="grid w-fit grid-cols-2 rounded-full">
                       <TabsTrigger className="rounded-3xl" value="BECE">BECE</TabsTrigger>
@@ -235,19 +379,17 @@ export default function Learn() {
                     <DialogTrigger asChild>
                       <Button variant="outline" size="sm" className="relative">
                         <Filter className="h-4 w-4 mr-2" />
-                        Topics
+                        Filter
                         {selectedTopics.length > 0 && (
-                          <Badge variant="secondary" className="flex justify-center items-center ml-2 h-5 w-5 p-0 text-xs">
-                            <span>
-                              {selectedTopics.length}
-                            </span>
+                          <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 text-xs">
+                            {selectedTopics.length}
                           </Badge>
                         )}
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md">
                       <DialogHeader>
-                        <DialogTitle>Filter by Topics</DialogTitle>
+                        <DialogTitle>Filter by Topics ({selectedExamType})</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
@@ -283,22 +425,63 @@ export default function Learn() {
                           </div>
                         )}
 
-                        <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto">
-                          {ALL_TOPICS.map((topic) => (
-                            <div key={topic} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={topic}
-                                checked={selectedTopics.includes(topic)}
-                                onCheckedChange={() => handleTopicToggle(topic)}
-                              />
-                              <label
-                                htmlFor={topic}
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                          {Object.entries(getTopicsBySubject()).map(([subject, topics]) => {
+                            const selectedCount = topics.filter((topic) => selectedTopics.includes(topic)).length
+                            return (
+                              <Collapsible
+                                key={subject}
+                                open={expandedSubjects[subject]}
+                                onOpenChange={() => toggleSubjectExpansion(subject)}
+                                className="border rounded-md"
                               >
-                                {topic}
-                              </label>
-                            </div>
-                          ))}
+                                <CollapsibleTrigger asChild>
+                                  <div className="flex items-center justify-between w-full p-3 text-sm font-medium bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+                                    <div className="flex items-center">
+                                      <Checkbox
+                                        id={`select-all-${subject}`}
+                                        checked={topics.every((topic) => selectedTopics.includes(topic))}
+                                        onCheckedChange={() => selectAllTopicsForSubject(subject, topics)}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="mr-2"
+                                      />
+                                      <span>{subject}</span>
+                                      <Badge variant="outline" className="ml-2">
+                                        {topics.length}
+                                      </Badge>
+                                      {selectedCount > 0 && (
+                                        <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 text-xs">
+                                          {selectedCount}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    {expandedSubjects[subject] ? (
+                                      <ChevronUp className="h-4 w-4" />
+                                    ) : (
+                                      <ChevronDown className="h-4 w-4" />
+                                    )}
+                                  </div>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent className="p-3 space-y-2 border-t">
+                                  {topics.map((topic) => (
+                                    <div key={topic} className="flex items-center space-x-2">
+                                      <Checkbox
+                                        id={`${subject}-${topic}`}
+                                        checked={selectedTopics.includes(topic)}
+                                        onCheckedChange={() => handleTopicToggle(topic)}
+                                      />
+                                      <label
+                                        htmlFor={`${subject}-${topic}`}
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                      >
+                                        {topic}
+                                      </label>
+                                    </div>
+                                  ))}
+                                </CollapsibleContent>
+                              </Collapsible>
+                            )
+                          })}
                         </div>
                       </div>
                     </DialogContent>
@@ -417,7 +600,7 @@ export default function Learn() {
                                 {exam.topics.length > 0 && (
                                   <div className="flex flex-wrap gap-2">
                                     {exam.topics
-                                      .slice(0, showMoretopics[exam.id] ? exam.topics.length : 3)
+                                      .slice(0, showMoreTopics[exam.id] ? exam.topics.length : 3)
                                       .map((topic) => (
                                         <span
                                           key={topic}
@@ -431,13 +614,13 @@ export default function Learn() {
                                           {topic}
                                         </span>
                                       ))}
-                                    {exam.topics.length > 3 && !showMoretopics[exam.id] && (
+                                    {exam.topics.length > 3 && !showMoreTopics[exam.id] && (
                                       <button
                                         type="button"
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           e.preventDefault()
-                                          setShowMoretopics((prev) => ({
+                                          setShowMoreTopics((prev) => ({
                                             ...prev,
                                             [exam.id]: true,
                                           }))
@@ -467,10 +650,9 @@ export default function Learn() {
           )}
         </div>
       </main>
-      {/* Footer */}
       <footer className="w-full bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-4">
         <div className="max-w-4xl mx-auto text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>© 2025 Kibra. All rights reserved. | Today is Thursday, May 29, 2025, 04:47 PM GMT</p>
+          <p>© 2025 Kibra. All rights reserved. | Today is Thursday, May 29, 2025, 09:52 PM GMT</p>
           <div className="mt-2 space-x-4">
             <a href="/terms" className="hover:underline">Terms</a>
             <a href="/privacy" className="hover:underline">Privacy</a>
