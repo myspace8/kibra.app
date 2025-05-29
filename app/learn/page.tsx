@@ -52,14 +52,26 @@ export default function Learn() {
   const [error, setError] = useState<string | null>(null)
   const [exams, setExams] = useState<Exam[]>([])
   const [showMoretopics, setShowMoretopics] = useState<Record<string, boolean>>({})
-  const [selectedExamType, setSelectedExamType] = useState<"BECE" | "WASSCE">(() => {
-    return (localStorage.getItem("selectedExamType") as "BECE" | "WASSCE") || "BECE"
-  })
-  const [selectedSubject, setSelectedSubject] = useState<string>(() => {
-    const storedSubject = localStorage.getItem("selectedSubject")
-    const subjects = selectedExamType === "BECE" ? BECE_SUBJECTS : WASSCE_SUBJECTS
-    return storedSubject && subjects.includes(storedSubject) ? storedSubject : "Recommended"
-  })
+  const [selectedExamType, setSelectedExamType] = useState<"BECE" | "WASSCE">("BECE")
+  const [selectedSubject, setSelectedSubject] = useState<string>("Recommended")
+
+  // Load initial state from localStorage on client side
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedExamType = localStorage.getItem("selectedExamType") as "BECE" | "WASSCE"
+      if (storedExamType) {
+        setSelectedExamType(storedExamType)
+      }
+
+      const storedSubject = localStorage.getItem("selectedSubject")
+      const subjects = selectedExamType === "BECE" ? BECE_SUBJECTS : WASSCE_SUBJECTS
+      if (storedSubject && subjects.includes(storedSubject)) {
+        setSelectedSubject(storedSubject)
+      } else {
+        setSelectedSubject("Recommended")
+      }
+    }
+  }, []) // Empty dependency array to run once on mount
 
   const getFilteredExams = () => {
     let filtered = exams.filter((exam) => exam.exam_type === selectedExamType)
