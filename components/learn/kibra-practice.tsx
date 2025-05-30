@@ -702,27 +702,29 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
               </div>
             </motion.div>
           )}
-          {currentQuestion.question_type === "objective" && (
+          {currentQuestion.question_type === "objective" && currentQuestion.options && (
             <div className="space-y-3">
-              {currentQuestion.options?.map((option, index) => {
-                const optionLetter = getOptionLetter(index)
+              {currentQuestion.options.map((option, index) => {
                 const isSelected = selectedOption === option
                 const isTentative = tentativeOption === option
                 const isCorrect = Array.isArray(currentQuestion.correct_answers)
                   ? currentQuestion.correct_answers.includes(option)
-                  : optionLetter === currentQuestion.correct_answers
+                  : option.startsWith(currentQuestion.correct_answers ?? "")
                 const isAnswered = answeredQuestions.includes(currentQuestion.id)
                 const isWrong = isAnswered && isSelected && !isCorrect
                 const isEliminated = currentEliminatedOptions.includes(option)
 
+                // Check if it's a True/False question (2 options: "True", "False")
+                const isTrueFalse = currentQuestion.options?.length === 2 && currentQuestion.options.every(opt => ["True", "False"].includes(opt));
+
                 return (
                   <div
                     key={index}
-                    onClick={() => handleOptionSelect(option)}
+                    onClick={() => !isTrueFalse && handleOptionSelect(option)}
                     className={cn(
                       "relative group transition-all duration-200 border-y",
                       isAnswered && isCorrect ? "border-green-500 bg-green-50 dark:bg-green-900/20" : isWrong ? "border-red-500 bg-red-50 dark:bg-red-900/20" : isTentative ? "border-gray-200" : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
-                      !isAnswered && !isTentative && "hover:shadow-sm",
+                      !isAnswered && !isTentative && !isTrueFalse && "hover:shadow-sm",
                       isEliminated && !isAnswered ? "opacity-60" : "",
                       "cursor-pointer",
                     )}
@@ -730,16 +732,16 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                     <div className="p-3 flex items-start gap-3">
                       <div
                         className={cn(
-                          "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs",
+                          "flex-shrink- w-6 h-6 rounded-full flex items-center justify-center text-xs",
                           isAnswered && isCorrect ? "bg-green-500 text-white" : isWrong ? "bg-red-500 text-white" : isTentative ? "bg-primary text-white" : "bg-gray-100 border dark:bg-gray-800 text-gray-700 dark:text-gray-300",
                         )}
                       >
-                        {isAnswered && isCorrect ? <CheckCircle size={14} /> : isWrong ? <XCircle size={14} /> : optionLetter}
+                        {isAnswered && isCorrect ? <CheckCircle size={14} /> : isWrong ? <XCircle size={14} /> : isTrueFalse ? option : option.split(".")[0]}
                       </div>
                       <div className={cn("flex-1 text-sm", isEliminated && !isAnswered ? "line-through text-gray-500 dark:text-gray-400" : "")}>
-                        {option}
+                        {isTrueFalse ? option : option.split(".").slice(1).join(".").trim()}
                       </div>
-                      {!isAnswered && (
+                      {!isAnswered && !isTrueFalse && (
                         <button
                           onClick={(e) => toggleEliminateOption(option, e)}
                           className={cn(
@@ -783,7 +785,9 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                       <AlertCircle size={14} className="text-blue-600 dark:text-blue-400" />
                       <h3 className="font-semibold text-blue-800 dark:text-blue-300 text-xs">Explanation</h3>
                     </div>
-                    <p className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">{currentQuestion.explanation}</p>
+                    <p className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">
+                      {currentQuestion.explanation.replace(/option (\w)/gi, (match, letter) => `Option ${letter.toUpperCase()}`)}
+                    </p>
                   </div>
                 </motion.div>
                 <div className="min-h-[12vh] md:min-h-0"></div>

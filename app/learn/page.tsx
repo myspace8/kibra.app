@@ -773,7 +773,7 @@ export default function Learn() {
                   );
                 })()}
                 {/* Ad Placeholder */}
-                <div className="mt-6 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg text-center">
+                <div className="hidden mt-6 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg text-center">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Advertisement Placeholder
                   </p>
