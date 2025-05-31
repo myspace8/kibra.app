@@ -26,6 +26,8 @@ import type { Question } from "@/types/question"
 import { useSession } from "next-auth/react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
+import MathExpression from "@/components/MathExpression"
+// 
 
 type KibraPracticeProps = {
   questions: Question[];
@@ -71,8 +73,17 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
 
-  const renderQuestionText = (text: string) => {
-    return { __html: text.replace(/<u>(.*?)<\/u>/g, '<span style="text-decoration: underline; text-underline-offset: 2px;">$1</span>') };
+  const renderTextWithMath = (text: string) => {
+    const parts = text.split(/(\$\$.*?\$\$|\$.*?\$)/g).filter(part => part.trim());
+    return parts.map((part, index) => {
+      if (part.startsWith('$$') && part.endsWith('$$')) {
+        return <MathExpression key={index} latex={part} isBlock={true} className="inline-block" />;
+      } else if (part.startsWith('$') && part.endsWith('$')) {
+        return <MathExpression key={index} latex={part} className="inline" />;
+      } else {
+        return <span key={index} dangerouslySetInnerHTML={{ __html: part.replace(/<u>(.*?)<\/u>/g, '<span style="text-decoration: underline; text-underline-offset: 2px;">$1</span>') }} />;
+      }
+    });
   };
 
   const loadCompletedExams = (): string[] => {
@@ -136,7 +147,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
         setFormError("An unexpected error occurred while loading students.");
       }
     };
-  
+
     fetchStudents();
   }, []);
 
@@ -688,7 +699,9 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
       <Card className="overflow-hidden border-0 rounded-none bg-inherit shadow-none">
         <div className="py-5">
           <div className="flex justify-between items-start mb-4">
-            <h2 className="text-base leading-tight" dangerouslySetInnerHTML={renderQuestionText(currentQuestion.question)} />
+            <h2 className="text-base leading-tight">
+              {renderTextWithMath(currentQuestion.question)}
+            </h2>
           </div>
           {showHint && currentQuestion.hint && (
             <motion.div
@@ -698,7 +711,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
               className="mb-4 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md"
             >
               <div className="flex items-center gap-1.5 text-amber-800 dark:text-amber-300">
-                <p className="text-xs">{currentQuestion.hint}</p>
+                <p className="text-xs">{renderTextWithMath(currentQuestion.hint)}</p>
               </div>
             </motion.div>
           )}
@@ -732,14 +745,14 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                     <div className="p-3 flex items-start gap-3">
                       <div
                         className={cn(
-                          "flex-shrink- w-6 h-6 rounded-full flex items-center justify-center text-xs",
+                          "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs",
                           isAnswered && isCorrect ? "bg-green-500 text-white" : isWrong ? "bg-red-500 text-white" : isTentative ? "bg-primary text-white" : "bg-gray-100 border dark:bg-gray-800 text-gray-700 dark:text-gray-300",
                         )}
                       >
                         {isAnswered && isCorrect ? <CheckCircle size={14} /> : isWrong ? <XCircle size={14} /> : isTrueFalse ? option : option.split(".")[0]}
                       </div>
                       <div className={cn("flex-1 text-sm", isEliminated && !isAnswered ? "line-through text-gray-500 dark:text-gray-400" : "")}>
-                        {isTrueFalse ? option : option.split(".").slice(1).join(".").trim()}
+                        {renderTextWithMath(isTrueFalse ? option : option.split(".").slice(1).join(".").trim())}
                       </div>
                       {!isAnswered && !isTrueFalse && (
                         <button
@@ -767,7 +780,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
           )}
           {["essay", "practical"].includes(currentQuestion.question_type) && currentQuestion.model_answer && (
             <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-              <p className="text-sm text-gray-700 dark:text-gray-300">Model Answer: {currentQuestion.model_answer}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300">Model Answer: {renderTextWithMath(currentQuestion.model_answer)}</p>
             </div>
           )}
           <AnimatePresence>
@@ -785,9 +798,9 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                       <AlertCircle size={14} className="text-blue-600 dark:text-blue-400" />
                       <h3 className="font-semibold text-blue-800 dark:text-blue-300 text-xs">Explanation</h3>
                     </div>
-                    <p className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">
-                      {currentQuestion.explanation.replace(/option (\w)/gi, (match, letter) => `Option ${letter.toUpperCase()}`)}
-                    </p>
+                    <div className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">
+                      {renderTextWithMath(currentQuestion.explanation.replace(/option (\w)/gi, (match, letter) => `Option ${letter.toUpperCase()}`))}
+                    </div>
                   </div>
                 </motion.div>
                 <div className="min-h-[12vh] md:min-h-0"></div>

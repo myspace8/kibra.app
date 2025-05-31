@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { NavigationProvider } from "@/contexts/navigation-context"
 import { AuthProvider } from "./providers"
 import { Toaster } from "react-hot-toast"
-
+import 'katex/dist/katex.min.css';
 const inter = Inter({ subsets: ["latin"] })
 
 // Define metadata if needed
