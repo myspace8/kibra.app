@@ -69,7 +69,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const isDesktop = useMediaQuery("(min-width: 768px)")
-  const [showMoretopics, setShowMoretopics] = useState<Record<string, boolean>>({})
+  const [showMoreTopics, setshowMoreTopics] = useState<Record<string, boolean>>({})
 
   // Fetch user settings
 
@@ -344,7 +344,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                   </div>
                   {exam.topics.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {exam.topics.slice(0, showMoretopics[exam.id] ? 18 : 3).map((topic) => (
+                      {exam.topics.slice(0, showMoreTopics[exam.id] ? 18 : 3).map((topic) => (
                         <span
                           key={topic}
                           className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md dark:bg-green-900/30 dark:text-green-400"
@@ -357,7 +357,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                           onClick={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
-                            setShowMoretopics((prev) => ({
+                            setshowMoreTopics((prev) => ({
                               ...prev,
                               [exam.id]: !prev[exam.id],
                             }));
@@ -368,14 +368,14 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              setShowMoretopics((prev) => ({
+                              setshowMoreTopics((prev) => ({
                                 ...prev,
                                 [exam.id]: !prev[exam.id],
                               }));
                             }
                           }}
                         >
-                          {showMoretopics[exam.id] ? "Less" : `+${exam.topics.length - 3} more`}
+                          {showMoreTopics[exam.id] ? "Less" : `+${exam.topics.length - 3} more`}
                         </button>
                       )}
                     </div>
