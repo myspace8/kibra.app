@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import type { Question } from "@/types/question"
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import MathExpression from "@/components/MathExpression"
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
@@ -28,6 +29,19 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
 
   const answeredQuestions = questions.filter((q) => userAnswers[q.id])
   const currentQuestion = answeredQuestions[currentQuestionIndex]
+
+  const renderTextWithMath = (text: string) => {
+    const parts = text.split(/(\$\$.*?\$\$|\$.*?\$)/g).filter(part => part.trim());
+    return parts.map((part, index) => {
+      if (part.startsWith('$$') && part.endsWith('$$')) {
+        return <MathExpression key={index} latex={part} isBlock={true} className="inline-block" />;
+      } else if (part.startsWith('$') && part.endsWith('$')) {
+        return <MathExpression key={index} latex={part} className="inline" />;
+      } else {
+        return <span key={index} dangerouslySetInnerHTML={{ __html: part.replace(/<u>(.*?)<\/u>/g, '<span style="text-decoration: underline; text-underline-offset: 2px;">$1</span>') }} />;
+      }
+    });
+  };
 
   const handleViewQuestion = (index: number) => {
     setCurrentQuestionIndex(index)
@@ -125,10 +139,9 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
                   )}
                   <span className="text-xs text-gray-500">Difficulty: {currentQuestion.difficulty}</span>
                 </div>
-                <h2 className="text-base font-bold leading-tight tracking-tight">{currentQuestion.question}</h2>
-                {/* {currentQuestion.media_url && (
-                  <img src={currentQuestion.media_url} alt="Question media" className="max-w-[200px] mt-2" />
-                )} */}
+                <h2 className="text-base font-bold leading-tight tracking-tight">
+                  {renderTextWithMath(currentQuestion.question)}
+                </h2>
               </div>
             </div>
             {currentQuestion.question_type === "objective" && currentQuestion.options && (
@@ -141,6 +154,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
                   const isCorrectAnswer = Array.isArray(currentQuestion.correct_answers)
                     ? currentQuestion.correct_answers.includes(option)
                     : option === currentQuestion.correct_answers
+                  const isTrueFalse = currentQuestion.options?.length === 2 && currentQuestion.options.every(opt => ["True", "False"].includes(opt));
 
                   return (
                     <div
@@ -170,10 +184,12 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
                           ) : isUserAnswer && !isCorrectAnswer ? (
                             <XCircle size={14} />
                           ) : (
-                            optionLetter
+                            isTrueFalse ? option : optionLetter
                           )}
                         </div>
-                        <div className="flex-1 text-sm">{option}</div>
+                        <div className="flex-1 text-sm">
+                          {renderTextWithMath(isTrueFalse ? option : option.split(".").slice(1).join(".").trim())}
+                        </div>
                         {isUserAnswer && (
                           <div className="text-xs font-medium text-gray-500 dark:text-gray-400">Your answer</div>
                         )}
@@ -185,12 +201,12 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
             )}
             {["essay", "practical"].includes(currentQuestion.question_type) && currentQuestion.model_answer && (
               <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Model Answer: {currentQuestion.model_answer}
-                </p>
-                <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
+                  Model Answer: {renderTextWithMath(currentQuestion.model_answer)}
+                </div>
+                <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
                   Your Answer: {Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || "Not provided"}
-                </p>
+                </div>
               </div>
             )}
             {currentQuestion.hint && usedHint && (
@@ -199,16 +215,20 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
                   <HelpCircle size={14} className="text-amber-600 dark:text-amber-400" />
                   <h3 className="font-semibold text-amber-800 dark:text-amber-300 text-xs">Hint Used</h3>
                 </div>
-                <p className="text-amber-900 dark:text-amber-200 text-xs leading-relaxed">{currentQuestion.hint}</p>
+                <div className="text-amber-900 dark:text-amber-200 text-xs leading-relaxed">
+                  {renderTextWithMath(currentQuestion.hint)}
+                </div>
               </div>
             )}
             <div className="mt-5 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3">
               <h3 className="font-semibold text-blue-800 dark:text-blue-300 text-xs mb-1.5">Explanation</h3>
-              <p className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">{currentQuestion.explanation}</p>
+              <div className="text-blue-900 dark:text-blue-200 text-xs leading-relaxed">
+                {renderTextWithMath(currentQuestion.explanation)}
+              </div>
               {currentQuestion.ai_feedback && (
-                <p className="mt-2 text-blue-700 dark:text-blue-300 text-xs">
-                  AI Feedback: {currentQuestion.ai_feedback}
-                </p>
+                <div className="mt-2 text-blue-700 dark:text-blue-300 text-xs">
+                  AI Feedback: {renderTextWithMath(currentQuestion.ai_feedback)}
+                </div>
               )}
             </div>
           </div>
@@ -237,7 +257,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
             <ChevronRight size={14} />
           </Button>
         </div>
-        {/* <div className="mt-4">
+        <div className="mt-4">
           <Button
             variant="outline"
             className="gap-2 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 hover:border-purple-300 hover:from-purple-100 hover:to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 dark:border-purple-800 dark:hover:border-purple-700 w-full"
@@ -250,10 +270,12 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
           {aiNote && (
             <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded">
               <h3 className="font-semibold text-purple-800 dark:text-purple-300 text-xs mb-1.5">Personalized Note</h3>
-              <p className="text-purple-900 dark:text-purple-200 text-xs leading-relaxed">{aiNote}</p>
+              <div className="text-purple-900 dark:text-purple-200 text-xs leading-relaxed">
+                {renderTextWithMath(aiNote)}
+              </div>
             </div>
           )}
-        </div> */}
+        </div>
       </motion.div>
     )
   }
@@ -292,7 +314,9 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
                     {isCorrect ? <CheckCircle size={14} /> : <XCircle size={14} />}
                   </div>
                   <div className="flex-1">
-                    <div className="text-sm font-medium mb-1 line-clamp-2">{question.question}</div>
+                    <div className="text-sm font-medium mb-1 line-clamp-2">
+                      {renderTextWithMath(question.question)}
+                    </div>
                     <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                       <span>{question.topic}</span>
                       <span>•</span>
@@ -327,7 +351,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
           <ArrowLeft size={16} />
           Back to Results
         </Button>
-        {/* <Button
+        <Button
           variant="outline"
           className="gap-2 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 hover:border-purple-300 hover:from-purple-100 hover:to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 dark:border-purple-800 dark:hover:border-purple-700 w-full"
           onClick={handleGenerateAINote}
@@ -335,7 +359,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
         >
           <Sparkles size={16} className="text-purple-500" />
           {generatingNote ? "Generating..." : "Generate AI Study Note"}
-        </Button> */}
+        </Button>
       </div>
     </motion.div>
   )
