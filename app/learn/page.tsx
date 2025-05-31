@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useSession } from "next-auth/react";
+import { toast } from "react-hot-toast";
 import {
   CheckCircle,
   Clock,
@@ -13,10 +14,10 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Share2, // Add this
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,6 +26,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -33,13 +40,14 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { LearnPageHeader } from "@/components/learn/learn-page-header";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 // Interfaces
 interface Exam {
   id: string;
   exam_source: "school" | "waec" | "user";
   subject: string;
-  exam_type: "BECE" | "WASSCE";
+  exam_type: string; // "BECE", "WASSCE", or "EXPLORER"
   question_count: number;
   total_marks: number;
   sort_date: string;
@@ -162,15 +170,17 @@ export default function Learn() {
   const [showMoreTopics, setShowMoreTopics] = useState<Record<string, boolean>>(
     {},
   );
-  const [selectedExamType, setSelectedExamType] = useState<"BECE" | "WASSCE">(
+  const [selectedExamType, setSelectedExamType] = useState<"BECE" | "WASSCE" | "EXPLORER">(
     "BECE",
   );
   const [selectedSubject, setSelectedSubject] = useState<string>("For you");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isExamTypeOpen, setIsExamTypeOpen] = useState(false);
   const [expandedSubjects, setExpandedSubjects] = useState<
     Record<string, boolean>
   >({});
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   // Initialize state from localStorage only on client side
   useEffect(() => {
@@ -215,14 +225,16 @@ export default function Learn() {
   };
 
   const getFilteredExams = () => {
-    let filtered = exams.filter((exam) => exam.exam_type === selectedExamType);
+    let filtered = exams.filter((exam) =>
+      selectedExamType === "EXPLORER" ? true : exam.exam_type === selectedExamType
+    );
 
     if (selectedSubject === "For you") {
       if (selectedTopics.length > 0) {
         filtered = filtered.filter((exam) =>
-          exam.topics.some((topic) => selectedTopics.includes(topic)),
+          exam.topics.some((topic) => selectedTopics.includes(topic))
         );
-      } else {
+      } else if (selectedExamType !== "EXPLORER") {
         filtered = filtered.slice(0, 5);
       }
     } else {
@@ -278,6 +290,16 @@ export default function Learn() {
       }
       return newTopics;
     });
+  };
+
+  const handleExamTypeChange = (examType: "BECE" | "WASSCE" | "EXPLORER") => {
+    setSelectedExamType(examType);
+    setSelectedTopics([]);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedExamType", examType);
+      localStorage.setItem("selectedTopics", JSON.stringify([]));
+    }
+    setIsExamTypeOpen(false);
   };
 
   useEffect(() => {
@@ -393,6 +415,31 @@ export default function Learn() {
   const subjectsToDisplay =
     selectedExamType === "BECE" ? BECE_SUBJECTS : WASSCE_SUBJECTS;
 
+  const examTypeContent = (
+    <div className="py-4">
+      <div className="space-y-2">
+        {[
+          { value: "BECE", label: "I am a BECE candidate" },
+          { value: "WASSCE", label: "I am a WASSCE candidate" },
+          { value: "EXPLORER", label: "Just an explorer" },
+        ].map((examType) => (
+          <button
+            key={examType.value}
+            onClick={() => handleExamTypeChange(examType.value as "BECE" | "WASSCE" | "EXPLORER")}
+            className={cn(
+              "w-full p-3 text-left text-sm font-medium rounded-md transition-colors",
+              selectedExamType === examType.value
+                ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700",
+            )}
+          >
+            {examType.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <>
       <LearnPageHeader />
@@ -420,185 +467,7 @@ export default function Learn() {
 
           {!loading && !error && (
             <>
-              {/* <div className="flex flex-col md:items-center justify-center py-6 md:p-6 md:text-center">
-                {session ? (
-                  <h2 className="text-2xl font-semibold leading-tight">
-                    {greeting}, {userName}.
-                  </h2>
-                ) : (
-                  <h2 className="text-2xl font-semibold">Welcome to Kibra.</h2>
-                )}
-                <p className="text-sm leading-tight text-gray-600 dark:text-gray-400 mb-6">
-                  Quickly test your skills on WAEC-Based topics
-                </p>
-              </div> */}
               <div className="w-full">
-                {/* BECE/WASSCE Toggle with Filter Button */}
-                {/* <div className="flex items-center justify-between">
-                  <Tabs
-                    value={selectedExamType}
-                    onValueChange={(value) => {
-                      const newExamType = value as "BECE" | "WASSCE";
-                      setSelectedExamType(newExamType);
-                      // Clear selected topics when exam type changes
-                      setSelectedTopics([]);
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("selectedTopics", JSON.stringify([]));
-                      }
-                    }}
-                  >
-                    <TabsList className="grid w-fit grid-cols-2 rounded-full">
-                      <TabsTrigger className="rounded-3xl" value="BECE">
-                        BECE
-                      </TabsTrigger>
-                      <TabsTrigger className="rounded-3xl" value="WASSCE">
-                        WASSCE
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                  <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="relative"
-                      >
-                        <Filter className="h-4 w-4 mr-2" />
-                        Filter
-                        {selectedTopics.length > 0 && (
-                          <Badge
-                            variant="secondary"
-                            className="ml-2 h-5 w-5 p-0 text-xs"
-                          >
-                            {selectedTopics.length}
-                          </Badge>
-                        )}
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>
-                          Filter by Topics ({selectedExamType})
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm text-muted-foreground">
-                            Select topics you want to focus on
-                          </p>
-                          {selectedTopics.length > 0 && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={clearSelectedTopics}
-                              className="h-auto p-1 text-xs"
-                            >
-                              Clear all
-                            </Button>
-                          )}
-                        </div>
-
-                        {selectedTopics.length > 0 && (
-                          <div className="space-y-2">
-                            <p className="text-sm font-medium">Selected topics:</p>
-                            <div className="flex flex-wrap gap-1">
-                              {selectedTopics.map((topic) => (
-                                <Badge
-                                  key={topic}
-                                  variant="secondary"
-                                  className="text-xs cursor-pointer"
-                                  onClick={() => handleTopicToggle(topic)}
-                                >
-                                  {topic}
-                                  <X className="h-3 w-3 ml-1" />
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                          {Object.entries(getTopicsBySubject()).map(
-                            ([subject, topics]) => {
-                              const selectedCount = topics.filter((topic) =>
-                                selectedTopics.includes(topic),
-                              ).length;
-                              return (
-                                <Collapsible
-                                  key={subject}
-                                  open={expandedSubjects[subject]}
-                                  onOpenChange={() => toggleSubjectExpansion(subject)}
-                                  className="border rounded-md"
-                                >
-                                  <CollapsibleTrigger asChild>
-                                    <div className="flex items-center justify-between w-full p-3 text-sm font-medium bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
-                                      <div className="flex items-center">
-                                        <Checkbox
-                                          id={`select-all-${subject}`}
-                                          checked={topics.every((topic) =>
-                                            selectedTopics.includes(topic),
-                                          )}
-                                          onCheckedChange={() =>
-                                            selectAllTopicsForSubject(subject, topics)
-                                          }
-                                          onClick={(e) => e.stopPropagation()}
-                                          className="mr-2"
-                                        />
-                                        <span>{subject}</span>
-                                        <Badge
-                                          variant="outline"
-                                          className="ml-2"
-                                        >
-                                          {topics.length}
-                                        </Badge>
-                                        {selectedCount > 0 && (
-                                          <Badge
-                                            variant="secondary"
-                                            className="ml-2 h-5 w-5 p-0 text-xs"
-                                          >
-                                            {selectedCount}
-                                          </Badge>
-                                        )}
-                                      </div>
-                                      {expandedSubjects[subject] ? (
-                                        <ChevronUp className="h-4 w-4" />
-                                      ) : (
-                                        <ChevronDown className="h-4 w-4" />
-                                      )}
-                                    </div>
-                                  </CollapsibleTrigger>
-                                  <CollapsibleContent className="p-3 space-y-2 border-t">
-                                    {topics.map((topic) => (
-                                      <div
-                                        key={topic}
-                                        className="flex items-center space-x-2"
-                                      >
-                                        <Checkbox
-                                          id={`${subject}-${topic}`}
-                                          checked={selectedTopics.includes(topic)}
-                                          onCheckedChange={() =>
-                                            handleTopicToggle(topic)
-                                          }
-                                        />
-                                        <label
-                                          htmlFor={`${subject}-${topic}`}
-                                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                                        >
-                                          {topic}
-                                        </label>
-                                      </div>
-                                    ))}
-                                  </CollapsibleContent>
-                                </Collapsible>
-                              );
-                            },
-                          )}
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div> */}
-
                 {/* Subject Categories */}
                 <div>
                   <div className="flex justify-center py-2 min-w-max">
@@ -623,7 +492,6 @@ export default function Learn() {
                         )}
                       </span>
                       {selectedSubject === "For you" && (
-                        // <div />
                         <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-blue-500 dark:bg-blue-400 rounded-full z-0"></div>
                       )}
                     </button>
@@ -651,7 +519,26 @@ export default function Learn() {
                   </div>
                 </div>
                 <div className="text-center text-sm leading-tight text-gray-600 dark:text-gray-400 mb-6 pt-2">
-                  You're a BECE candidate. <button className="inline-block text-blue-600">Change</button>
+                  You're {selectedExamType === "EXPLORER" ? "an EXPLORER" : `a ${selectedExamType} candidate`}.{" "}
+                  <Dialog open={isExamTypeOpen && isDesktop} onOpenChange={setIsExamTypeOpen}>
+                    <DialogTrigger asChild>
+                      <button className="inline-block text-blue-600">Change</button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-sm">
+                      <DialogHeader>
+                        <DialogTitle>Select Preference</DialogTitle>
+                      </DialogHeader>
+                      {examTypeContent}
+                    </DialogContent>
+                  </Dialog>
+                  <Drawer open={isExamTypeOpen && !isDesktop} onOpenChange={setIsExamTypeOpen}>
+                    <DrawerContent className="h-auto rounded-t-3xl">
+                      <DrawerHeader>
+                        <DrawerTitle>Select Preference</DrawerTitle>
+                      </DrawerHeader>
+                      {examTypeContent}
+                    </DrawerContent>
+                  </Drawer>
                 </div>
 
                 {/* Exam Cards */}
