@@ -386,8 +386,8 @@ export default function Learn() {
     currentHour < 12
       ? "Good morning"
       : currentHour < 17
-      ? "Good afternoon"
-      : "Good evening";
+        ? "Good afternoon"
+        : "Good evening";
   const userName = session?.user?.name?.split(" ")[0] || "User";
 
   const subjectsToDisplay =
@@ -396,7 +396,7 @@ export default function Learn() {
   return (
     <>
       <LearnPageHeader />
-      <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 px-3">
+      <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 pb-6 px-3">
         <div className="max-w-4xl mx-auto">
           {loading && (
             <div className="flex justify-center py-8">
@@ -408,19 +408,19 @@ export default function Learn() {
               <p className="text-sm text-red-600 dark:text-red-400 mb-2">
                 {error}
               </p>
-              <Link
+              <a
                 href="/learn"
                 className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
               >
                 <RefreshCw size={16} />
                 Reload
-              </Link>
+              </a>
             </div>
           )}
 
           {!loading && !error && (
             <>
-              <div className="flex flex-col md:items-center justify-center py-6 md:p-6 md:text-center">
+              {/* <div className="flex flex-col md:items-center justify-center py-6 md:p-6 md:text-center">
                 {session ? (
                   <h2 className="text-2xl font-semibold leading-tight">
                     {greeting}, {userName}.
@@ -431,10 +431,10 @@ export default function Learn() {
                 <p className="text-sm leading-tight text-gray-600 dark:text-gray-400 mb-6">
                   Quickly test your skills on WAEC-Based topics
                 </p>
-              </div>
-              <div className="w-full space-y-6">
+              </div> */}
+              <div className="w-full">
                 {/* BECE/WASSCE Toggle with Filter Button */}
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <Tabs
                     value={selectedExamType}
                     onValueChange={(value) => {
@@ -597,45 +597,61 @@ export default function Learn() {
                       </div>
                     </DialogContent>
                   </Dialog>
-                </div>
+                </div> */}
 
                 {/* Subject Categories */}
-                <div className="overflow-x-auto">
-                  <div className="flex gap-4 pb-2 min-w-max">
+                <div>
+                  <div className="flex justify-center py-2 min-w-max">
                     <button
                       onClick={() => setSelectedSubject("For you")}
                       className={cn(
-                        "px-0 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+                        "mx-4 py-2 text-base whitespace-nowrap transition-colors relative",
                         selectedSubject === "For you"
-                          ? "text-gray-900 border-b-2 border-gray-900 dark:text-gray-100 dark:border-gray-100"
+                          ? "text-gray-900 font-medium dark:text-gray-100"
                           : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100",
                       )}
                     >
-                      For you
-                      {selectedTopics.length > 0 && (
-                        <Badge
-                          variant="secondary"
-                          className="ml-2 h-4 w-4 p-0 text-xs"
-                        >
-                          {selectedTopics.length}
-                        </Badge>
+                      <span className="relative z-10">
+                        For you
+                        {selectedTopics.length > 0 && (
+                          <Badge
+                            variant="secondary"
+                            className="ml-2 h-4 w-4 p-0 text-xs"
+                          >
+                            {selectedTopics.length}
+                          </Badge>
+                        )}
+                      </span>
+                      {selectedSubject === "For you" && (
+                        // <div />
+                        <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-blue-500 dark:bg-blue-400 rounded-full z-0"></div>
                       )}
                     </button>
-                    {subjectsToDisplay.map((subject) => (
-                      <button
-                        key={subject}
-                        onClick={() => setSelectedSubject(subject)}
-                        className={cn(
-                          "px-0 mr-2 py-2 text-sm font-medium whitespace-nowrap transition-colors",
-                          selectedSubject === subject
-                            ? "text-gray-900 border-b-2 border-gray-900 dark:text-gray-100 dark:border-gray-100"
-                            : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100",
-                        )}
-                      >
-                        {subject}
-                      </button>
-                    ))}
+                    <div className="flex max-w-[70vw] overflow-x-auto scrollbar-hide">
+                      {subjectsToDisplay.map((subject) => (
+                        <button
+                          key={subject}
+                          onClick={() => setSelectedSubject(subject)}
+                          className={cn(
+                            "mx-2 py-2 text-base whitespace-nowrap transition-colors relative",
+                            selectedSubject === subject
+                              ? "text-gray-900 font-medium dark:text-gray-100"
+                              : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100",
+                          )}
+                        >
+                          <span className="relative z-10">
+                            {subject === "Information and Communication Technology" ? "ICT" : subject}
+                          </span>
+                          {selectedSubject === subject && (
+                            <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-blue-500 dark:bg-blue-400 rounded-full z-0"></div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   </div>
+                </div>
+                <div className="text-center text-sm leading-tight text-gray-600 dark:text-gray-400 mb-6 pt-2">
+                  You're a BECE candidate. <button className="inline-block text-blue-600">Change</button>
                 </div>
 
                 {/* Exam Cards */}
@@ -647,8 +663,8 @@ export default function Learn() {
                         {selectedSubject === "For you" && selectedTopics.length > 0
                           ? `No ${selectedExamType} exams found for your selected topics.`
                           : selectedSubject === "For you"
-                          ? `No ${selectedExamType} exams available. Try selecting some topics to personalize your experience.`
-                          : `No ${selectedExamType} exams available for ${selectedSubject}.`}
+                            ? `No ${selectedExamType} exams available. Try selecting some topics to personalize your experience.`
+                            : `No ${selectedExamType} exams available for ${selectedSubject}.`}
                       </p>
                       {selectedSubject === "For you" &&
                         selectedTopics.length === 0 && (
@@ -670,21 +686,21 @@ export default function Learn() {
                           exam.exam_source === "school"
                             ? exam.school_exam_metadata?.school || "Unknown School"
                             : exam.exam_source === "waec"
-                            ? exam.waec_exam_metadata?.region || "WAEC"
-                            : exam.user_exam_metadata?.creator_name ||
+                              ? exam.waec_exam_metadata?.region || "WAEC"
+                              : exam.user_exam_metadata?.creator_name ||
                               "User Created";
                         const examType =
                           exam.exam_source === "school"
                             ? exam.exam_type
                             : exam.exam_source === "waec"
-                            ? exam.exam_type
-                            : exam.exam_type || "Custom";
+                              ? exam.exam_type
+                              : exam.exam_type || "Custom";
                         const examDate =
                           exam.exam_source === "school"
                             ? exam.school_exam_metadata?.date
                             : exam.exam_source === "waec"
-                            ? `${exam.waec_exam_metadata?.exam_year} ${exam.waec_exam_metadata?.exam_session}`
-                            : exam.user_exam_metadata?.date || "";
+                              ? `${exam.waec_exam_metadata?.exam_year} ${exam.waec_exam_metadata?.exam_session}`
+                              : exam.user_exam_metadata?.date || "";
 
                         return (
                           <Link
@@ -693,7 +709,7 @@ export default function Learn() {
                             className={cn(
                               "block w-full p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors dark:bg-gray-950 dark:border-gray-800 dark:hover:border-gray-700",
                               exam.completed &&
-                                "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900",
+                              "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900",
                             )}
                           >
                             <div className="flex items-start gap-3">

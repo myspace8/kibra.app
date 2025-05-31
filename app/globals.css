@@ -22,6 +22,21 @@
 
 }
 
+/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for IE/Edge */
+.scrollbar-none {
+  -ms-overflow-style: none;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
