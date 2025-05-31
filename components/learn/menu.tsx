@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, CheckCircle, Clock, ArrowRight, Building2, Globe, User, Loader2, Filter, Link2 } from "lucide-react"
+import { Search, CheckCircle, Clock, ArrowRight, Building2, Globe, User, Loader2, Filter, Share } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { supabase } from "@/lib/supabase"
@@ -314,7 +314,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
             >
               <div
                 className={cn(
-                  "mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
+                  "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
                   exam.completed
                     ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                     : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
@@ -393,7 +393,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                 className="ml-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label="Copy share link"
               >
-                <Link2 className="h-4 w-4" />
+                <Share className="h-4 w-4" />
               </Button>
             </Link>
           );

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
+import { Separator } from "@/components/ui/separator";
 import {
   CheckCircle,
   Clock,
@@ -14,7 +15,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
-  Share2,
+  Share,
   Copy,
   Twitter,
   MessageCircle,
@@ -479,7 +480,7 @@ export default function Learn() {
   return (
     <>
       <LearnPageHeader />
-      <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 pb-6 md:px-3">
+      <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-white dark:from-gray-900 dark:to-gray-950 pb-6 md:px-3">
         <div className="max-w-2xl mx-auto">
           {loading && (
             <div className="flex justify-center py-8">
@@ -503,7 +504,7 @@ export default function Learn() {
 
           {!loading && !error && (
             <>
-              <div className="w-full">
+              <div className="w-full border border-y-0 border-x">
                 {/* Subject Categories */}
                 <div>
                   <div className="flex justify-center pt-2 min-w-max border-b">
@@ -554,7 +555,7 @@ export default function Learn() {
                     </div>
                   </div>
                 </div>
-                <div className="text-center text-sm leading-tight text-gray-600 dark:text-gray-400 mb-6 pt-2 px-3">
+                <div className="text-center text-sm leading-tight text-gray-600 dark:text-gray-400 py-4 px-3 border-b">
                   You're {selectedExamType === "EXPLORER" ? "an explorer" : `a ${selectedExamType} candidate`}.{" "}
                   <Dialog open={isExamTypeOpen && isDesktop} onOpenChange={setIsExamTypeOpen}>
                     <DialogTrigger asChild>
@@ -603,8 +604,8 @@ export default function Learn() {
                         )}
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      {filteredExams.map((exam) => {
+                    <div>
+                      {filteredExams.map((exam, index) => {
                         const institution =
                           exam.exam_source === "school"
                             ? exam.school_exam_metadata?.school || "Unknown School"
@@ -626,40 +627,36 @@ export default function Learn() {
                               : exam.user_exam_metadata?.date || "";
 
                         return (
-                          <div key={exam.id} className="px-3 md:px-0">
-                            <Link
-                              href={`/exam/${exam.id}`}
-                              className={cn(
-                                "block w-full p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors dark:bg-gray-950 dark:border-gray-800 dark:hover:border-gray-700",
-                                exam.completed &&
-                                "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900",
-                              )}
-                            >
-                              <div className="flex items-start gap-3">
-                                <div
-                                  className={cn(
-                                    "mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
-                                    exam.completed
-                                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                      : "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
-                                  )}
-                                >
-                                  {exam.completed ? (
-                                    <CheckCircle className="h-4 w-4" />
-                                  ) : (
-                                    <Clock className="h-4 w-4" />
-                                  )}
-                                </div>
-                                <div className="flex-1 min-w-0">
+                          <div key={exam.id} className="md:px-0 group">
+                          <Link
+                            href={`/exam/${exam.id}`}
+                            className={cn(
+                              "block w-full p-4 transition-colors dark:bg-gray-950 dark:border-gray-800 hover:bg-[#f7f7f7] dark:hover:border-gray-700",
+                              exam.completed &&
+                                "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900"
+                            )}
+                          >
+                            <div className="flex items-start">
+                              <div
+                                className={cn(
+                                  "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
+                                  exam.completed
+                                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                    : "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                                )}
+                              >
+                                {exam.completed ? (
+                                  <CheckCircle className="h-4 w-4" />
+                                ) : (
+                                  <Clock className="h-4 w-4" />
+                                )}
+                              </div>
+                              <div className="flex flex-col items-start gap-2">
+                                <div className="ml-3 flex-1 min-w-0">
                                   <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                                    {exam.subject} {examType}{" "}
-                                    {examDate && `(${examDate}) Trial`}
+                                    {exam.subject} {examType} {examDate && `(${examDate}) Trial`}
                                   </h3>
                                   <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
-                                    <div className="flex items-center gap-1">
-                                      <Globe className="h-4 w-4" />
-                                      <span>{institution}</span>
-                                    </div>
                                     <span>{exam.question_count} Questions</span>
                                   </div>
                                   {exam.topics.length > 0 && (
@@ -667,9 +664,7 @@ export default function Learn() {
                                       {exam.topics
                                         .slice(
                                           0,
-                                          showMoreTopics[exam.id]
-                                            ? exam.topics.length
-                                            : 3,
+                                          showMoreTopics[exam.id] ? exam.topics.length : 3
                                         )
                                         .map((topic) => (
                                           <span
@@ -678,122 +673,127 @@ export default function Learn() {
                                               "px-2 py-1 text-xs font-medium rounded-md",
                                               selectedTopics.includes(topic)
                                                 ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                                                : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+                                                : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                                             )}
                                           >
                                             {topic}
                                           </span>
                                         ))}
-                                      {exam.topics.length > 3 &&
-                                        !showMoreTopics[exam.id] && (
-                                          <button
-                                            type="button"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              e.preventDefault();
-                                              setShowMoreTopics((prev) => ({
-                                                ...prev,
-                                                [exam.id]: true,
-                                              }));
-                                            }}
-                                            className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-                                          >
-                                            +{exam.topics.length - 3} more
-                                          </button>
-                                        )}
+                                      {exam.topics.length > 3 && !showMoreTopics[exam.id] && (
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            setShowMoreTopics((prev) => ({
+                                              ...prev,
+                                              [exam.id]: true,
+                                            }));
+                                          }}
+                                          className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                                        >
+                                          +{exam.topics.length - 3} more
+                                        </button>
+                                      )}
                                     </div>
                                   )}
                                 </div>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="ml-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    setIsShareOpen(exam.id);
-                                  }}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter" || e.key === " ") {
+                                <div className="w-full">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="focus:outline-none rounded-full"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
                                       e.preventDefault();
                                       setIsShareOpen(exam.id);
-                                    }
-                                  }}
-                                  role="button"
-                                  tabIndex={0}
-                                  aria-label="Share exam link"
-                                >
-                                  <Share2 className="h-4 w-4" />
-                                </Button>
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        setIsShareOpen(exam.id);
+                                      }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-label="Share exam link"
+                                  >
+                                    <Share className="h-4 w-4 text-gray-500" />
+                                  </Button>
+                                </div>
                               </div>
-                            </Link>
-                            <Dialog
-                              open={isShareOpen === exam.id && isDesktop}
-                              onOpenChange={(open) => setIsShareOpen(open ? exam.id : null)}
-                            >
-                              <DialogContent className="sm:max-w-sm">
-                                <DialogHeader>
-                                  <DialogTitle>Share This Test</DialogTitle>
-                                </DialogHeader>
-                                <div className="py-4 space-y-2">
-                                  <button
-                                    onClick={(e) => handleShare(exam.id, "copy", e)}
-                                    className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                  >
-                                    <Copy className="h-4 w-4 mr-2" />
-                                    Copy Link
-                                  </button>
-                                  <button
-                                    onClick={(e) => handleShare(exam.id, "twitter", e)}
-                                    className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                  >
-                                    <Twitter className="h-4 w-4 mr-2" />
-                                    Share on Twitter/X
-                                  </button>
-                                  <button
-                                    onClick={(e) => handleShare(exam.id, "whatsapp", e)}
-                                    className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                  >
-                                    <MessageCircle className="h-4 w-4 mr-2" />
-                                    Share on WhatsApp
-                                  </button>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                            <Drawer
-                              open={isShareOpen === exam.id && !isDesktop}
-                              onOpenChange={(open) => setIsShareOpen(open ? exam.id : null)}
-                            >
-                              <DrawerContent className="h-auto rounded-t-3xl">
-                                <DrawerHeader>
-                                  <DrawerTitle>Share This Test</DrawerTitle>
-                                </DrawerHeader>
-                                <div className="py-4 space-y-2 px-4">
-                                  <button
-                                    onClick={(e) => handleShare(exam.id, "copy", e)}
-                                    className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                  >
-                                    <Copy className="h-4 w-4 mr-2" />
-                                    Copy Link
-                                  </button>
-                                  <button
-                                    onClick={(e) => handleShare(exam.id, "twitter", e)}
-                                    className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                  >
-                                    <Twitter className="h-4 w-4 mr-2" />
-                                    Share on Twitter/X
-                                  </button>
-                                  <button
-                                    onClick={(e) => handleShare(exam.id, "whatsapp", e)}
-                                    className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                  >
-                                    <MessageCircle className="h-4 w-4 mr-2" />
-                                    Share on WhatsApp
-                                  </button>
-                                </div>
-                              </DrawerContent>
-                            </Drawer>
-                          </div>
+                            </div>
+                          </Link>
+                          {index < filteredExams.length - 1 && (
+                            <Separator className="opacity-1 transition-opacity duration-300" />
+                          )}
+                          <Dialog
+                            open={isShareOpen === exam.id && isDesktop}
+                            onOpenChange={(open) => setIsShareOpen(open ? exam.id : null)}
+                          >
+                            <DialogContent className="sm:max-w-sm">
+                              <DialogHeader>
+                                <DialogTitle>Share This Test</DialogTitle>
+                              </DialogHeader>
+                              <div className="py-4 space-y-2">
+                                <button
+                                  onClick={(e) => handleShare(exam.id, "copy", e)}
+                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  Copy Link
+                                </button>
+                                <button
+                                  onClick={(e) => handleShare(exam.id, "twitter", e)}
+                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                  <Twitter className="h-4 w-4 mr-2" />
+                                  Share on Twitter/X
+                                </button>
+                                <button
+                                  onClick={(e) => handleShare(exam.id, "whatsapp", e)}
+                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                  Share on WhatsApp
+                                </button>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                          <Drawer
+                            open={isShareOpen === exam.id && !isDesktop}
+                            onOpenChange={(open) => setIsShareOpen(open ? exam.id : null)}
+                          >
+                            <DrawerContent className="h-auto rounded-t-3xl">
+                              <DrawerHeader>
+                                <DrawerTitle>Share This Test</DrawerTitle>
+                              </DrawerHeader>
+                              <div className="py-4 space-y-2 px-4">
+                                <button
+                                  onClick={(e) => handleShare(exam.id, "copy", e)}
+                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  Copy Link
+                                </button>
+                                <button
+                                  onClick={(e) => handleShare(exam.id, "twitter", e)}
+                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                  <Twitter className="h-4 w-4 mr-2" />
+                                  Share on Twitter/X
+                                </button>
+                                <button
+                                  onClick={(e) => handleShare(exam.id, "whatsapp", e)}
+                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                  Share on WhatsApp
+                                </button>
+                              </div>
+                            </DrawerContent>
+                          </Drawer>
+                        </div>
                         );
                       })}
                     </div>
