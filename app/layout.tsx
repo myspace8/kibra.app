@@ -6,6 +6,8 @@ import { NavigationProvider } from "@/contexts/navigation-context"
 import { AuthProvider } from "./providers"
 import { Toaster } from "react-hot-toast"
 import 'katex/dist/katex.min.css';
+// import 'react-syntax-highlighter/dist/esm/styles/prism'; 
+
 const inter = Inter({ subsets: ["latin"] })
 
 // Define metadata if needed

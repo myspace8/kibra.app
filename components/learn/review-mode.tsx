@@ -9,6 +9,9 @@ import { motion } from "framer-motion"
 import type { Question } from "@/types/question"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import MathExpression from "@/components/MathExpression"
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
@@ -31,16 +34,57 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
   const currentQuestion = answeredQuestions[currentQuestionIndex]
 
   const renderTextWithMath = (text: string) => {
-    const parts = text.split(/(\$\$.*?\$\$|\$.*?\$)/g).filter(part => part.trim());
-    return parts.map((part, index) => {
-      if (part.startsWith('$$') && part.endsWith('$$')) {
-        return <MathExpression key={index} latex={part} isBlock={true} className="inline-block" />;
-      } else if (part.startsWith('$') && part.endsWith('$')) {
-        return <MathExpression key={index} latex={part} className="inline" />;
-      } else {
-        return <span key={index} dangerouslySetInnerHTML={{ __html: part.replace(/<u>(.*?)<\/u>/g, '<span style="text-decoration: underline; text-underline-offset: 2px;">$1</span>') }} />;
+    // Normalize literal \n to actual newlines
+    const normalizedText = text.replace(/\\n/g, '\n');
+
+    // Match code blocks with optional language, handling both literal \n and actual newlines
+    const codeBlockRegex = /```(\w+)?\s*([\s\S]*?)```/g;
+    let lastIndex = 0;
+    const elements = [];
+
+    normalizedText.replace(codeBlockRegex, (match, language, code, index) => {
+      // Add text before the code block
+      if (index > lastIndex) {
+        elements.push(...renderTextParts(normalizedText.slice(lastIndex, index)));
       }
+      // Add code block
+      const lang = (language || 'text').toLowerCase();
+      elements.push(
+        <div key={`code-${index}`} className="my-2">
+          <SyntaxHighlighter
+            language={lang}
+            style={prism}
+            customStyle={{ fontSize: '0.75rem', padding: '0.5rem', borderRadius: '0.375rem' }}
+            wrapLines={true}
+          >
+            {code.trim()}
+          </SyntaxHighlighter>
+        </div>
+      );
+      lastIndex = index + match.length;
+      return match;
     });
+
+    // Add remaining text after the last code block
+    if (lastIndex < normalizedText.length) {
+      elements.push(...renderTextParts(normalizedText.slice(lastIndex)));
+    }
+
+    return elements;
+
+    // Helper function to handle LaTeX and plain text
+    function renderTextParts(textPart: string) {
+      const subParts = textPart.split(/(\$\$.*?\$\$|\$.*?\$)/g).filter(part => part.trim());
+      return subParts.map((subPart, subIndex) => {
+        if (subPart.startsWith('$$') && subPart.endsWith('$$')) {
+          return <MathExpression key={`math-${subIndex}`} latex={subPart} isBlock={true} className="inline-block" />;
+        } else if (subPart.startsWith('$') && subPart.endsWith('$')) {
+          return <MathExpression key={`math-${subIndex}`} latex={subPart} className="inline" />;
+        } else {
+          return <span key={`text-${subIndex}`} dangerouslySetInnerHTML={{ __html: subPart.replace(/<u>(.*?)<\/u>/g, '<span style="text-decoration: underline; text-underline-offset: 2px;">$1</span>') }} />;
+        }
+      });
+    }
   };
 
   const handleViewQuestion = (index: number) => {
