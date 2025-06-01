@@ -71,9 +71,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const [showMoreTopics, setshowMoreTopics] = useState<Record<string, boolean>>({})
 
-  // Fetch user settings
-
-  // Fetch initial data
+  // SUPABASE FETCH
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
@@ -138,6 +136,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
     if (open) fetchData()
   }, [open, session?.user?.id])
 
+  // SUPABASE FETCH
   // Real-time subscription for exams
   useEffect(() => {
     if (!open) return
@@ -195,6 +194,124 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
     }
   }, [open, session?.user?.id])
 
+  // DEV MODE MOCK DATA
+  // useEffect(() => {
+  //   const fetchExams = async () => {
+  //     setLoading(true);
+  //     setError(null);
+
+  //     try {
+  //       // Mock data
+  //       const mockExams: Exam[] = [
+  //         {
+  //           id: "1",
+  //           exam_source: "school",
+  //           exam_type: "BECE",
+  //           subject: "Mathematics",
+  //           question_count: 40,
+  //           total_marks: 100,
+  //           sort_date: "2025-05-01",
+  //           difficulty: "Medium",
+  //           topics: ["Arithmetic (Fractions, Percentages, Ratios)", "Algebra (Equations, Expressions)"],
+  //           school_exam_metadata: {
+  //             school: "Accra Academy",
+  //             grade_level: "JHS 3",
+  //             date: "2025-04-15",
+  //             examiner: "Mr. Kofi Mensah",
+  //             school_location: { region: "Greater Accra", city: "Accra", country: "Ghana" },
+  //           },
+  //           completed: false,
+  //         },
+  //         {
+  //           id: "2",
+  //           exam_source: "waec",
+  //           exam_type: "WASSCE",
+  //           subject: "English Language",
+  //           question_count: 60,
+  //           total_marks: 150,
+  //           sort_date: "2025-06-10",
+  //           difficulty: "Hard",
+  //           topics: ["Advanced Grammar and Usage", "Essay Writing (Argumentative, Expository)"],
+  //           waec_exam_metadata: {
+  //             exam_year: 2025,
+  //             exam_session: "May/June",
+  //             region: "West Africa",
+  //             syllabus_version: "2025",
+  //           },
+  //           completed: true,
+  //         },
+  //         {
+  //           id: "3",
+  //           exam_source: "user",
+  //           exam_type: "EXPLORER",
+  //           subject: "Integrated Science",
+  //           question_count: 25,
+  //           total_marks: 50,
+  //           sort_date: "2025-03-20",
+  //           difficulty: "Easy",
+  //           topics: ["Physical Science (Energy, Forces)", "Scientific Investigation"],
+  //           user_exam_metadata: {
+  //             creator_id: "user123",
+  //             creator_name: "Jane Doe",
+  //             date: "2025-03-18",
+  //             description: "Practice test for science enthusiasts",
+  //           },
+  //           completed: false,
+  //         },
+  //         {
+  //           id: "4",
+  //           exam_source: "school",
+  //           exam_type: "BECE",
+  //           subject: "Social Studies",
+  //           question_count: 50,
+  //           total_marks: 120,
+  //           sort_date: "2025-04-25",
+  //           difficulty: "Medium",
+  //           topics: ["Governance and Citizenship", "Geography (Physical and Human)"],
+  //           school_exam_metadata: {
+  //             school: "Wesley Girls High School",
+  //             grade_level: "JHS 3",
+  //             date: "2025-04-20",
+  //             examiner: "Mrs. Ama Boateng",
+  //             school_location: { region: "Central Region", city: "Cape Coast", country: "Ghana" },
+  //           },
+  //           completed: true,
+  //         },
+  //         {
+  //           id: "5",
+  //           exam_source: "waec",
+  //           exam_type: "WASSCE",
+  //           subject: "Financial Accounting",
+  //           question_count: 45,
+  //           total_marks: 100,
+  //           sort_date: "2025-06-15",
+  //           difficulty: "Hard",
+  //           topics: ["Financial Statements and Analysis", "Bookkeeping and Ledger Accounts"],
+  //           waec_exam_metadata: {
+  //             exam_year: 2025,
+  //             exam_session: "November/December",
+  //             region: "West Africa",
+  //             syllabus_version: "2025",
+  //           },
+  //           completed: false,
+  //         },
+  //       ];
+
+  //       setExams(mockExams);
+  //     } catch (err) {
+  //       setError(
+  //         err instanceof Error
+  //           ? err.message
+  //           : "An error occurred while fetching exams.",
+  //       );
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchExams();
+  // }, [session?.user?.id]);
+  
   // Filter and sort exams
   const filterAndSortExams = useCallback(
     (exams: Exam[]) => {
@@ -347,7 +464,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                       {exam.topics.slice(0, showMoreTopics[exam.id] ? 18 : 3).map((topic) => (
                         <span
                           key={topic}
-                          className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md dark:bg-green-900/30 dark:text-green-400"
+                          className="py-1 text-xs underline underline-offset-4 text-gray-500"
                         >
                           {topic}
                         </span>
@@ -393,7 +510,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                 className="ml-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label="Copy share link"
               >
-                <Share className="h-4 w-4" />
+                <Share className="h-4 w-4 text-gray-500" />
               </Button>
             </Link>
           );

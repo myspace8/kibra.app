@@ -19,6 +19,7 @@ import {
   Copy,
   Twitter,
   MessageCircle,
+  ChartNoAxesColumnIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -36,6 +37,14 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -185,6 +194,7 @@ export default function Learn() {
     Record<string, boolean>
   >({});
   const [isShareOpen, setIsShareOpen] = useState<string | null>(null);
+  const [isViewCountOpen, setIsViewCountOpen] = useState<string | null>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   // Initialize state from localStorage only on client side
@@ -339,6 +349,7 @@ export default function Learn() {
     setIsExamTypeOpen(false);
   };
 
+  // SUPABASE FETCH
   useEffect(() => {
     const fetchExams = async () => {
       setLoading(true);
@@ -398,6 +409,124 @@ export default function Learn() {
 
     fetchExams();
   }, [session?.user?.id]);
+
+  // DEV MODE MOCK DATA
+  // useEffect(() => {
+  //   const fetchExams = async () => {
+  //     setLoading(true);
+  //     setError(null);
+
+  //     try {
+  //       // Mock data
+  //       const mockExams: Exam[] = [
+  //         {
+  //           id: "1",
+  //           exam_source: "school",
+  //           exam_type: "BECE",
+  //           subject: "Mathematics",
+  //           question_count: 40,
+  //           total_marks: 100,
+  //           sort_date: "2025-05-01",
+  //           difficulty: "Medium",
+  //           topics: ["Arithmetic (Fractions, Percentages, Ratios)", "Algebra (Equations, Expressions)"],
+  //           school_exam_metadata: {
+  //             school: "Accra Academy",
+  //             grade_level: "JHS 3",
+  //             date: "2025-04-15",
+  //             examiner: "Mr. Kofi Mensah",
+  //             school_location: { region: "Greater Accra", city: "Accra", country: "Ghana" },
+  //           },
+  //           completed: false,
+  //         },
+  //         {
+  //           id: "2",
+  //           exam_source: "waec",
+  //           exam_type: "WASSCE",
+  //           subject: "English Language",
+  //           question_count: 60,
+  //           total_marks: 150,
+  //           sort_date: "2025-06-10",
+  //           difficulty: "Hard",
+  //           topics: ["Advanced Grammar and Usage", "Essay Writing (Argumentative, Expository)"],
+  //           waec_exam_metadata: {
+  //             exam_year: 2025,
+  //             exam_session: "May/June",
+  //             region: "West Africa",
+  //             syllabus_version: "2025",
+  //           },
+  //           completed: true,
+  //         },
+  //         {
+  //           id: "3",
+  //           exam_source: "user",
+  //           exam_type: "EXPLORER",
+  //           subject: "Integrated Science",
+  //           question_count: 25,
+  //           total_marks: 50,
+  //           sort_date: "2025-03-20",
+  //           difficulty: "Easy",
+  //           topics: ["Physical Science (Energy, Forces)", "Scientific Investigation"],
+  //           user_exam_metadata: {
+  //             creator_id: "user123",
+  //             creator_name: "Jane Doe",
+  //             date: "2025-03-18",
+  //             description: "Practice test for science enthusiasts",
+  //           },
+  //           completed: false,
+  //         },
+  //         {
+  //           id: "4",
+  //           exam_source: "school",
+  //           exam_type: "BECE",
+  //           subject: "Social Studies",
+  //           question_count: 50,
+  //           total_marks: 120,
+  //           sort_date: "2025-04-25",
+  //           difficulty: "Medium",
+  //           topics: ["Governance and Citizenship", "Geography (Physical and Human)"],
+  //           school_exam_metadata: {
+  //             school: "Wesley Girls High School",
+  //             grade_level: "JHS 3",
+  //             date: "2025-04-20",
+  //             examiner: "Mrs. Ama Boateng",
+  //             school_location: { region: "Central Region", city: "Cape Coast", country: "Ghana" },
+  //           },
+  //           completed: true,
+  //         },
+  //         {
+  //           id: "5",
+  //           exam_source: "waec",
+  //           exam_type: "WASSCE",
+  //           subject: "Financial Accounting",
+  //           question_count: 45,
+  //           total_marks: 100,
+  //           sort_date: "2025-06-15",
+  //           difficulty: "Hard",
+  //           topics: ["Financial Statements and Analysis", "Bookkeeping and Ledger Accounts"],
+  //           waec_exam_metadata: {
+  //             exam_year: 2025,
+  //             exam_session: "November/December",
+  //             region: "West Africa",
+  //             syllabus_version: "2025",
+  //           },
+  //           completed: false,
+  //         },
+  //       ];
+
+  //       setExams(mockExams);
+  //     } catch (err) {
+  //       setError(
+  //         err instanceof Error
+  //           ? err.message
+  //           : "An error occurred while fetching exams.",
+  //       );
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchExams();
+  // }, [session?.user?.id]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -628,172 +757,310 @@ export default function Learn() {
 
                         return (
                           <div key={exam.id} className="md:px-0 group">
-                          <Link
-                            href={`/exam/${exam.id}`}
-                            className={cn(
-                              "block w-full p-4 transition-colors dark:bg-gray-950 dark:border-gray-800 hover:bg-[#f7f7f7] dark:hover:border-gray-700",
-                              exam.completed &&
+                            <Link
+                              href={`/exam/${exam.id}`}
+                              className={cn(
+                                "block w-full px-4 pt-4 transition-colors dark:bg-gray-950 dark:border-gray-800 hover:bg-[#f7f7f7] dark:hover:border-gray-700",
+                                exam.completed &&
                                 "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900"
-                            )}
-                          >
-                            <div className="flex items-start">
-                              <div
-                                className={cn(
-                                  "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
-                                  exam.completed
-                                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                    : "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                                )}
-                              >
-                                {exam.completed ? (
-                                  <CheckCircle className="h-4 w-4" />
-                                ) : (
-                                  <Clock className="h-4 w-4" />
-                                )}
-                              </div>
-                              <div className="flex flex-col items-start gap-2">
-                                <div className="ml-3 flex-1 min-w-0">
-                                  <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                                    {exam.subject} {examType} {examDate && `(${examDate}) Trial`}
-                                  </h3>
-                                  <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
-                                    <span>{exam.question_count} Questions</span>
-                                  </div>
-                                  {exam.topics.length > 0 && (
-                                    <div className="flex flex-wrap gap-2">
-                                      {exam.topics
-                                        .slice(
-                                          0,
-                                          showMoreTopics[exam.id] ? exam.topics.length : 3
-                                        )
-                                        .map((topic) => (
-                                          <span
-                                            key={topic}
-                                            className={cn(
-                                              "px-2 py-1 text-xs font-medium rounded-md",
-                                              selectedTopics.includes(topic)
-                                                ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                                                : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                            )}
-                                          >
-                                            {topic}
-                                          </span>
-                                        ))}
-                                      {exam.topics.length > 3 && !showMoreTopics[exam.id] && (
-                                        <button
-                                          type="button"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                            setShowMoreTopics((prev) => ({
-                                              ...prev,
-                                              [exam.id]: true,
-                                            }));
-                                          }}
-                                          className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-                                        >
-                                          +{exam.topics.length - 3} more
-                                        </button>
-                                      )}
-                                    </div>
+                              )}
+                            >
+                              <div className="flex items-start">
+                                <div
+                                  className={cn(
+                                    "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
+                                    exam.completed
+                                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                      : "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                                  )}
+                                >
+                                  {exam.completed ? (
+                                    <CheckCircle className="h-4 w-4" />
+                                  ) : (
+                                    <Clock className="h-4 w-4" />
                                   )}
                                 </div>
-                                <div className="w-full">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="focus:outline-none rounded-full"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      e.preventDefault();
-                                      setIsShareOpen(exam.id);
-                                    }}
-                                    onKeyDown={(e) => {
-                                      if (e.key === "Enter" || e.key === " ") {
-                                        e.preventDefault();
-                                        setIsShareOpen(exam.id);
-                                      }
-                                    }}
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label="Share exam link"
-                                  >
-                                    <Share className="h-4 w-4 text-gray-500" />
-                                  </Button>
+                                <div className="flex flex-col items-start gap-2">
+                                  <div className="ml-3 flex-1 min-w-0">
+                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                                      {exam.subject} {examType} {examDate && `(${examDate}) Trial`}
+                                    </h3>
+                                    <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                      <span>{exam.question_count} Questions</span>
+                                    </div>
+                                    {exam.topics.length > 0 && (
+                                      <div className="flex flex-wrap gap-x-2">
+                                        {exam.topics
+                                          .slice(
+                                            0,
+                                            showMoreTopics[exam.id] ? exam.topics.length : 3
+                                          )
+                                          .map((topic) => (
+                                            <span
+                                              key={topic}
+                                              className={cn(
+                                                "py-1 text-xs underline underline-offset-4",
+                                                selectedTopics.includes(topic)
+                                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                                                  : "text-gray-500"
+                                              )}
+                                            >
+                                              {topic}
+                                            </span>
+                                          ))}
+                                        {exam.topics.length > 3 && !showMoreTopics[exam.id] && (
+                                          <button
+                                            type="button"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              e.preventDefault();
+                                              setShowMoreTopics((prev) => ({
+                                                ...prev,
+                                                [exam.id]: true,
+                                              }));
+                                            }}
+                                            className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                                          >
+                                            +{exam.topics.length - 3} more
+                                          </button>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="flex gap-1 w-full">
+
+
+                                    {isDesktop ? (
+                                      <DropdownMenu
+                                        open={isShareOpen === exam.id}
+                                        onOpenChange={(open) => {
+                                          console.log("Share DropdownMenu open change, open:", open, "exam.id:", exam.id); // Debugging
+                                          setIsShareOpen(open ? exam.id : null);
+                                        }}
+                                      >
+                                        <DropdownMenuTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-label="Share exam link"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              e.preventDefault();
+                                              console.log("Share button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                              setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
+                                            }}
+                                            onKeyDown={(e) => {
+                                              if (e.key === "Enter" || e.key === " ") {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                console.log("Share button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                                setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
+                                              }
+                                            }}
+                                          >
+                                            <Share className="h-4 w-4 text-gray-500" />
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent
+                                          align="end"
+                                          sideOffset={8}
+                                          className="w-48 z-50"
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          <DropdownMenuLabel>Share This Test</DropdownMenuLabel>
+                                          <DropdownMenuSeparator />
+                                          <button
+                                            onClick={(e) => handleShare(exam.id, "copy", e)}
+                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                          >
+                                            <Copy className="h-4 w-4 mr-2" />
+                                            Copy Link
+                                          </button>
+                                          <button
+                                            onClick={(e) => handleShare(exam.id, "twitter", e)}
+                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                          >
+                                            <Twitter className="h-4 w-4 mr-2" />
+                                            Share on Twitter/X
+                                          </button>
+                                          <button
+                                            onClick={(e) => handleShare(exam.id, "whatsapp", e)}
+                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                          >
+                                            <MessageCircle className="h-4 w-4 mr-2" />
+                                            Share on WhatsApp
+                                          </button>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                    ) : (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Share exam link"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          e.preventDefault();
+                                          console.log("Share button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                          setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
+                                        }}
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            console.log("Share button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                            setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
+                                          }
+                                        }}
+                                      >
+                                        <Share className="h-4 w-4 text-gray-500" />
+                                      </Button>
+                                    )}
+                                    <Drawer
+                                      open={isShareOpen === exam.id && !isDesktop}
+                                      onOpenChange={(open) => {
+                                        console.log("Share Drawer open change, open:", open, "exam.id:", exam.id); // Debugging
+                                        setIsShareOpen(open ? exam.id : null);
+                                      }}
+                                    >
+                                      <DrawerContent className="h-auto rounded-t-3xl">
+                                        <DrawerHeader>
+                                          <DrawerTitle>Share This Test</DrawerTitle>
+                                        </DrawerHeader>
+                                        <div className="py-4 space-y-2 px-4">
+                                          <button
+                                            onClick={(e) => handleShare(exam.id, "copy", e)}
+                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                          >
+                                            <Copy className="h-4 w-4 mr-2" />
+                                            Copy Link
+                                          </button>
+                                          <button
+                                            onClick={(e) => handleShare(exam.id, "twitter", e)}
+                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                          >
+                                            <Twitter className="h-4 w-4 mr-2" />
+                                            Share on Twitter/X
+                                          </button>
+                                          <button
+                                            onClick={(e) => handleShare(exam.id, "whatsapp", e)}
+                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                          >
+                                            <MessageCircle className="h-4 w-4 mr-2" />
+                                            Share on WhatsApp
+                                          </button>
+                                        </div>
+                                      </DrawerContent>
+                                    </Drawer>
+
+                                    {isDesktop ? (
+                                      <DropdownMenu
+                                        open={isViewCountOpen === exam.id}
+                                        onOpenChange={(open) => {
+                                          console.log("DropdownMenu open change, open:", open, "exam.id:", exam.id); // Debugging
+                                          setIsViewCountOpen(open ? exam.id : null);
+                                        }}
+                                      >
+                                        <DropdownMenuTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-label="View exam clicks"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              e.preventDefault();
+                                              console.log("View count button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                              setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                            }}
+                                            onKeyDown={(e) => {
+                                              if (e.key === "Enter" || e.key === " ") {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                console.log("View count button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                                setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                              }
+                                            }}
+                                          >
+                                            <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent
+                                          align="end"
+                                          sideOffset={8}
+                                          className="w-48 z-50"
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          <DropdownMenuLabel>Test View Count</DropdownMenuLabel>
+                                          <DropdownMenuSeparator />
+                                          <div className="p-2 text-center">
+                                            <p className="text-sm text-gray-500">Coming soon</p>
+                                            <p className="text-xs text-gray-400">
+                                              The number of times this test has been clicked will be displayed here
+                                            </p>
+                                          </div>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                    ) : (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="View exam clicks"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          e.preventDefault();
+                                          console.log("View count button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                          setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                        }}
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            console.log("View count button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                            setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                          }
+                                        }}
+                                      >
+                                        <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
+                                      </Button>
+                                    )}
+                                    <Drawer
+                                      open={isViewCountOpen === exam.id && !isDesktop}
+                                      onOpenChange={(open) => {
+                                        console.log("Drawer open change, open:", open, "exam.id:", exam.id); // Debugging
+                                        setIsViewCountOpen(open ? exam.id : null);
+                                      }}
+                                    >
+                                      <DrawerContent className="h-auto rounded-t-3xl">
+                                        <DrawerHeader>
+                                          <DrawerTitle>Test view count</DrawerTitle>
+                                        </DrawerHeader>
+                                        <div className="py-4 space-y-2 px-4 text-center mb-12">
+                                          <h3 className="text-lg">Coming soon</h3>
+                                          <p className="text-base text-gray-500">
+                                            The number of times this test has been clicked will be displayed here
+                                          </p>
+                                        </div>
+                                      </DrawerContent>
+                                    </Drawer>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </Link>
-                          {index < filteredExams.length - 1 && (
-                            <Separator className="opacity-1 transition-opacity duration-300" />
-                          )}
-                          <Dialog
-                            open={isShareOpen === exam.id && isDesktop}
-                            onOpenChange={(open) => setIsShareOpen(open ? exam.id : null)}
-                          >
-                            <DialogContent className="sm:max-w-sm">
-                              <DialogHeader>
-                                <DialogTitle>Share This Test</DialogTitle>
-                              </DialogHeader>
-                              <div className="py-4 space-y-2">
-                                <button
-                                  onClick={(e) => handleShare(exam.id, "copy", e)}
-                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                  <Copy className="h-4 w-4 mr-2" />
-                                  Copy Link
-                                </button>
-                                <button
-                                  onClick={(e) => handleShare(exam.id, "twitter", e)}
-                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                  <Twitter className="h-4 w-4 mr-2" />
-                                  Share on Twitter/X
-                                </button>
-                                <button
-                                  onClick={(e) => handleShare(exam.id, "whatsapp", e)}
-                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                  <MessageCircle className="h-4 w-4 mr-2" />
-                                  Share on WhatsApp
-                                </button>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                          <Drawer
-                            open={isShareOpen === exam.id && !isDesktop}
-                            onOpenChange={(open) => setIsShareOpen(open ? exam.id : null)}
-                          >
-                            <DrawerContent className="h-auto rounded-t-3xl">
-                              <DrawerHeader>
-                                <DrawerTitle>Share This Test</DrawerTitle>
-                              </DrawerHeader>
-                              <div className="py-4 space-y-2 px-4">
-                                <button
-                                  onClick={(e) => handleShare(exam.id, "copy", e)}
-                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                  <Copy className="h-4 w-4 mr-2" />
-                                  Copy Link
-                                </button>
-                                <button
-                                  onClick={(e) => handleShare(exam.id, "twitter", e)}
-                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                  <Twitter className="h-4 w-4 mr-2" />
-                                  Share on Twitter/X
-                                </button>
-                                <button
-                                  onClick={(e) => handleShare(exam.id, "whatsapp", e)}
-                                  className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                  <MessageCircle className="h-4 w-4 mr-2" />
-                                  Share on WhatsApp
-                                </button>
-                              </div>
-                            </DrawerContent>
-                          </Drawer>
-                        </div>
+                            </Link>
+                            {index < filteredExams.length - 1 && (
+                              <Separator className="opacity-1 transition-opacity duration-300" />
+                            )}
+                          </div>
                         );
                       })}
                     </div>

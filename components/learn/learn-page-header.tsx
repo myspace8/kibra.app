@@ -58,7 +58,7 @@ export function LearnPageHeader({ className, showActions = true }: HeaderProps) 
     <>
       <header
         className={cn(
-          "w-full border-b bg-background sticky top-0 z-20 shadow-sm",
+          "w-full border-b",
           className
         )}
       >
