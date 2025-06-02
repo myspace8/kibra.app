@@ -1,0 +1,187 @@
+{
+  "exam_type": "BECE",
+  "exam_year": 2025,
+  "exam_session": "May/June",
+  "region": "Ghana",
+  "subject": "Mathematics",
+  "syllabus_version": "2025 Syllabus",
+  "questions": [
+    {
+      "question": "A bag contains 5 blue marbles and 3 red marbles. You pick 2 marbles in succession without replacement. What is the probability that both marbles are blue?",
+      "question_type": "objective",
+      "topic": "Probability",
+      "subtopic": "Dependent Events",
+      "options": [
+        "A. 1/2",
+        "B. 5/14",
+        "C. 1/4",
+        "D. 3/8"
+      ],
+      "correct_answers": [
+        "B. 5/14"
+      ],
+      "explanation": "Total marbles: 5 blue + 3 red = 8 marbles. Probability of first blue: 5/8. After picking one blue, 7 marbles remain (4 blue, 3 red). Probability of second blue: 4/7. Combined probability: (5/8) × (4/7) = 20/56 = 5/14.",
+      "hint": "Think about how the number of marbles changes after the first pick.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/marble_diagram_1.jpg",
+      "media_type": "image",
+      "keywords": [
+        "probability",
+        "dependent events",
+        "sample space"
+      ],
+      "learning_objectives": [
+        "Understand dependent events",
+        "Calculate probabilities without replacement"
+      ],
+      "estimated_time": "3 minutes",
+      "source_reference": "WAEC Past Questions",
+      "ai_feedback": "This question tests understanding of dependent probabilities and updating the sample space."
+    },
+    {
+      "question": "A deck has 10 cards: 6 hearts and 4 spades. You draw 2 cards without replacement. What is the probability that both cards are hearts?",
+      "question_type": "objective",
+      "topic": "Probability",
+      "subtopic": "Dependent Events",
+      "options": [
+        "A. 1/3",
+        "B. 1/5",
+        "C. 1/6",
+        "D. 3/10"
+      ],
+      "correct_answers": [
+        "A. 1/3"
+      ],
+      "explanation": "Total cards: 6 hearts + 4 spades = 10 cards. Probability of first heart: 6/10. After drawing one heart, 9 cards remain (5 hearts, 4 spades). Probability of second heart: 5/9. Combined probability: (6/10) × (5/9) = 30/90 = 1/3.",
+      "hint": "Consider how the total number of cards decreases after the first draw.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/card_diagram_2.jpg",
+      "media_type": "image",
+      "keywords": [
+        "probability",
+        "dependent events",
+        "cards"
+      ],
+      "learning_objectives": [
+        "Understand dependent events",
+        "Apply probability to card draws"
+      ],
+      "estimated_time": "3 minutes",
+      "source_reference": "WAEC Past Questions",
+      "ai_feedback": "This question assesses the ability to handle sequential probabilities with a changing sample space."
+    },
+    {
+      "question": "A jar has 7 candies: 4 chocolate and 3 strawberry. You pick 3 candies without replacement. What is the probability that all 3 are chocolate?",
+      "question_type": "objective",
+      "topic": "Probability",
+      "subtopic": "Dependent Events",
+      "options": [
+        "A. 4/35",
+        "B. 1/5",
+        "C. 2/7",
+        "D. 1/3"
+      ],
+      "correct_answers": [
+        "A. 4/35"
+      ],
+      "explanation": "Total candies: 4 chocolate + 3 strawberry = 7 candies. Probability of first chocolate: 4/7. After one chocolate, 6 remain (3 chocolate, 3 strawberry). Probability of second: 3/6 = 1/2. After two, 5 remain (2 chocolate, 3 strawberry). Probability of third: 2/5. Combined: (4/7) × (3/6) × (2/5) = 24/210 = 4/35.",
+      "hint": "Break it into three steps and adjust the numbers each time.",
+      "difficulty": "Hard",
+      "marks": 1,
+      "media_url": "https://example.com/candy_diagram_3.jpg",
+      "media_type": "image",
+      "keywords": [
+        "probability",
+        "dependent events",
+        "multiple draws"
+      ],
+      "learning_objectives": [
+        "Calculate multi-step dependent probabilities",
+        "Update sample space"
+      ],
+      "estimated_time": "4 minutes",
+      "source_reference": "WAEC Past Questions",
+      "ai_feedback": "This question challenges the ability to handle multiple dependent events and sample space updates."
+    },
+    {
+      "question": "A box contains 3 yellow balls and 5 green balls. You pick 2 balls without replacement. What is the probability that the first ball is yellow and the second ball is green?",
+      "question_type": "objective",
+      "topic": "Probability",
+      "subtopic": "Dependent Events",
+      "options": [
+        "A. 5/14",
+        "B. 15/56",
+        "C. 3/8",
+        "D. 1/4"
+      ],
+      "correct_answers": [
+        "B. 15/56"
+      ],
+      "explanation": "Total balls: 3 yellow + 5 green = 8 balls. Probability of first yellow: 3/8. After one yellow, 7 balls remain (2 yellow, 5 green). Probability of second green: 5/7. Combined probability: (3/8) × (5/7) = 15/56.",
+      "hint": "Focus on the order: yellow first, then green, and adjust the totals.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ball_diagram_4.jpg",
+      "media_type": "image",
+      "keywords": [
+        "probability",
+        "dependent events",
+        "order of events"
+      ],
+      "learning_objectives": [
+        "Understand order in dependent events",
+        "Update sample space"
+      ],
+      "estimated_time": "3 minutes",
+      "source_reference": "WAEC Past Questions",
+      "ai_feedback": "This question tests the ability to apply dependent probabilities with specific event ordering."
+    },
+    {
+      "question": "A basket has 6 apples and 4 oranges. You pick 2 fruits without replacement. What is the probability that both are oranges?",
+      "question_type": "objective",
+      "topic": "Probability",
+      "subtopic": "Dependent Events",
+      "options": [
+        "A. 1/5",
+        "B. 1/6",
+        "C. 2/9",
+        "D. 3/10"
+      ],
+      "correct_answers": [
+        "B. 1/6"
+      ],
+      "explanation": "Total fruits: 6 apples + 4 oranges = 10 fruits. Probability of first orange: 4/10. After one orange, 9 fruits remain (6 apples, 3 oranges). Probability of second orange: 3/9. Combined probability: (4/10) × (3/9) = 12/90 = 1/6.",
+      "hint": "Think about how many oranges are left after the first pick.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/fruit_diagram_5.jpg",
+      "media_type": "image",
+      "keywords": [
+        "probability",
+        "dependent events",
+        "fruits"
+      ],
+      "learning_objectives": [
+        "Calculate basic dependent probabilities",
+        "Update sample space"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Past Questions",
+      "ai_feedback": "This question introduces dependent events with a simple, relatable context."
+    }
+  ],
+  "questionCount": 5,
+  "total_marks": 5,
+  "duration": "30 minutes",
+  "isPublic": true,
+  "topics": [
+    "Probability",
+    "Dependent Events"
+  ],
+  "difficulty": "Medium",
+  "language": "English",
+  "status": "isPublic",
+  "instructions": "Answer all questions. Show your workings where necessary. Select the correct option for each question."
+}

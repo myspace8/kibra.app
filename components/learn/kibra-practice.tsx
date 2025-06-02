@@ -66,6 +66,13 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   const [eliminatedOptions, setEliminatedOptions] = useState<Record<number, string[]>>({})
   const [showDetails, setShowDetails] = useState(true)
   const [students, setStudents] = useState<Student[]>([])
+  // Report issue state
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [issue_type, setissue_type] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+  const [reportSuccess, setReportSuccess] = useState<string | null>(null);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   // Modal and form state
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -287,7 +294,36 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     }
   }
 
-  const getOptionLetter = (index: number) => String.fromCharCode(65 + index)
+  const handleReportSubmit = async () => {
+    setIsSubmittingReport(true);
+    setReportError(null);
+    setReportSuccess(null);
+
+    try {
+      const response = await fetch('/api/report-question', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question_id: currentQuestion.id,
+          exam_id: examId || 'unknown',
+          issue_type,
+          description,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to submit report');
+
+      setReportSuccess('Thank you for your report!');
+      setissue_type('');
+      setDescription('');
+      setTimeout(() => setIsReportModalOpen(false), 2000);
+    } catch (err) {
+      setReportError(err instanceof Error ? err.message : 'An error occurred. Please try again.');
+    } finally {
+      setIsSubmittingReport(false);
+    }
+  };
 
   const enterReviewMode = () => setShowReviewMode(true)
   const exitReviewMode = () => setShowReviewMode(false)
@@ -718,6 +754,91 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                 </div>
               </div>
             )}
+            {isReportModalOpen && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-3">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-semibold">Report an Issue</h2>
+                    <button
+                      onClick={() => setIsReportModalOpen(false)}
+                      className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                      aria-label="Close report modal"
+                    >
+                      <XCircle size={20} />
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Let us know if something is wrong with this question. Your feedback helps us improve!
+                  </p>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="issue-type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Issue Type
+                      </label>
+                      <select
+                        id="issue-type"
+                        value={issue_type}
+                        onChange={(e) => setissue_type(e.target.value)}
+                        className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary sm:text-sm"
+                        aria-required="true"
+                      >
+                        <option value="">Select an issue</option>
+                        <option value="Question unclear">Question unclear</option>
+                        <option value="Option incorrect">Option incorrect</option>
+                        <option value="Correct answer wrong">Correct answer wrong</option>
+                        <option value="Typographical error">Typographical error</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Description
+                      </label>
+                      <textarea
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        maxLength={500}
+                        className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary sm:text-sm p-2"
+                        placeholder="Please describe the issue (e.g., 'Option B should be 1/3, not 1/2')"
+                        aria-required="true"
+                      />
+                    </div>
+                    {reportError && (
+                      <p className="text-sm text-red-600 dark:text-red-400">{reportError}</p>
+                    )}
+                    {reportSuccess && (
+                      <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
+                        <CheckCircle size={16} /> {reportSuccess}
+                      </p>
+                    )}
+                    <div className="flex justify-end gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsReportModalOpen(false)}
+                        disabled={isSubmittingReport}
+                        className="px-4 py-2 text-sm"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleReportSubmit}
+                        disabled={isSubmittingReport || !issue_type || !description}
+                        className="px-4 py-2 text-sm flex items-center gap-2 bg-primary hover:bg-primary/90"
+                      >
+                        {isSubmittingReport ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" /> Sending...
+                          </>
+                        ) : (
+                          <>Submit</>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
 
           <Button
@@ -852,14 +973,25 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
             )}
           </AnimatePresence>
           <div className="hidden mt-5 md:flex justify-between">
-            <Button
-              variant="outline"
-              onClick={handlePreviousQuestion}
-              disabled={currentQuestionIndex === 0}
-              className="gap-1 text-sm h-8"
-            >
-              <ChevronLeft size={14} /> Previous
-            </Button>
+            <div className="flex flex-col items-start gap-2">
+              <Button
+                variant="outline"
+                onClick={handlePreviousQuestion}
+                disabled={currentQuestionIndex === 0}
+                className="gap-1 text-sm h-8"
+              >
+                <ChevronLeft size={14} /> Previous
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsReportModalOpen(true)}
+                className="mt-2 flex-shrink-0 h-7 px-2 text-xs text-red-600 hover:text-red-700"
+                aria-label="Report an issue with this question"
+              >
+                <AlertCircle size={14} /> Report Issue
+              </Button>
+            </div>
             {showExplanation ? (
               <Button onClick={handleNextQuestion} className="gap-1 text-sm h-8 bg-primary hover:bg-primary/90">
                 {isLastQuestion ? "See Results" : "Next"} {!isLastQuestion && <ChevronRight size={14} />}
@@ -895,14 +1027,25 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
         </div>
       </Card>
       <div className="md:hidden mt-5 flex justify-between fixed bottom-0 left-0 right-0 border-t bg-white p-4 min-h-[12vh]">
-        <Button
-          variant="outline"
-          onClick={handlePreviousQuestion}
-          disabled={currentQuestionIndex === 0}
-          className="gap-1 text-sm h-8"
-        >
-          <ChevronLeft size={14} /> Previous
-        </Button>
+        <div className="flex flex-col items-start gap-">
+          <Button
+            variant="outline"
+            onClick={handlePreviousQuestion}
+            disabled={currentQuestionIndex === 0}
+            className="gap-1 text-sm h-8"
+          >
+            <ChevronLeft size={14} /> Previous
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsReportModalOpen(true)}
+            className="mt-2 flex-shrink-0 h-7 px-2 text-xs text-red-600 hover:text-red-700"
+            aria-label="Report an issue with this question"
+          >
+            <AlertCircle size={14} /> Report Issue
+          </Button>
+        </div>
         {showExplanation ? (
           <Button onClick={handleNextQuestion} className="gap-1 text-sm h-8 bg-primary hover:bg-primary/90">
             {isLastQuestion ? "See Results" : "Next"} {!isLastQuestion && <ChevronRight size={14} />}
