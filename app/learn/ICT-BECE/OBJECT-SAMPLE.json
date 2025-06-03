@@ -1,0 +1,1382 @@
+{
+  "exam_type": "BECE",
+  "exam_year": 2025,
+  "exam_session": "May/June",
+  "region": "Ghana",
+  "subject": "ICT",
+  "syllabus_version": "2023 Syllabus",
+  "questions": [
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Basic Computer Operations",
+      "question": "The process of restarting a computer without turning it off is called ______.",
+      "options": [
+        "A. booting",
+        "B. rebooting",
+        "C. shutting down",
+        "D. logging off"
+      ],
+      "correct_answers": [
+        "B. rebooting"
+      ],
+      "model_answer": null,
+      "explanation": "Rebooting is the process of restarting a computer without powering it off, allowing the system to reload the operating system. Booting is the initial startup, shutting down powers off the computer, and logging off ends a user session.",
+      "hint": "Think about restarting the computer while it is still powered on.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/basic_computer_operations.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "rebooting",
+        "computer operations"
+      ],
+      "learning_objectives": [
+        "Understand computer startup and restart processes",
+        "Identify key ICT operations"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of computer restart terminology."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Input and Output Devices",
+      "question": "Which of the following is an input device?",
+      "options": [
+        "A. Monitor",
+        "B. Printer",
+        "C. Keyboard",
+        "D. Speaker"
+      ],
+      "correct_answers": [
+        "C. Keyboard"
+      ],
+      "model_answer": null,
+      "explanation": "A keyboard is an input device used to enter data into a computer. Monitor, printer, and speaker are output devices as they display or produce results from the computer.",
+      "hint": "Consider devices used to send data to the computer.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/input_output_devices.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "input device",
+        "keyboard"
+      ],
+      "learning_objectives": [
+        "Identify input and output devices",
+        "Understand device functions"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests ability to distinguish input devices from output devices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Software Concepts",
+      "question": "A computer program designed to harm or disrupt computer operations is called a ______.",
+      "options": [
+        "A. utility",
+        "B. virus",
+        "C. driver",
+        "D. firmware"
+      ],
+      "correct_answers": [
+        "B. virus"
+      ],
+      "model_answer": null,
+      "explanation": "A virus is malicious software that disrupts computer operations. Utilities perform maintenance, drivers enable hardware communication, and firmware is software embedded in hardware.",
+      "hint": "Think of harmful software that spreads and causes damage.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/software_concepts.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "virus",
+        "software"
+      ],
+      "learning_objectives": [
+        "Understand types of software",
+        "Recognize malicious software"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of harmful software types."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Internet and Web Technologies",
+      "question": "The unique address of a webpage on the internet is called a ______.",
+      "options": [
+        "A. URL",
+        "B. HTML",
+        "C. IP address",
+        "D. browser"
+      ],
+      "correct_answers": [
+        "A. URL"
+      ],
+      "model_answer": null,
+      "explanation": "A URL (Uniform Resource Locator) is the unique address of a webpage. HTML is a markup language, an IP address identifies devices, and a browser is software for accessing the web.",
+      "hint": "Consider what identifies a specific webpage location.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/internet_web_technologies.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "URL",
+        "webpage"
+      ],
+      "learning_objectives": [
+        "Understand internet terminology",
+        "Identify webpage addressing"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of webpage addressing."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Health and Safety in ICT",
+      "question": "To avoid eye strain while using a computer, a user should ______.",
+      "options": [
+        "A. sit very close to the monitor",
+        "B. take regular breaks",
+        "C. use a dim screen",
+        "D. avoid blinking"
+      ],
+      "correct_answers": [
+        "B. take regular breaks"
+      ],
+      "model_answer": null,
+      "explanation": "Taking regular breaks reduces eye strain by allowing eyes to rest. Sitting close to the monitor, using a dim screen, or avoiding blinking can worsen eye strain.",
+      "hint": "Think about resting your eyes during computer use.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/health_safety_ict.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "eye strain",
+        "health"
+      ],
+      "learning_objectives": [
+        "Understand health practices in ICT",
+        "Identify ergonomic solutions"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of computer health practices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Data Representation and Storage",
+      "question": "One kilobyte is approximately equal to ______ bytes.",
+      "options": [
+        "A. 100",
+        "B. 1,000",
+        "C. 10,000",
+        "D. 100,000"
+      ],
+      "correct_answers": [
+        "B. 1,000"
+      ],
+      "model_answer": null,
+      "explanation": "One kilobyte is approximately 1,000 bytes (or exactly 1,024 bytes in binary). The other options represent incorrect magnitudes of data size.",
+      "hint": "Recall the approximate size of a kilobyte in bytes.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/data_representation_storage.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "kilobyte",
+        "data storage"
+      ],
+      "learning_objectives": [
+        "Understand data measurement units",
+        "Identify storage sizes"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of data size units."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "ICT Terminology",
+      "question": "The shortcut key to save a document in most applications is ______.",
+      "options": [
+        "A. Ctrl + S",
+        "B. Ctrl + P",
+        "C. Ctrl + C",
+        "D. Ctrl + V"
+      ],
+      "correct_answers": [
+        "A. Ctrl + S"
+      ],
+      "model_answer": null,
+      "explanation": "Ctrl + S is the shortcut to save a document. Ctrl + P prints, Ctrl + C copies, and Ctrl + V pastes.",
+      "hint": "Think about the key combination used to save files.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/ict_terminology.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "shortcut",
+        "save"
+      ],
+      "learning_objectives": [
+        "Understand common ICT shortcuts",
+        "Identify key functions"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of keyboard shortcuts."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Basic Computer Operations",
+      "question": "The process of organizing files into folders is called ______.",
+      "options": [
+        "A. formatting",
+        "B. file management",
+        "C. booting",
+        "D. editing"
+      ],
+      "correct_answers": [
+        "B. file management"
+      ],
+      "model_answer": null,
+      "explanation": "File management involves organizing files into folders for easy access. Formatting prepares storage devices, booting starts the computer, and editing modifies content.",
+      "hint": "Consider how files are organized on a computer.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/basic_computer_operations.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "file management",
+        "folders"
+      ],
+      "learning_objectives": [
+        "Understand file organization",
+        "Identify computer operations"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of file organization."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Input and Output Devices",
+      "question": "Which device is used to produce hard copies of documents?",
+      "options": [
+        "A. Scanner",
+        "B. Printer",
+        "C. Mouse",
+        "D. Microphone"
+      ],
+      "correct_answers": [
+        "B. Printer"
+      ],
+      "model_answer": null,
+      "explanation": "A printer produces hard copies of documents. A scanner digitizes documents, a mouse is an input device, and a microphone captures audio.",
+      "hint": "Think about a device that prints on paper.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/input_output_devices.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "printer",
+        "output device"
+      ],
+      "learning_objectives": [
+        "Identify output devices",
+        "Understand device functions"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests identification of output devices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Software Concepts",
+      "question": "Software that manages computer hardware and provides a platform for other software is called ______.",
+      "options": [
+        "A. application software",
+        "B. system software",
+        "C. utility software",
+        "D. malware"
+      ],
+      "correct_answers": [
+        "B. system software"
+      ],
+      "model_answer": null,
+      "explanation": "System software, like operating systems, manages hardware and supports other software. Application software performs specific tasks, utility software maintains systems, and malware is harmful.",
+      "hint": "Think about software that runs the computer itself.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/software_concepts.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "system software",
+        "operating system"
+      ],
+      "learning_objectives": [
+        "Understand software types",
+        "Identify system software roles"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of software categories."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Internet and Web Technologies",
+      "question": "Which of the following is a web browser?",
+      "options": [
+        "A. Google",
+        "B. Firefox",
+        "C. Skype",
+        "D. Notepad"
+      ],
+      "correct_answers": [
+        "B. Firefox"
+      ],
+      "model_answer": null,
+      "explanation": "Firefox is a web browser used to access the internet. Google is a search engine, Skype is for communication, and Notepad is a text editor.",
+      "hint": "Think of software used to browse websites.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/internet_web_technologies.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "web browser",
+        "Firefox"
+      ],
+      "learning_objectives": [
+        "Identify web browsing tools",
+        "Understand internet software"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests recognition of web browsers."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Health and Safety in ICT",
+      "question": "Sitting with a straight back and feet flat on the floor while using a computer promotes ______.",
+      "options": [
+        "A. eye strain",
+        "B. poor posture",
+        "C. good ergonomics",
+        "D. wrist pain"
+      ],
+      "correct_answers": [
+        "C. good ergonomics"
+      ],
+      "model_answer": null,
+      "explanation": "Proper posture, such as sitting straight with feet flat, promotes good ergonomics, reducing strain. The other options are negative outcomes of poor posture.",
+      "hint": "Consider the term for proper computer use posture.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/health_safety_ict.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "ergonomics",
+        "posture"
+      ],
+      "learning_objectives": [
+        "Understand ergonomic practices",
+        "Identify health measures in ICT"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of ergonomic principles."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Data Representation and Storage",
+      "question": "Which storage device uses flash memory to store data?",
+      "options": [
+        "A. Hard disk",
+        "B. USB flash drive",
+        "C. CD-ROM",
+        "D. Tape drive"
+      ],
+      "correct_answers": [
+        "B. USB flash drive"
+      ],
+      "model_answer": null,
+      "explanation": "A USB flash drive uses flash memory for data storage. Hard disks use magnetic storage, CD-ROMs use optical storage, and tape drives use magnetic tape.",
+      "hint": "Think about portable storage with no moving parts.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/data_representation_storage.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "flash memory",
+        "USB"
+      ],
+      "learning_objectives": [
+        "Understand storage technologies",
+        "Identify storage devices"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of storage device types."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "ICT Terminology",
+      "question": "The term used to describe a computer's main circuit board is ______.",
+      "options": [
+        "A. RAM",
+        "B. CPU",
+        "C. motherboard",
+        "D. monitor"
+      ],
+      "correct_answers": [
+        "C. motherboard"
+      ],
+      "model_answer": null,
+      "explanation": "The motherboard is the main circuit board connecting all computer components. RAM is memory, CPU is the processor, and the monitor is an output device.",
+      "hint": "Think of the main board that holds computer components.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/ict_terminology.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "motherboard",
+        "hardware"
+      ],
+      "learning_objectives": [
+        "Understand computer hardware terms",
+        "Identify key components"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests recognition of hardware terminology."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Basic Computer Operations",
+      "question": "What happens when you double-click a file icon?",
+      "options": [
+        "A. It deletes the file",
+        "B. It opens the file",
+        "C. It renames the file",
+        "D. It copies the file"
+      ],
+      "correct_answers": [
+        "B. It opens the file"
+      ],
+      "model_answer": null,
+      "explanation": "Double-clicking a file icon opens the file in its associated application. The other options involve different actions not triggered by double-clicking.",
+      "hint": "Consider what action launches a file.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/basic_computer_operations.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "file operations",
+        "double-click"
+      ],
+      "learning_objectives": [
+        "Understand file interaction",
+        "Identify basic operations"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of file interaction."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Input and Output Devices",
+      "question": "Which device is used to capture images and convert them to digital format?",
+      "options": [
+        "A. Printer",
+        "B. Scanner",
+        "C. Speaker",
+        "D. Monitor"
+      ],
+      "correct_answers": [
+        "B. Scanner"
+      ],
+      "model_answer": null,
+      "explanation": "A scanner captures images and converts them to digital format. Printers produce hard copies, speakers output sound, and monitors display visuals.",
+      "hint": "Think of a device that digitizes physical images.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/input_output_devices.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "scanner",
+        "input device"
+      ],
+      "learning_objectives": [
+        "Identify input devices",
+        "Understand device functions"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests identification of input devices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Software Concepts",
+      "question": "Which type of software is Microsoft Word?",
+      "options": [
+        "A. System software",
+        "B. Utility software",
+        "C. Application software",
+        "D. Firmware"
+      ],
+      "correct_answers": [
+        "C. Application software"
+      ],
+      "model_answer": null,
+      "explanation": "Microsoft Word is application software used for word processing. System software manages hardware, utility software maintains systems, and firmware is embedded in hardware.",
+      "hint": "Think of software used for specific tasks like writing.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/software_concepts.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "application software",
+        "Microsoft Word"
+      ],
+      "learning_objectives": [
+        "Understand software types",
+        "Identify application software"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests recognition of software types."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Internet and Web Technologies",
+      "question": "The protocol used to transfer web pages over the internet is ______.",
+      "options": [
+        "A. FTP",
+        "B. HTTP",
+        "C. SMTP",
+        "D. TCP"
+      ],
+      "correct_answers": [
+        "B. HTTP"
+      ],
+      "model_answer": null,
+      "explanation": "HTTP (HyperText Transfer Protocol) is used to transfer web pages. FTP transfers files, SMTP sends emails, and TCP is a transport protocol.",
+      "hint": "Think of the protocol for accessing websites.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/internet_web_technologies.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "HTTP",
+        "web protocol"
+      ],
+      "learning_objectives": [
+        "Understand internet protocols",
+        "Identify web technologies"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of internet protocols."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Health and Safety in ICT",
+      "question": "Which practice helps prevent wrist strain when typing?",
+      "options": [
+        "A. Typing with wrists bent",
+        "B. Using a wrist rest",
+        "C. Typing without breaks",
+        "D. Placing the keyboard on your lap"
+      ],
+      "correct_answers": [
+        "B. Using a wrist rest"
+      ],
+      "model_answer": null,
+      "explanation": "A wrist rest supports wrists during typing, reducing strain. Bent wrists, no breaks, or improper keyboard placement increase strain risks.",
+      "hint": "Think about a tool that supports your wrists while typing.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/health_safety_ict.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "wrist rest",
+        "ergonomics"
+      ],
+      "learning_objectives": [
+        "Understand ergonomic tools",
+        "Identify health practices"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of ergonomic tools."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Data Representation and Storage",
+      "question": "Data stored in binary form is represented using ______.",
+      "options": [
+        "A. letters and numbers",
+        "B. ones and zeros",
+        "C. symbols and spaces",
+        "D. pixels and colors"
+      ],
+      "correct_answers": [
+        "B. ones and zeros"
+      ],
+      "model_answer": null,
+      "explanation": "Binary data is represented using ones and zeros. Letters and numbers are higher-level representations, symbols and spaces are text, and pixels and colors relate to graphics.",
+      "hint": "Think of the basic units of binary data.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/data_representation_storage.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "binary",
+        "data representation"
+      ],
+      "learning_objectives": [
+        "Understand binary data",
+        "Identify data representation"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of binary data."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "ICT Terminology",
+      "question": "The term for a program that protects a computer from viruses is ______.",
+      "options": [
+        "A. firewall",
+        "B. antivirus",
+        "C. browser",
+        "D. spreadsheet"
+      ],
+      "correct_answers": [
+        "B. antivirus"
+      ],
+      "model_answer": null,
+      "explanation": "An antivirus protects against viruses. A firewall blocks unauthorized access, a browser accesses the web, and a spreadsheet manages data.",
+      "hint": "Think of software that fights computer viruses.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/ict_terminology.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "antivirus",
+        "security"
+      ],
+      "learning_objectives": [
+        "Understand security terminology",
+        "Identify protective software"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests recognition of security terms."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Basic Computer Operations",
+      "question": "The process of copying a file to another location is called ______.",
+      "options": [
+        "A. deleting",
+        "B. moving",
+        "C. duplicating",
+        "D. formatting"
+      ],
+      "correct_answers": [
+        "C. duplicating"
+      ],
+      "model_answer": null,
+      "explanation": "Duplicating creates a copy of a file in another location. Deleting removes it, moving relocates it, and formatting prepares storage media.",
+      "hint": "Think about creating a second copy of a file.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/basic_computer_operations.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "duplicating",
+        "file operations"
+      ],
+      "learning_objectives": [
+        "Understand file management",
+        "Identify copy operations"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of file duplication."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Input and Output Devices",
+      "question": "Which device allows a user to point and click on a computer screen?",
+      "options": [
+        "A. Keyboard",
+        "B. Mouse",
+        "C. Printer",
+        "D. Speaker"
+      ],
+      "correct_answers": [
+        "B. Mouse"
+      ],
+      "model_answer": null,
+      "explanation": "A mouse is used to point and click on a screen. A keyboard inputs text, a printer outputs hard copies, and a speaker outputs sound.",
+      "hint": "Think of a device used to navigate a computer screen.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/input_output_devices.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "mouse",
+        "input device"
+      ],
+      "learning_objectives": [
+        "Identify input devices",
+        "Understand navigation tools"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests identification of input devices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Software Concepts",
+      "question": "Which software is used to create and manage databases?",
+      "options": [
+        "A. Microsoft Word",
+        "B. Microsoft Access",
+        "C. Microsoft Excel",
+        "D. Microsoft PowerPoint"
+      ],
+      "correct_answers": [
+        "B. Microsoft Access"
+      ],
+      "model_answer": null,
+      "explanation": "Microsoft Access is designed for database management. Word is for documents, Excel for spreadsheets, and PowerPoint for presentations.",
+      "hint": "Think of software for organizing data in tables.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/software_concepts.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "database",
+        "Microsoft Access"
+      ],
+      "learning_objectives": [
+        "Understand software purposes",
+        "Identify database software"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests recognition of database software."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Internet and Web Technologies",
+      "question": "What does the 'www' in a website address stand for?",
+      "options": [
+        "A. World Wide Web",
+        "B. Web World Wide",
+        "C. Wide Web World",
+        "D. World Web Wide"
+      ],
+      "correct_answers": [
+        "A. World Wide Web"
+      ],
+      "model_answer": null,
+      "explanation": "WWW stands for World Wide Web, the system of interlinked resources on the internet. The other options are incorrect rearrangements.",
+      "hint": "Think of the global network of web pages.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/internet_web_technologies.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "World Wide Web",
+        "internet"
+      ],
+      "learning_objectives": [
+        "Understand internet terminology",
+        "Identify web components"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of web terminology."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Health and Safety in ICT",
+      "question": "Which of the following reduces the risk of electrical hazards in an ICT environment?",
+      "options": [
+        "A. Overloading power Babel",
+        "B. Using a surge protector",
+        "C. Leaving cables exposed",
+        "D. Using a faulty plug"
+      ],
+      "correct_answers": [
+        "B. Using a surge protector"
+      ],
+      "model_answer": null,
+      "explanation": "A surge protector prevents electrical damage to devices. Overloading, exposed cables, and faulty plugs increase electrical risks.",
+      "hint": "Think of a device that protects against power surges.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/health_safety_ict.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "surge protector",
+        "safety"
+      ],
+      "learning_objectives": [
+        "Understand electrical safety",
+        "Identify protective measures"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of electrical safety devices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Data Representation and Storage",
+      "question": "One gigabyte is approximately equal to ______ bytes.",
+      "options": [
+        "A. 1,000,000",
+        "B. 1,000,000,000",
+        "C. 1,000,000,000,000",
+        "D. 1,000,000,000,000,000"
+      ],
+      "correct_answers": [
+        "B. 1,000,000,000"
+      ],
+      "model_answer": null,
+      "explanation": "One gigabyte is approximately 1 billion bytes (or exactly 1,073,741,824 bytes in binary). The other options are incorrect data sizes.",
+      "hint": "Think of the size of a gigabyte compared to a kilobyte.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/data_representation_storage.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "gigabyte",
+        "data storage"
+      ],
+      "learning_objectives": [
+        "Understand data measurement units",
+        "Identify storage sizes"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of data size units."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "ICT Terminology",
+      "question": "The term for the physical components of a computer is ______.",
+      "options": [
+        "A. software",
+        "B. hardware",
+        "C. firmware",
+        "D. liveware"
+      ],
+      "correct_answers": [
+        "B. hardware"
+      ],
+      "model_answer": null,
+      "explanation": "Hardware refers to the physical components of a computer. Software is programs, firmware is embedded software, and liveware refers to users.",
+      "hint": "Think of the tangible parts of a computer.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/ict_terminology.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "hardware",
+        "components"
+      ],
+      "learning_objectives": [
+        "Understand computer terminology",
+        "Identify hardware components"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests recognition of hardware terminology."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Basic Computer Operations",
+      "question": "The action of pressing Ctrl + Alt + Del on a Windows computer opens the ______.",
+      "options": [
+        "A. task manager",
+        "B. control panel",
+        "C. file explorer",
+        "D. recycle bin"
+      ],
+      "correct_answers": [
+        "A. task manager"
+      ],
+      "model_answer": null,
+      "explanation": "Ctrl + Alt + Del opens the task manager or security options on Windows. The other options are accessed differently.",
+      "hint": "Think of the tool for managing running programs.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/basic_computer_operations.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "task manager",
+        "shortcuts"
+      ],
+      "learning_objectives": [
+        "Understand system operations",
+        "Identify keyboard shortcuts"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of system shortcuts."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Input and Output Devices",
+      "question": "Which device is both an input and output device?",
+      "options": [
+        "A. Touchscreen",
+        "B. Keyboard",
+        "C. Printer",
+        "D. Mouse"
+      ],
+      "correct_answers": [
+        "A. Touchscreen"
+      ],
+      "model_answer": null,
+      "explanation": "A touchscreen accepts input via touch and displays output. Keyboards and mice are input-only, and printers are output-only.",
+      "hint": "Think of a device that both accepts and shows data.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/input_output_devices.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "touchscreen",
+        "input output"
+      ],
+      "learning_objectives": [
+        "Identify dual-function devices",
+        "Understand device roles"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of dual-purpose devices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Software Concepts",
+      "question": "Which software type is designed to perform specific tasks for users?",
+      "options": [
+        "A. System software",
+        "B. Application software",
+        "C. Firmware",
+        "D. Driver software"
+      ],
+      "correct_answers": [
+        "B. Application software"
+      ],
+      "model_answer": null,
+      "explanation": "Application software performs specific user tasks, like word processing. System software manages hardware, firmware is embedded, and drivers enable hardware communication.",
+      "hint": "Think of software for tasks like writing or browsing.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/software_concepts.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "application software",
+        "user tasks"
+      ],
+      "learning_objectives": [
+        "Understand software types",
+        "Identify user software"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests recognition of software purposes."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Internet and Web Technologies",
+      "question": "An email address is separated into two parts by the ______ symbol.",
+      "options": [
+        "A. #",
+        "B. @",
+        "C. &",
+        "D. *"
+      ],
+      "correct_answers": [
+        "B. @"
+      ],
+      "model_answer": null,
+      "explanation": "The @ symbol separates the username and domain in an email address. The other symbols are not used for this purpose.",
+      "hint": "Think of the symbol in an email address format.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/internet_web_technologies.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "email",
+        "@ symbol"
+      ],
+      "learning_objectives": [
+        "Understand email structure",
+        "Identify internet symbols"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of email address format."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Health and Safety in ICT",
+      "question": "Which of the following helps maintain proper ventilation in an ICT room?",
+      "options": [
+        "A. Blocking air vents",
+        "B. Using a fan",
+        "C. Keeping windows closed",
+        "D. Overloading power sockets"
+      ],
+      "correct_answers": [
+        "B. Using a fan"
+      ],
+      "model_answer": null,
+      "explanation": "A fan improves ventilation by circulating air. Blocking vents, closing windows, or overloading sockets hinders ventilation or causes other issues.",
+      "hint": "Think of a device that improves air flow.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/health_safety_ict.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "ventilation",
+        "safety"
+      ],
+      "learning_objectives": [
+        "Understand environmental safety",
+        "Identify ventilation methods"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of ventilation practices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Data Representation and Storage",
+      "question": "Which of the following is a non-volatile storage device?",
+      "options": [
+        "A. RAM",
+        "B. Hard disk",
+        "C. Cache memory",
+        "D. Register"
+      ],
+      "correct_answers": [
+        "B. Hard disk"
+      ],
+      "model_answer": null,
+      "explanation": "A hard disk is non-volatile, retaining data without power. RAM, cache, and registers are volatile, losing data when power is off.",
+      "hint": "Think of storage that keeps data when powered off.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/data_representation_storage.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "non-volatile",
+        "hard disk"
+      ],
+      "learning_objectives": [
+        "Understand storage types",
+        "Identify non-volatile storage"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of storage volatility."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "ICT Terminology",
+      "question": "The term for a small program that runs in the background of a computer is ______.",
+      "options": [
+        "A. widget",
+        "B. gadget",
+        "C. daemon",
+        "D. icon"
+      ],
+      "correct_answers": [
+        "C. daemon"
+      ],
+      "model_answer": null,
+      "explanation": "A daemon is a background program in an operating system. Widgets and gadgets are user interface elements, and icons are graphical representations.",
+      "hint": "Think of a program running behind the scenes.",
+      "difficulty": "Hard",
+      "marks": 1,
+      "media_url": "https://example.com/ict/ict_terminology.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "daemon",
+        "background process"
+      ],
+      "learning_objectives": [
+        "Understand advanced ICT terms",
+        "Identify background processes"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of advanced ICT terminology."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Basic Computer Operations",
+      "question": "The process of closing all programs and turning off a computer is called ______.",
+      "options": [
+        "A. logging off",
+        "B. shutting down",
+        "C. rebooting",
+        "D. hibernating"
+      ],
+      "correct_answers": [
+        "B. shutting down"
+      ],
+      "model_answer": null,
+      "explanation": "Shutting down closes all programs and powers off the computer. Logging off ends a user session, rebooting restarts it, and hibernating saves the state and powers off.",
+      "hint": "Think of turning off the computer completely.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/basic_computer_operations.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "shutting down",
+        "computer operations"
+      ],
+      "learning_objectives": [
+        "Understand computer shutdown",
+        "Identify power operations"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests understanding of shutdown processes."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Input and Output Devices",
+      "question": "Which output device produces sound from a computer?",
+      "options": [
+        "A. Monitor",
+        "B. Printer",
+        "C. Speaker",
+        "D. Scanner"
+      ],
+      "correct_answers": [
+        "C. Speaker"
+      ],
+      "model_answer": null,
+      "explanation": "A speaker produces sound output from a computer. Monitors display visuals, printers produce hard copies, and scanners input images.",
+      "hint": "Think of a device that outputs audio.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/input_output_devices.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "speaker",
+        "output device"
+      ],
+      "learning_objectives": [
+        "Identify output devices",
+        "Understand audio output"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests identification of audio output devices."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Software Concepts",
+      "question": "Which software is essential for a computer to communicate with a printer?",
+      "options": [
+        "A. Driver",
+        "B. Utility",
+        "C. Application",
+        "D. System"
+      ],
+      "correct_answers": [
+        "A. Driver"
+      ],
+      "model_answer": null,
+      "explanation": "A driver enables communication between a computer and a printer. Utilities maintain systems, applications perform tasks, and system software manages hardware.",
+      "hint": "Think of software that connects hardware to the system.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/ict/software_concepts.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "driver",
+        "printer"
+      ],
+      "learning_objectives": [
+        "Understand software roles",
+        "Identify device drivers"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of device drivers."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Internet and Web Technologies",
+      "question": "Which of the following is a search engine?",
+      "options": [
+        "A. Firefox",
+        "B. Google",
+        "C. WordPress",
+        "D. Zoom"
+      ],
+      "correct_answers": [
+        "B. Google"
+      ],
+      "model_answer": null,
+      "explanation": "Google is a search engine for finding web content. Firefox is a browser, WordPress is a content management system, and Zoom is for video conferencing.",
+      "hint": "Think of a tool for searching the internet.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/internet_web_technologies.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "search engine",
+        "Google"
+      ],
+      "learning_objectives": [
+        "Understand internet tools",
+        "Identify search engines"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests recognition of search engines."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Information and Communication Technology",
+      "subtopic": "Health and Safety in ICT",
+      "question": "Adjusting the height of a computer chair helps to ______.",
+      "options": [
+        "A. increase eye strain",
+        "B. improve posture",
+        "C. reduce ventilation",
+        "D. increase wrist pain"
+      ],
+      "correct_answers": [
+        "B. improve posture"
+      ],
+      "model_answer": null,
+      "explanation": "Adjusting chair height aligns the body properly, improving posture. It does not affect eye strain, ventilation, or wrist pain directly.",
+      "hint": "Think of how chair height affects sitting comfort.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/ict/health_safety_ict.jpg",
+      "media_type": "image",
+      "keywords": [
+        "ICT",
+        "posture",
+        "ergonomics"
+      ],
+      "learning_objectives": [
+        "Understand ergonomic adjustments",
+        "Identify health practices"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "Tests knowledge of ergonomic adjustments."
+    }
+  ],
+  "questionCount": 40,
+  "total_marks": 40,
+  "duration": "1 hour",
+  "file_url": "https://example.com/bece_english_2025.pdf",
+  "isPublic": true,
+  "topics": [
+    "Basic Computer Operations, Input and Output Devices, Software Concepts, Internet and Web Technologies, Health and Safety in ICT, Data Representation and Storage, and ICT Terminology."
+  ],
+  "difficulty": "Hard",
+  "language": "English",
+  "status": "Published",
+  "instructions": "Answer all questions by selecting the correct option."
+}

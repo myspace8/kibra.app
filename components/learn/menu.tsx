@@ -27,6 +27,7 @@ interface Exam {
   exam_type: "BECE" | "WASSCE"
   question_count: number
   total_marks: number
+  created_at: Date;
   sort_date: string
   difficulty: "Easy" | "Medium" | "Hard"
   topics: string[]
@@ -51,6 +52,26 @@ interface Exam {
   }
   completed: boolean
 }
+
+// Helper function to format time difference
+const formatTimeAgo = (sortDate: string): string => {
+  const now = new Date();
+  const examDate = new Date(sortDate);
+  const diffInMs = now.getTime() - examDate.getTime();
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInDays < 1) {
+    return `${diffInHours}h`;
+  } else if (diffInDays < 6) {
+    return `${diffInDays}d`;
+  } else {
+    return examDate.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    });
+  }
+};
 
 interface MenuProps {
   open: boolean
@@ -96,6 +117,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
             subject_id,
             question_count,
             total_marks,
+            created_at,
             sort_date,
             difficulty,
             topics,
@@ -116,6 +138,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
           exam_type: exam.exam_type,
           question_count: exam.question_count,
           total_marks: exam.total_marks,
+          created_at: new Date(exam.created_at),
           sort_date: exam.sort_date,
           difficulty: exam.difficulty,
           topics: exam.topics,
@@ -161,6 +184,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                 id: newExam.id,
                 exam_source: newExam.exam_source,
                 subject_id: newExam.subject_id,
+                created_at: newExam.created_at,
                 exam_type: newExam.exam_type,
                 question_count: newExam.question_count,
                 total_marks: newExam.total_marks,
@@ -311,7 +335,7 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
 
   //   fetchExams();
   // }, [session?.user?.id]);
-  
+
   // Filter and sort exams
   const filterAndSortExams = useCallback(
     (exams: Exam[]) => {
@@ -431,16 +455,25 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
             >
               <div
                 className={cn(
-                  "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
+                  "flex flex-shrink-0 items-center justify-center",
                   exam.completed
-                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                    ? " h-6 w-6 bg-green-100 text-green-700 rounded-full dark:bg-green-900/30 dark:text-green-400"
+                    : ""
                 )}
               >
                 {exam.completed ? (
                   <CheckCircle className="h-4 w-4" />
                 ) : (
-                  <Clock className="h-4 w-4 text-blue-400" />
+                  <p className="text-base font-medium text-center text-gray-500">
+                    {(() => {
+                      const timeAgo = formatTimeAgo(exam.created_at.toISOString());
+                      // Show "ago" only for hours or days (not for month)
+                      if (timeAgo.endsWith("h") || timeAgo.endsWith("d")) {
+                        return `${timeAgo} ago`;
+                      }
+                      return timeAgo;
+                    })()}
+                  </p>
                 )}
               </div>
               <div className="flex-1">
@@ -449,12 +482,12 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
                 </h3>
                 <div className="mt-1 flex flex-col gap-1 text-xs text-muted-foreground">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
+                    {/* <div className="flex items-center gap-1">
                       {exam.exam_source === "school" && <Building2 className="h-3 w-3" />}
                       {exam.exam_source === "waec" && <Globe className="h-3 w-3" />}
                       {exam.exam_source === "user" && <User className="h-3 w-3" />}
                       <span>{institution}</span>
-                    </div>
+                    </div> */}
                     <div className="flex items-center gap-1">
                       <span>{exam.question_count} questions </span> {(exam.exam_source !== "waec" && exam.exam_source !== "school") && <span>• {exam.difficulty}</span>}
                     </div>

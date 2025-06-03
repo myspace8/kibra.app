@@ -662,7 +662,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   }
 
   const QuizHeader = ({ quizTitle, topic, subtopic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2 max-w-24">
       {quizTitle && (
       <h1 className="text-xs font-medium text-center text-gray-500 max-w-[35vw] md:max-w-[45vw] leading-tight">
         {quizTitle}

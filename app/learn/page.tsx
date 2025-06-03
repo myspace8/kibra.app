@@ -66,6 +66,7 @@ interface Exam {
   sort_date: string;
   difficulty: "Easy" | "Medium" | "Hard";
   topics: string[];
+  created_at: Date;
   school_exam_metadata?: {
     school: string;
     grade_level: string;
@@ -87,6 +88,26 @@ interface Exam {
   };
   completed: boolean;
 }
+
+// Helper function to format time difference
+const formatTimeAgo = (sortDate: string): string => {
+  const now = new Date();
+  const examDate = new Date(sortDate);
+  const diffInMs = now.getTime() - examDate.getTime();
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInDays < 1) {
+    return `${diffInHours}h`;
+  } else if (diffInDays < 6) {
+    return `${diffInDays}d`;
+  } else {
+    return examDate.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    });
+  }
+};
 
 // WAEC-based subjects for BECE and WASSCE (2025, Ghana)
 const BECE_SUBJECTS = [
@@ -366,6 +387,7 @@ export default function Learn() {
             question_count,
             total_marks,
             sort_date,
+            created_at,
             difficulty,
             topics,
             school_exam_metadata,
@@ -384,6 +406,7 @@ export default function Learn() {
             exam_source: exam.exam_source,
             exam_type: exam.exam_type,
             subject: exam.subject,
+            created_at: new Date(exam.created_at),
             question_count: exam.question_count || 0,
             total_marks: exam.total_marks || 0,
             sort_date: exam.sort_date,
@@ -768,24 +791,33 @@ export default function Learn() {
                               <div className="flex items-start">
                                 <div
                                   className={cn(
-                                    "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
+                                    "flex flex-shrink-0 items-center justify-center",
                                     exam.completed
-                                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                      : "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                                      ? "h-6 w-6 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full"
+                                      : ""
                                   )}
                                 >
                                   {exam.completed ? (
                                     <CheckCircle className="h-4 w-4" />
                                   ) : (
-                                    <Clock className="h-4 w-4" />
+                                    <p className="text-sm font-medium text-center text-gray-500">
+                                      {(() => {
+                                        const timeAgo = formatTimeAgo(exam.created_at.toISOString());
+                                        // Show "ago" only for hours or days (not for month)
+                                        if (timeAgo.endsWith("h") || timeAgo.endsWith("d")) {
+                                          return `${timeAgo} ago`;
+                                        }
+                                        return timeAgo;
+                                      })()}
+                                    </p>
                                   )}
                                 </div>
                                 <div className="flex flex-col items-start gap-2">
                                   <div className="ml-3 flex-1 min-w-0">
-                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                                      {exam.subject} {examType} {examDate && `(${examDate}) Trial`}
+                                    <h3 className="text-sm font-semibold text-left text-gray-600">
+                                      {exam.subject} {examType} {examDate && `(${examDate})`} Trial
                                     </h3>
-                                    <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-1">
                                       <span>{exam.question_count} Questions</span>
                                     </div>
                                     {exam.topics.length > 0 && (
@@ -1098,137 +1130,3 @@ export default function Learn() {
     </>
   );
 }
-
-
-/**Below are the prompts for each process in the pipeline—generating questions, computing the answer, generating options, and verification—tailored to meet your requirements for generating WAEC exam questions. These prompts are designed to ensure consistency, educational accuracy, and alignment with your existing prompt structure, which I’ve referenced and adapted as needed.
-
----
-
-### 1. **Prompt for Generating the Question**
-This prompt creates a question that aligns with the subject, topic, difficulty, and exam type specified in your form data.
-
-```plaintext
-Generate a question for a WAEC exam that adheres to the following requirements:
-- Subject: "{subject}" (e.g., "{formData.subject}")
-- Topic: "{topic}" (e.g., from "{formData.topics}")
-- Subtopic: "{subtopic}" (a specific area within the topic)
-- Difficulty: "{difficulty}" (one of "Easy", "Medium", "Hard")
-- Exam Type: "{exam_type}" (e.g., "{formData.examType}", such as BECE for JHS or WASSCE for SHS)
-- Overall Exam Difficulty: "{formData.difficulty}" (influences the question's complexity)
-
-The question must:
-- Be relevant to the {formData.examType} curriculum and educationally accurate.
-- Match the specified difficulty level:
-  - "Easy": Focus on recall or basic comprehension (e.g., definitions, simple calculations).
-  - "Medium": Require application or analysis (e.g., multi-step problems).
-  - "Hard": Demand synthesis or evaluation (e.g., complex reasoning or multi-concept integration).
-- Use clear, concise language suitable for the student level.
-- Incorporate LaTeX for mathematical expressions:
-  - Inline math: `$expression$`
-  - Block math: `$$expression$$`
-- Where appropriate, use real-world contexts to enhance engagement.
-
-**Example Output:**
-- Mathematics (WASSCE, Hard): "Solve the quadratic equation $$2x^2 - 5x + 3 = 0$$ using the quadratic formula."
-- Biology (BECE, Easy): "What is the primary source of energy for Earth’s climate system?"
-
-**Output:** A string containing only the question text.
-```
-
----
-
-### 2. **Prompt for Computing the Answer**
-This prompt ensures the answer is calculated accurately and presented in a format suitable for the options.
-
-```plaintext
-Compute the correct answer to the following question: "{question}"
-
-Requirements:
-- For mathematical questions:
-  - Show all steps of the calculation clearly.
-  - Use LaTeX for equations (e.g., `$x = 3$` inline or `$$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$` for block equations).
-  - Provide the final answer in a precise format that matches the expected options (e.g., a number, expression, or coordinate pair).
-- For non-mathematical questions:
-  - Give a direct, concise answer based on factual knowledge or reasoning.
-  - Include relevant principles or formulas in LaTeX if applicable.
-
-**Example:**
-- Question: "Solve $$2x^2 - 5x + 3 = 0$$ using the quadratic formula."
-  - Steps: "Using $$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$, where $a = 2$, $b = -5$, $c = 3$: Discriminant = $(-5)^2 - 4 \cdot 2 \cdot 3 = 25 - 24 = 1$. Then, $x = \frac{5 \pm \sqrt{1}}{4}$, so $x = \frac{6}{4} = 1.5$ or $x = \frac{4}{4} = 1$."
-  - Answer: "1.5 and 1"
-- Question: "What is the primary source of energy for Earth’s climate system?"
-  - Answer: "The Sun"
-
-**Output:** The final answer as a string, ready to match an option.
-```
-
----
-
-### 3. **Prompt for Generating Options**
-This prompt generates plausible options, including the correct answer, formatted consistently with your requirements.
-
-```plaintext
-Generate options for the following question: "{question}"
-
-Requirements:
-- Question Type: "{formData.questionType}" (e.g., "Multiple Choice Only" or "Hybrid (MC + T/F)")
-- Correct Answer: "{answer}" (from the computation step)
-
-For Multiple Choice Only:
-- Create exactly 4 options, including the correct answer.
-- Format as: ["A. Option text", "B. Option text", "C. Option text", "D. Option text"].
-- Include the correct answer exactly as computed.
-- Design distractors based on common errors or misconceptions.
-- Keep options similar in length and complexity for fairness.
-
-For Hybrid (MC + T/F):
-- For multiple-choice: Follow the above format.
-- For true/false: Use ["True", "False"] without letter prefixes.
-
-**Example:**
-- Question: "Solve $$2x^2 - 5x + 3 = 0$$"
-  - Answer: "1.5 and 1"
-  - Options: ["A. 1.5 and 1", "B. 2 and 3", "C. 1 and 2", "D. -1.5 and -1"]
-- Question: "The Sun is the primary source of energy for Earth’s climate system."
-  - Options: ["True", "False"]
-
-**Output:** An array of strings representing the options.
-```
-
----
-
-### 4. **Prompt for Verification**
-This prompt checks that all components align and meet the specified requirements.
-
-```plaintext
-Verify the following components of the question:
-
-- Question: "{question}"
-- Computed Answer: "{answer}"
-- Options: {options}
-- Explanation: "{explanation}"
-- Difficulty: "{difficulty}"
-- Other fields: (e.g., topic, subtopic, marks from form data)
-
-Steps:
-1. Check that "{answer}" exactly matches one of the {options}. Flag if it doesn’t.
-2. Validate the explanation:
-   - Confirms the correct answer with reasoning or steps.
-   - References the correct option by letter (e.g., "A. 1.5 and 1 is correct because...").
-   - Avoids ambiguity or errors.
-3. Ensure the question matches the "{difficulty}" level:
-   - "Easy": Simple recall or basic application.
-   - "Medium": Moderate problem-solving.
-   - "Hard": Complex reasoning or multi-step processes.
-4. Confirm all fields (e.g., topic, marks) align with the schema.
-
-**Example Report:**
-- Question: "Solve $$2x^2 - 5x + 3 = 0$$"
-- Answer: "1.5 and 1"
-- Options: ["A. 1.5 and 1", "B. 2 and 3", "C. 1 and 2", "D. -1.5 and -1"]
-- Explanation: "Using the quadratic formula, the roots are 1.5 and 1, so A is correct."
-- Report: "All components are correct."
-
-**Output:** A verification report as a string, stating "All components are correct" or listing specific issues (e.g., "Answer does not match any option").
-```
-*/
