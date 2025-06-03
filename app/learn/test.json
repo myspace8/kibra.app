@@ -3,185 +3,1044 @@
   "exam_year": 2025,
   "exam_session": "May/June",
   "region": "Ghana",
-  "subject": "Mathematics",
-  "syllabus_version": "2025 Syllabus",
+  "subject": "English Language",
+  "syllabus_version": "2023 Syllabus",
   "questions": [
     {
-      "question": "A bag contains 5 blue marbles and 3 red marbles. You pick 2 marbles in succession without replacement. What is the probability that both marbles are blue?",
       "question_type": "objective",
-      "topic": "Probability",
-      "subtopic": "Dependent Events",
+      "topic": "Grammar",
+      "subtopic": "Verb Tense",
+      "question": "If you ______ late, you will miss the opening ceremony.",
       "options": [
-        "A. 1/2",
-        "B. 5/14",
-        "C. 1/4",
-        "D. 3/8"
+        "A. arrive",
+        "B. arrived",
+        "C. had arrived",
+        "D. have arrived"
       ],
       "correct_answers": [
-        "B. 5/14"
+        "A. arrive"
       ],
-      "explanation": "Total marbles: 5 blue + 3 red = 8 marbles. Probability of first blue: 5/8. After picking one blue, 7 marbles remain (4 blue, 3 red). Probability of second blue: 4/7. Combined probability: (5/8) × (4/7) = 20/56 = 5/14.",
-      "hint": "Think about how the number of marbles changes after the first pick.",
-      "difficulty": "Medium",
-      "marks": 1,
-      "media_url": "https://example.com/marble_diagram_1.jpg",
-      "media_type": "image",
-      "keywords": [
-        "probability",
-        "dependent events",
-        "sample space"
-      ],
-      "learning_objectives": [
-        "Understand dependent events",
-        "Calculate probabilities without replacement"
-      ],
-      "estimated_time": "3 minutes",
-      "source_reference": "WAEC Past Questions",
-      "ai_feedback": "This question tests understanding of dependent probabilities and updating the sample space."
-    },
-    {
-      "question": "A deck has 10 cards: 6 hearts and 4 spades. You draw 2 cards without replacement. What is the probability that both cards are hearts?",
-      "question_type": "objective",
-      "topic": "Probability",
-      "subtopic": "Dependent Events",
-      "options": [
-        "A. 1/3",
-        "B. 1/5",
-        "C. 1/6",
-        "D. 3/10"
-      ],
-      "correct_answers": [
-        "A. 1/3"
-      ],
-      "explanation": "Total cards: 6 hearts + 4 spades = 10 cards. Probability of first heart: 6/10. After drawing one heart, 9 cards remain (5 hearts, 4 spades). Probability of second heart: 5/9. Combined probability: (6/10) × (5/9) = 30/90 = 1/3.",
-      "hint": "Consider how the total number of cards decreases after the first draw.",
-      "difficulty": "Medium",
-      "marks": 1,
-      "media_url": "https://example.com/card_diagram_2.jpg",
-      "media_type": "image",
-      "keywords": [
-        "probability",
-        "dependent events",
-        "cards"
-      ],
-      "learning_objectives": [
-        "Understand dependent events",
-        "Apply probability to card draws"
-      ],
-      "estimated_time": "3 minutes",
-      "source_reference": "WAEC Past Questions",
-      "ai_feedback": "This question assesses the ability to handle sequential probabilities with a changing sample space."
-    },
-    {
-      "question": "A jar has 7 candies: 4 chocolate and 3 strawberry. You pick 3 candies without replacement. What is the probability that all 3 are chocolate?",
-      "question_type": "objective",
-      "topic": "Probability",
-      "subtopic": "Dependent Events",
-      "options": [
-        "A. 4/35",
-        "B. 1/5",
-        "C. 2/7",
-        "D. 1/3"
-      ],
-      "correct_answers": [
-        "A. 4/35"
-      ],
-      "explanation": "Total candies: 4 chocolate + 3 strawberry = 7 candies. Probability of first chocolate: 4/7. After one chocolate, 6 remain (3 chocolate, 3 strawberry). Probability of second: 3/6 = 1/2. After two, 5 remain (2 chocolate, 3 strawberry). Probability of third: 2/5. Combined: (4/7) × (3/6) × (2/5) = 24/210 = 4/35.",
-      "hint": "Break it into three steps and adjust the numbers each time.",
-      "difficulty": "Hard",
-      "marks": 1,
-      "media_url": "https://example.com/candy_diagram_3.jpg",
-      "media_type": "image",
-      "keywords": [
-        "probability",
-        "dependent events",
-        "multiple draws"
-      ],
-      "learning_objectives": [
-        "Calculate multi-step dependent probabilities",
-        "Update sample space"
-      ],
-      "estimated_time": "4 minutes",
-      "source_reference": "WAEC Past Questions",
-      "ai_feedback": "This question challenges the ability to handle multiple dependent events and sample space updates."
-    },
-    {
-      "question": "A box contains 3 yellow balls and 5 green balls. You pick 2 balls without replacement. What is the probability that the first ball is yellow and the second ball is green?",
-      "question_type": "objective",
-      "topic": "Probability",
-      "subtopic": "Dependent Events",
-      "options": [
-        "A. 5/14",
-        "B. 15/56",
-        "C. 3/8",
-        "D. 1/4"
-      ],
-      "correct_answers": [
-        "B. 15/56"
-      ],
-      "explanation": "Total balls: 3 yellow + 5 green = 8 balls. Probability of first yellow: 3/8. After one yellow, 7 balls remain (2 yellow, 5 green). Probability of second green: 5/7. Combined probability: (3/8) × (5/7) = 15/56.",
-      "hint": "Focus on the order: yellow first, then green, and adjust the totals.",
-      "difficulty": "Medium",
-      "marks": 1,
-      "media_url": "https://example.com/ball_diagram_4.jpg",
-      "media_type": "image",
-      "keywords": [
-        "probability",
-        "dependent events",
-        "order of events"
-      ],
-      "learning_objectives": [
-        "Understand order in dependent events",
-        "Update sample space"
-      ],
-      "estimated_time": "3 minutes",
-      "source_reference": "WAEC Past Questions",
-      "ai_feedback": "This question tests the ability to apply dependent probabilities with specific event ordering."
-    },
-    {
-      "question": "A basket has 6 apples and 4 oranges. You pick 2 fruits without replacement. What is the probability that both are oranges?",
-      "question_type": "objective",
-      "topic": "Probability",
-      "subtopic": "Dependent Events",
-      "options": [
-        "A. 1/5",
-        "B. 1/6",
-        "C. 2/9",
-        "D. 3/10"
-      ],
-      "correct_answers": [
-        "B. 1/6"
-      ],
-      "explanation": "Total fruits: 6 apples + 4 oranges = 10 fruits. Probability of first orange: 4/10. After one orange, 9 fruits remain (6 apples, 3 oranges). Probability of second orange: 3/9. Combined probability: (4/10) × (3/9) = 12/90 = 1/6.",
-      "hint": "Think about how many oranges are left after the first pick.",
+      "model_answer": null,
+      "explanation": "The correct answer is 'arrive' because it uses the present tense, suitable for the 'if' clause of a first conditional sentence indicating a possible future outcome. The sentence 'If you arrive late, you will miss the opening ceremony' shows a cause-and-effect relationship. The other options—'arrived' (past), 'had arrived' (past perfect), and 'have arrived' (present perfect)—do not fit the future conditional structure.",
+      "hint": "Focus on the tense needed for a future possibility.",
       "difficulty": "Easy",
       "marks": 1,
-      "media_url": "https://example.com/fruit_diagram_5.jpg",
+      "media_url": "https://example.com/english/verb_tense_future.jpg",
       "media_type": "image",
       "keywords": [
-        "probability",
-        "dependent events",
-        "fruits"
+        "grammar",
+        "verb tense",
+        "conditional"
       ],
       "learning_objectives": [
-        "Calculate basic dependent probabilities",
-        "Update sample space"
+        "Apply present tense in conditionals",
+        "Understand future outcomes"
       ],
       "estimated_time": "2 minutes",
-      "source_reference": "WAEC Past Questions",
-      "ai_feedback": "This question introduces dependent events with a simple, relatable context."
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests understanding of conditional verb tenses."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Prepositions",
+      "question": "The painting was hung ______ the fireplace.",
+      "options": [
+        "A. over",
+        "B. in",
+        "C. at",
+        "D. on"
+      ],
+      "correct_answers": [
+        "A. over"
+      ],
+      "model_answer": null,
+      "explanation": "The preposition 'over' is correct as it indicates the painting is positioned above the fireplace, as in 'The painting was hung over the fireplace.' The other options—'in' (inside), 'at' (specific point), and 'on' (surface contact)—do not accurately describe the position.",
+      "hint": "Choose a preposition that means above the fireplace.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/english/preposition_place.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "preposition",
+        "position"
+      ],
+      "learning_objectives": [
+        "Use prepositions of place",
+        "Identify spatial relationships"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses preposition usage for location."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Pronouns",
+      "question": "The boy ______ broke the window apologized immediately.",
+      "options": [
+        "A. which",
+        "B. who",
+        "C. whose",
+        "D. whom"
+      ],
+      "correct_answers": [
+        "B. who"
+      ],
+      "model_answer": null,
+      "explanation": "The pronoun 'who' is correct as it acts as the subject of the relative clause describing the boy, as in 'The boy who broke the window apologized immediately.' The other options—'which' (for things), 'whose' (possessive), and 'whom' (object)—do not fit as the subject of the clause.",
+      "hint": "Choose a pronoun that acts as the subject of the clause.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/pronoun_subject.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "pronoun",
+        "relative clause"
+      ],
+      "learning_objectives": [
+        "Understand relative pronouns",
+        "Apply pronouns as subjects"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests relative pronoun application."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Gerunds",
+      "question": "She couldn’t help ______ at the funny scene.",
+      "options": [
+        "A. laughing",
+        "B. to laugh",
+        "C. laugh",
+        "D. laughed"
+      ],
+      "correct_answers": [
+        "A. laughing"
+      ],
+      "model_answer": null,
+      "explanation": "The verb 'help' in the phrase 'couldn’t help' is followed by a gerund, a verb form ending in '-ing' acting as a noun. 'Laughing' is correct, as in 'She couldn’t help laughing at the funny scene,' where 'laughing' is the object. The other options—'to laugh' (infinitive), 'laugh' (base verb), and 'laughed' (past tense)—are not grammatically correct after 'couldn’t help.'",
+      "hint": "Select the verb form that acts as a noun after 'couldn’t help.'",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/gerund_help.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "gerund",
+        "verb form"
+      ],
+      "learning_objectives": [
+        "Identify gerunds after specific phrases",
+        "Use gerunds correctly"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests gerund usage after specific expressions."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Subjunctive Mood",
+      "question": "The coach demanded that the players ______ early for training.",
+      "options": [
+        "A. arrive",
+        "B. arrives",
+        "C. arrived",
+        "D. will arrive"
+      ],
+      "correct_answers": [
+        "A. arrive"
+      ],
+      "model_answer": null,
+      "explanation": "The subjunctive mood is used after 'demanded that' to express a requirement, requiring the base form 'arrive' regardless of the subject. The sentence 'The coach demanded that the players arrive early for training' is correct. The other options—'arrives' (present indicative), 'arrived' (past), and 'will arrive' (future)—do not fit the subjunctive structure.",
+      "hint": "Use the base verb form for the subjunctive mood after 'demanded that.'",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/subjunctive_demand.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "subjunctive",
+        "mood"
+      ],
+      "learning_objectives": [
+        "Understand subjunctive mood",
+        "Apply subjunctive in context"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses subjunctive mood application."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Subject-Verb Agreement",
+      "question": "The group of students, along with their teacher, ______ visiting the museum tomorrow.",
+      "options": [
+        "A. is",
+        "B. are",
+        "C. were",
+        "D. have been"
+      ],
+      "correct_answers": [
+        "A. is"
+      ],
+      "model_answer": null,
+      "explanation": "The subject is 'The group of students,' which is singular, and the phrase 'along with their teacher' does not change the subject's number. Thus, 'is' is correct, as in 'The group of students, along with their teacher, is visiting the museum tomorrow.' The other options—'are' (plural), 'were' (past plural), and 'have been' (present perfect plural)—do not agree with the singular subject.",
+      "hint": "Identify the singular subject and match the verb accordingly.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/subject_verb_agreement.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "subject-verb agreement",
+        "singular subject"
+      ],
+      "learning_objectives": [
+        "Understand subject-verb agreement",
+        "Apply agreement rules"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests subject-verb agreement with additional phrases."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Conjunctions",
+      "question": "He didn’t study, ______ he passed the exam.",
+      "options": [
+        "A. and",
+        "B. but",
+        "C. so",
+        "D. because"
+      ],
+      "correct_answers": [
+        "B. but"
+      ],
+      "model_answer": null,
+      "explanation": "The conjunction 'but' is correct to show contrast between not studying and passing the exam, as in 'He didn’t study, but he passed the exam.' The other options—'and' (addition), 'so' (result), and 'because' (cause)—do not convey the intended contrast.",
+      "hint": "Choose a conjunction that shows a contrast between two ideas.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/english/conjunctions_contrast.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "conjunction",
+        "contrast"
+      ],
+      "learning_objectives": [
+        "Use conjunctions of contrast",
+        "Understand sentence connections"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests basic conjunction usage for contrast."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Adverbs",
+      "question": "She sings ______ during the choir performance.",
+      "options": [
+        "A. beautiful",
+        "B. beautifully",
+        "C. beauty",
+        "D. beautify"
+      ],
+      "correct_answers": [
+        "B. beautifully"
+      ],
+      "model_answer": null,
+      "explanation": "An adverb 'beautifully' is needed to describe how she sings, as in 'She sings beautifully during the choir performance.' Adverbs modify verbs to indicate manner. The other options—'beautiful' (adjective), 'beauty' (noun), and 'beautify' (verb)—do not function as adverbs.",
+      "hint": "Pick a word that describes the manner of singing and modifies the verb.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/adverbs_manner.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "adverb",
+        "manner"
+      ],
+      "learning_objectives": [
+        "Identify adverbs of manner",
+        "Apply adverbs correctly"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests adverb usage for manner."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Synonyms",
+      "question": "The teacher was very <u>stern</u> during the lesson.",
+      "options": [
+        "A. strict",
+        "B. calm",
+        "C. kind",
+        "D. lazy"
+      ],
+      "correct_answers": [
+        "A. strict"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'stern' means strict or severe, and 'strict' is its closest synonym, as in 'The teacher was very strict during the lesson.' The other options—'calm' (peaceful), 'kind' (gentle), and 'lazy' (idle)—do not align with the meaning of 'stern.'",
+      "hint": "Choose a word that means strict or severe, like 'stern.'",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/synonyms_stern.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "synonym",
+        "stern"
+      ],
+      "learning_objectives": [
+        "Identify synonyms",
+        "Expand vocabulary"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests synonym recognition."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Synonyms",
+      "question": "His <u>bravery</u> inspired everyone in the village.",
+      "options": [
+        "A. fear",
+        "B. courage",
+        "C. weakness",
+        "D. sadness"
+      ],
+      "correct_answers": [
+        "B. courage"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'bravery' means the quality of being brave, and 'courage' is its closest synonym, as in 'His courage inspired everyone in the village.' The other options—'fear' (opposite), 'weakness' (opposite), and 'sadness' (unrelated)—do not match the meaning of 'bravery.'",
+      "hint": "Choose a word that means being brave, like 'bravery.'",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/english/synonyms_bravery.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "synonym",
+        "bravery"
+      ],
+      "learning_objectives": [
+        "Identify synonyms",
+        "Understand word meanings"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question evaluates synonym understanding."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Synonyms",
+      "question": "The journey was <u>tedious</u> for the children.",
+      "options": [
+        "A. exciting",
+        "B. boring",
+        "C. short",
+        "D. pleasant"
+      ],
+      "correct_answers": [
+        "B. boring"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'tedious' means tiresome or boring, and 'boring' is its closest synonym, as in 'The journey was boring for the children.' The other options—'exciting' (opposite), 'short' (opposite), and 'pleasant' (opposite)—do not reflect the meaning of 'tedious.'",
+      "hint": "Choose a word that means tiresome or uninteresting, like 'tedious.'",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/synonyms_tedious.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "synonym",
+        "tedious"
+      ],
+      "learning_objectives": [
+        "Identify synonyms",
+        "Expand vocabulary"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests synonym recognition."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Synonyms",
+      "question": "The <u>vivid</u> colors of the painting caught everyone’s attention.",
+      "options": [
+        "A. dull",
+        "B. bright",
+        "C. faint",
+        "D. pale"
+      ],
+      "correct_answers": [
+        "B. bright"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'vivid' means bright or intense, and 'bright' is its closest synonym, as in 'The bright colors of the painting caught everyone’s attention.' The other options—'dull' (opposite), 'faint' (opposite), and 'pale' (opposite)—do not align with the meaning of 'vivid.'",
+      "hint": "Choose a word that means bright or intense, like 'vivid.'",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/synonyms_vivid.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "synonym",
+        "vivid"
+      ],
+      "learning_objectives": [
+        "Identify synonyms",
+        "Understand word meanings"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses synonym knowledge."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Synonyms",
+      "question": "The speaker’s <u>eloquent</u> speech moved the audience.",
+      "options": [
+        "A. fluent",
+        "B. silent",
+        "C. unclear",
+        "D. boring"
+      ],
+      "correct_answers": [
+        "A. fluent"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'eloquent' means fluent or persuasive in speech, and 'fluent' is its closest synonym, as in 'The speaker’s fluent speech moved the audience.' The other options—'silent' (opposite), 'unclear' (opposite), and 'boring' (opposite)—do not match the meaning of 'eloquent.'",
+      "hint": "Choose a word that means fluent or expressive, like 'eloquent.'",
+      "difficulty": "Hard",
+      "marks": 1,
+      "media_url": "https://example.com/english/synonyms_eloquent.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "synonym",
+        "eloquent"
+      ],
+      "learning_objectives": [
+        "Identify synonyms",
+        "Expand vocabulary"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests advanced synonym recognition."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Antonyms",
+      "question": "The room was <u>spacious</u> enough for the event.",
+      "options": [
+        "A. large",
+        "B. open",
+        "C. cramped",
+        "D. wide"
+      ],
+      "correct_answers": [
+        "C. cramped"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'spacious' means having a lot of space, and its antonym is 'cramped,' meaning lacking space, as in 'The room was not cramped enough for the event.' The other options—'large' (synonym), 'open' (similar), and 'wide' (similar)—do not oppose 'spacious.'",
+      "hint": "Choose the word that means the opposite of having a lot of space.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/antonyms_spacious.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "antonym",
+        "space"
+      ],
+      "learning_objectives": [
+        "Identify antonyms",
+        "Understand word opposites"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests antonym recognition."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Antonyms",
+      "question": "The leader was <u>arrogant</u> in his speech.",
+      "options": [
+        "A. proud",
+        "B. humble",
+        "C. confident",
+        "D. loud"
+      ],
+      "correct_answers": [
+        "B. humble"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'arrogant' means overly proud or conceited, and its antonym is 'humble,' meaning modest, as in 'The leader was humble in his speech.' The other options—'proud' (similar), 'confident' (related), and 'loud' (unrelated)—do not directly oppose 'arrogant.'",
+      "hint": "Choose the word that means modest, the opposite of conceited.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/antonyms_arrogant.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "antonym",
+        "arrogant"
+      ],
+      "learning_objectives": [
+        "Identify antonyms",
+        "Expand vocabulary"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses antonym understanding."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Antonyms",
+      "question": "The instructions were <u>complex</u> for the beginners.",
+      "options": [
+        "A. difficult",
+        "B. simple",
+        "C. detailed",
+        "D. long"
+      ],
+      "correct_answers": [
+        "B. simple"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'complex' means complicated, and its antonym is 'simple,' meaning easy to understand, as in 'The instructions were simple for the beginners.' The other options—'difficult' (synonym), 'detailed' (related), and 'long' (unrelated)—do not directly oppose 'complex.'",
+      "hint": "Choose the word that means easy to understand, the opposite of complicated.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/antonyms_complex.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "antonym",
+        "complex"
+      ],
+      "learning_objectives": [
+        "Identify antonyms",
+        "Understand word opposites"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests antonym recognition."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Antonyms",
+      "question": "The team <u>succeeded</u> in their first attempt.",
+      "options": [
+        "A. won",
+        "B. tried",
+        "C. failed",
+        "D. achieved"
+      ],
+      "correct_answers": [
+        "C. failed"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'succeeded' means to achieve a goal, and its antonym is 'failed,' meaning to not achieve, as in 'The team failed in their first attempt.' The other options—'won' (similar), 'tried' (neutral), and 'achieved' (synonym)—do not oppose 'succeeded.'",
+      "hint": "Choose the word that means to not achieve, the opposite of succeeded.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/antonyms_succeeded.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "antonym",
+        "succeeded"
+      ],
+      "learning_objectives": [
+        "Identify antonyms",
+        "Understand word opposites"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses antonym knowledge."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Antonyms",
+      "question": "The weather was <u>pleasant</u> during the picnic.",
+      "options": [
+        "A. nice",
+        "B. warm",
+        "C. terrible",
+        "D. sunny"
+      ],
+      "correct_answers": [
+        "C. terrible"
+      ],
+      "model_answer": null,
+      "explanation": "The word 'pleasant' means enjoyable, and its antonym is 'terrible,' meaning very bad, as in 'The weather was terrible during the picnic.' The other options—'nice' (synonym), 'warm' (neutral), and 'sunny' (neutral)—do not directly oppose 'pleasant.'",
+      "hint": "Choose the word that means very bad, the opposite of enjoyable.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/antonyms_pleasant.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "antonym",
+        "pleasant"
+      ],
+      "learning_objectives": [
+        "Identify antonyms",
+        "Expand vocabulary"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests antonym recognition."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Idioms",
+      "question": "Kofi decided to <u>turn over a new leaf</u> after his mistakes. This means that he",
+      "options": [
+        "A. started gardening",
+        "B. changed his behavior",
+        "C. wrote a new book",
+        "D. moved to a new place"
+      ],
+      "correct_answers": [
+        "B. changed his behavior"
+      ],
+      "model_answer": null,
+      "explanation": "The idiom 'turn over a new leaf' means to start anew or change one’s behavior for the better, so 'changed his behavior' is correct, as in 'Kofi changed his behavior after his mistakes.' The other options—'started gardening' (literal), 'wrote a new book' (unrelated), and 'moved to a new place' (unrelated)—do not reflect the idiom’s meaning.",
+      "hint": "Think about what it means to start fresh after making mistakes.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/idioms_new_leaf.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "idiom",
+        "change"
+      ],
+      "learning_objectives": [
+        "Understand idioms",
+        "Interpret figurative language"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests idiom comprehension."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Idioms",
+      "question": "She <u>spilled the beans</u> about the surprise party. This means that she",
+      "options": [
+        "A. made a mess",
+        "B. revealed a secret",
+        "C. cooked dinner",
+        "D. planned the event"
+      ],
+      "correct_answers": [
+        "B. revealed a secret"
+      ],
+      "model_answer": null,
+      "explanation": "The idiom 'spilled the beans' means to reveal a secret, so 'revealed a secret' is correct, as in 'She revealed a secret about the surprise party.' The other options—'made a mess' (literal), 'cooked dinner' (unrelated), and 'planned the event' (unrelated)—do not capture the idiom’s meaning.",
+      "hint": "Consider what it means to accidentally share hidden information.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/idioms_spill_beans.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "idiom",
+        "secret"
+      ],
+      "learning_objectives": [
+        "Understand idioms",
+        "Interpret figurative language"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses idiom understanding."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Idioms",
+      "question": "The manager decided to <u>call it a day</u> after a long meeting. This means that he",
+      "options": [
+        "A. ended the work",
+        "B. scheduled another meeting",
+        "C. named the day",
+        "D. took a break"
+      ],
+      "correct_answers": [
+        "A. ended the work"
+      ],
+      "model_answer": null,
+      "explanation": "The idiom 'call it a day' means to stop working for the day, so 'ended the work' is correct, as in 'The manager ended the work after a long meeting.' The other options—'scheduled another meeting' (opposite), 'named the day' (literal), and 'took a break' (partial)—do not fully reflect the idiom’s meaning.",
+      "hint": "Think about what it means to stop working after a long day.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/idioms_call_day.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "idiom",
+        "end"
+      ],
+      "learning_objectives": [
+        "Understand idioms",
+        "Interpret figurative language"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests idiom comprehension."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Idioms",
+      "question": "He <u>hit the nail on the head</u> during his presentation. This means that he",
+      "options": [
+        "A. made a mistake",
+        "B. spoke accurately",
+        "C. hurt someone",
+        "D. finished quickly"
+      ],
+      "correct_answers": [
+        "B. spoke accurately"
+      ],
+      "model_answer": null,
+      "explanation": "The idiom 'hit the nail on the head' means to be exactly right, so 'spoke accurately' is correct, as in 'He spoke accurately during his presentation.' The other options—'made a mistake' (opposite), 'hurt someone' (literal), and 'finished quickly' (unrelated)—do not reflect the idiom’s meaning.",
+      "hint": "Consider what it means to be exactly right in a discussion.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/idioms_hit_nail.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "idiom",
+        "accuracy"
+      ],
+      "learning_objectives": [
+        "Understand idioms",
+        "Interpret figurative language"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses idiom understanding."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Vocabulary",
+      "subtopic": "Idioms",
+      "question": "She was <u>over the moon</u> when she got the news. This means that she was",
+      "options": [
+        "A. very happy",
+        "B. confused",
+        "C. tired",
+        "D. angry"
+      ],
+      "correct_answers": [
+        "A. very happy"
+      ],
+      "model_answer": null,
+      "explanation": "The idiom 'over the moon' means to be extremely happy, so 'very happy' is correct, as in 'She was very happy when she got the news.' The other options—'confused' (unrelated), 'tired' (unrelated), and 'angry' (opposite)—do not reflect the idiom’s meaning.",
+      "hint": "Think about what it means to be extremely joyful about something.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/idioms_over_moon.jpg",
+      "media_type": "image",
+      "keywords": [
+        "vocabulary",
+        "idiom",
+        "happiness"
+      ],
+      "learning_objectives": [
+        "Understand idioms",
+        "Interpret figurative language"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests idiom comprehension."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Question Tags",
+      "question": "They are coming to the party, ______ they?",
+      "options": [
+        "A. are",
+        "B. aren’t",
+        "C. were",
+        "D. weren’t"
+      ],
+      "correct_answers": [
+        "B. aren’t"
+      ],
+      "model_answer": null,
+      "explanation": "The question tag 'aren’t' is correct because it matches the present tense of the main clause 'They are coming' and reverses its polarity (positive to negative), as in 'They are coming to the party, aren’t they?' The other options—'are' (wrong polarity), 'were' (wrong tense), and 'weren’t' (wrong tense)—do not fit.",
+      "hint": "Ensure the question tag matches the tense and reverses the polarity of the main clause.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/question_tags_present.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "question tag",
+        "tense"
+      ],
+      "learning_objectives": [
+        "Use question tags correctly",
+        "Match tenses in tags"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question evaluates question tag formation."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Conditional Sentences",
+      "question": "If I ______ the map, we wouldn’t have gotten lost.",
+      "options": [
+        "A. bring",
+        "B. brought",
+        "C. had brought",
+        "D. have brought"
+      ],
+      "correct_answers": [
+        "C. had brought"
+      ],
+      "model_answer": null,
+      "explanation": "This is a third conditional sentence describing an unreal past situation, requiring 'had brought' in the 'if' clause. The sentence 'If I had brought the map, we wouldn’t have gotten lost' indicates a past hypothetical scenario. The other options—'bring' (present), 'brought' (past simple), and 'have brought' (present perfect)—do not fit the third conditional structure.",
+      "hint": "Use the past perfect tense for an unreal past condition.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/conditional_third.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "conditional",
+        "past"
+      ],
+      "learning_objectives": [
+        "Understand third conditional",
+        "Apply past tense in conditionals"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question evaluates third conditional usage."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Adjective Order",
+      "question": "She wore a ______ dress to the party.",
+      "options": [
+        "A. silk red long",
+        "B. long red silk",
+        "C. red silk long",
+        "D. long silk red"
+      ],
+      "correct_answers": [
+        "B. long red silk"
+      ],
+      "model_answer": null,
+      "explanation": "The correct answer is 'long red silk' because English adjective order typically follows: size, color, material. Here, 'long' (size), 'red' (color), and 'silk' (material) are in the correct sequence, as in 'She wore a long red silk dress to the party.' The other options violate this standard order.",
+      "hint": "Arrange the adjectives in the order: size, color, material.",
+      "difficulty": "Hard",
+      "marks": 1,
+      "media_url": "https://example.com/english/adjective_order.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "adjective",
+        "order"
+      ],
+      "learning_objectives": [
+        "Understand adjective order",
+        "Apply adjective rules"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests adjective order rules."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Quantifiers",
+      "question": "There isn’t ______ water left in the jug.",
+      "options": [
+        "A. some",
+        "B. any",
+        "C. many",
+        "D. few"
+      ],
+      "correct_answers": [
+        "B. any"
+      ],
+      "model_answer": null,
+      "explanation": "In negative sentences, the quantifier 'any' is used to indicate none, as in 'There isn’t any water left in the jug.' The other options—'some' (used in positive sentences), 'many' (used with countable nouns), and 'few' (used with countable nouns)—do not fit the context of a negative sentence with an uncountable noun like 'water.'",
+      "hint": "Choose a quantifier that fits a negative sentence with an uncountable noun.",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/quantifiers_negative.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "quantifier",
+        "negation"
+      ],
+      "learning_objectives": [
+        "Understand quantifiers",
+        "Apply quantifiers in negative contexts"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests quantifier usage in negative sentences."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Prepositions",
+      "question": "The event will take place ______ Saturday morning.",
+      "options": [
+        "A. at",
+        "B. in",
+        "C. on",
+        "D. by"
+      ],
+      "correct_answers": [
+        "C. on"
+      ],
+      "model_answer": null,
+      "explanation": "The preposition 'on' is correct when referring to specific days, as in 'The event will take place on Saturday morning.' The other options—'at' (specific times), 'in' (months or years), and 'by' (deadline)—do not fit the context of a specific day.",
+      "hint": "Choose the preposition used for specific days of the week.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/english/prepositions_time.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "preposition",
+        "time"
+      ],
+      "learning_objectives": [
+        "Use prepositions of time",
+        "Identify correct temporal terms"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses preposition usage for time."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Gerunds",
+      "question": "He admitted ______ the mistake during the meeting.",
+      "options": [
+        "A. to make",
+        "B. making",
+        "C. make",
+        "D. made"
+      ],
+      "correct_answers": [
+        "B. making"
+      ],
+      "model_answer": null,
+      "explanation": "The verb 'admitted' is typically followed by a gerund, a verb form ending in '-ing' that functions as a noun. 'Making' is correct, as in 'He admitted making the mistake during the meeting,' where 'making' is the object of 'admitted.' The other options—'to make' (infinitive), 'make' (base verb), and 'made' (past tense)—are not grammatically suitable after 'admitted.'",
+      "hint": "Select the verb form that acts as a noun after the verb 'admitted.'",
+      "difficulty": "Medium",
+      "marks": 1,
+      "media_url": "https://example.com/english/gerunds_admit.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "gerund",
+        "verb"
+      ],
+      "learning_objectives": [
+        "Identify gerunds",
+        "Use gerunds as objects"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question tests gerund usage after verbs."
+    },
+    {
+      "question_type": "objective",
+      "topic": "Grammar",
+      "subtopic": "Prepositions",
+      "question": "The letter was addressed ______ the principal.",
+      "options": [
+        "A. to",
+        "B. at",
+        "C. for",
+        "D. with"
+      ],
+      "correct_answers": [
+        "A. to"
+      ],
+      "model_answer": null,
+      "explanation": "The preposition 'to' is correct after 'addressed,' as in 'The letter was addressed to the principal,' indicating the recipient. The other options—'at' (location), 'for' (purpose), and 'with' (accompaniment)—do not fit the context of directing a letter.",
+      "hint": "Choose the preposition that indicates the recipient of the letter.",
+      "difficulty": "Easy",
+      "marks": 1,
+      "media_url": "https://example.com/english/prepositions_address.jpg",
+      "media_type": "image",
+      "keywords": [
+        "grammar",
+        "preposition",
+        "recipient"
+      ],
+      "learning_objectives": [
+        "Use prepositions correctly",
+        "Understand phrase structure"
+      ],
+      "estimated_time": "2 minutes",
+      "source_reference": "WAEC Practice Materials",
+      "ai_feedback": "This question assesses preposition usage with 'addressed.'"
     }
   ],
-  "questionCount": 5,
-  "total_marks": 5,
-  "duration": "30 minutes",
+  "questionCount": 30,
+  "total_marks": 30,
+  "duration": "1 hour",
+  "file_url": "https://example.com/bece_english_2025.pdf",
   "isPublic": true,
   "topics": [
-    "Probability",
-    "Dependent Events"
+    "Idioms",
+    "Synonyms",
+    "Antonyms",
+    "Grammar",
+    "Gerunds"
   ],
-  "difficulty": "Medium",
+  "difficulty": "Hard",
   "language": "English",
-  "status": "isPublic",
-  "instructions": "Answer all questions. Show your workings where necessary. Select the correct option for each question."
+  "status": "Published",
+  "instructions": "Answer all questions by selecting the correct option."
 }

@@ -661,17 +661,20 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     );
   }
 
-  const QuizHeader = ({ quizTitle, topic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (
+  const QuizHeader = ({ quizTitle, topic, subtopic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (
     <div className="flex flex-col items-center gap-2">
       {quizTitle && (
-        <h1 className="text-xs font-medium text-center text-gray-500 max-w-[35vw] md:max-w-[45vw] leading-tight">
-          {quizTitle}
-        </h1>
+      <h1 className="text-xs font-medium text-center text-gray-500 max-w-[35vw] md:max-w-[45vw] leading-tight">
+        {quizTitle}
+      </h1>
       )}
       {(topic) && (
-        <div className="flex flex-col items-center gap-1 max-w-[64%]">
-          {topic && <span className="text-xs text-gray-500 text-center">{topic}</span>}
-        </div>
+      <div className="flex flex-col items-center gap-1 max-w-[64%]">
+        {topic && <span className="text-xs text-gray-500 text-center">{topic}</span>}
+        {quizTitle === "English Language" && subtopic && (
+        <span className="text-xs text-gray-400 text-center">{subtopic}</span>
+        )}
+      </div>
       )}
     </div>
   )
@@ -696,7 +699,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
           <div className="flex items-center justify-between w-full relative">
             {showDetails && (
               <div className="flex items-start justify-between w-full gap-2">
-                <QuizHeader quizTitle={quizTitle} topic={currentQuestion.topic} />
+                <QuizHeader quizTitle={quizTitle} topic={currentQuestion.topic} subtopic={currentQuestion.subtopic} />
                 <QuizFooter sourceReference={currentQuestion.source_reference} waecExamType={waecExamType} currentIndex={currentQuestionIndex} total={totalQuestions} />
               </div>
             )}
