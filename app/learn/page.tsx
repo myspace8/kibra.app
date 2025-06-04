@@ -54,6 +54,7 @@ import {
 } from "@/components/ui/collapsible";
 import { LearnPageHeader } from "@/components/learn/learn-page-header";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import Banner from "@/components/annAdBanner";
 
 // Interfaces
 interface Exam {
@@ -707,6 +708,9 @@ export default function Learn() {
                     </div>
                   </div>
                 </div>
+                <div className="py-1">
+                  <Banner />
+                </div>
                 <div className="text-center text-sm leading-tight text-gray-600 dark:text-gray-400 py-4 px-3 border-b">
                   You're {selectedExamType === "EXPLORER" ? "an explorer" : `a ${selectedExamType} candidate`}.{" "}
                   <Dialog open={isExamTypeOpen && isDesktop} onOpenChange={setIsExamTypeOpen}>
@@ -729,6 +733,7 @@ export default function Learn() {
                     </DrawerContent>
                   </Drawer>
                 </div>
+
 
                 {/* Exam Cards */}
                 {(() => {
