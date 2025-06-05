@@ -326,8 +326,7 @@ export function ReviewMode({ questions, userAnswers, correctAnswers, onExit, hin
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold">{quizTitle ? `Review: ${quizTitle}` : "Review Your Answers"}</h2>
+      <div className="mb-4 flex items-start">
         <Button variant="ghost" onClick={onExit} className="gap-2 text-sm">
           <ArrowLeft size={14} />
           Back to Results

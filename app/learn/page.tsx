@@ -58,6 +58,7 @@ import Banner from "@/components/annAdBanner";
 
 // Interfaces
 interface Exam {
+  score: any;
   id: string;
   exam_source: "school" | "waec" | "user";
   subject: string;
@@ -88,7 +89,7 @@ interface Exam {
     description?: string;
   };
   completed: boolean;
-  score: number;
+  // score: number;
 }
 
 // Helper function to format time difference
@@ -1069,7 +1070,7 @@ export default function Learn() {
                                         </DropdownMenu>
                                         {examScores[exam.id] ? (
                                           <span className="text-xs text-green-500 font-medium">
-                                           Score: {examScores[exam.id].score + 1}/{examScores[exam.id].totalMarks}
+                                            Score: {examScores[exam.id].score + 1}/{examScores[exam.id].totalMarks}
                                           </span>
                                         ) : typeof exam.score === "number" ? (
                                           <span className="text-xs text-gray-500">

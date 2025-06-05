@@ -29,7 +29,51 @@ import Link from "next/link"
 import MathExpression from "@/components/MathExpression"
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Other themes we can use: 'prism', 'prism-okaidia', 'prism-tomorrow', 'prism-coy', 'prism-solarizedlight'
+import Banner from "@/components/annAdBanner";
+
+
+import {
+  Share,
+  Copy,
+  Twitter,
+  MessageCircle,
+  ChartNoAxesColumnIcon,
+} from "lucide-react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Separator } from "../ui/separator"
+
+interface Exam {
+  id: string;
+  exam_source: "school" | "waec" | "user";
+  subject: string;
+  exam_type: string;
+  question_count: number;
+  total_marks: number;
+  sort_date: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  topics: string[];
+  created_at: Date;
+  school_exam_metadata?: {
+    school: string;
+    grade_level: string;
+    date: string;
+    examiner: string;
+    school_location?: { region: string; city?: string; country?: string };
+  };
+  waec_exam_metadata?: {
+    exam_year: number;
+    exam_session: "May/June" | "November/December";
+    region: string;
+    syllabus_version: string;
+  };
+  user_exam_metadata?: {
+    creator_id: string;
+    creator_name: string;
+    date?: string;
+    description?: string;
+  };
+}
 
 type KibraPracticeProps = {
   questions: Question[];
@@ -40,14 +84,36 @@ type KibraPracticeProps = {
   quizTitle?: string;
   onQuizComplete?: () => void;
   waecExamYear?: string;
+  exams?: Exam[]; // Add this line
 };
+
 interface Student {
   id: number;
   name: string;
   code: string;
 }
 
-export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, waecExamYear, examId, onQuizComplete }: KibraPracticeProps) {
+// Helper function to format time difference
+const formatTimeAgo = (sortDate: string): string => {
+  const now = new Date();
+  const examDate = new Date(sortDate);
+  const diffInMs = now.getTime() - examDate.getTime();
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInDays < 1) {
+    return `${diffInHours}h`;
+  } else if (diffInDays < 6) {
+    return `${diffInDays}d`;
+  } else {
+    return examDate.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    });
+  }
+};
+
+export default function KibraPractice({ open, questions: initialQuestions, waecExamType, quizTitle, waecExamYear, examId, onQuizComplete, exams }: KibraPracticeProps) {
   const { data: session } = useSession()
   const [questions, setQuestions] = useState<Question[]>(initialQuestions)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -81,7 +147,39 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
+  const [suggestedExams, setSuggestedExams] = useState<Exam[]>([]);
+  const [examScores, setExamScores] = useState<Record<string, { score: number; totalMarks: number }>>({});
+  const [isShareOpen, setIsShareOpen] = useState<string | null>(null);
+  const [isViewCountOpen, setIsViewCountOpen] = useState<string | null>(null);
+  const [showMoreTopics, setShowMoreTopics] = useState<Record<string, boolean>>({});
+  const [isDesktop, setIsDesktop] = useState(true);
 
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleShare = (examId: string, platform: "copy" | "twitter" | "whatsapp", event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+    const examUrl = `${window.location.origin}/exam/${examId}`;
+    const shareText = `Check out this ${quizTitle} practice exam on Kibra!`;
+
+    if (platform === "copy") {
+      navigator.clipboard.writeText(examUrl);
+      // Optionally show a toast notification
+      console.log("Link copied:", examUrl);
+    } else if (platform === "twitter") {
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(examUrl)}`;
+      window.open(twitterUrl, "_blank");
+    } else if (platform === "whatsapp") {
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText} ${examUrl}`)}`;
+      window.open(whatsappUrl, "_blank");
+    }
+    setIsShareOpen(null);
+  };
 
   const renderTextWithMath = (text: string) => {
     // Normalize literal \n to actual newlines
@@ -115,6 +213,8 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
       return match;
     });
 
+
+
     // Add remaining text after the last code block
     if (lastIndex < normalizedText.length) {
       elements.push(...renderTextParts(normalizedText.slice(lastIndex)));
@@ -137,12 +237,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     }
   };
 
-  // const loadCompletedExams = (): string[] => {
-  //   const userId = session?.user?.id || "anonymous";
-  //   const storedData = localStorage.getItem(`kibra_completed_exams_${userId}`);
-  //   return storedData ? JSON.parse(storedData) : [];
-  // };
-
   const saveExamScore = (examId: string, score: number, totalMarks: number) => {
     const key = `kibra_exam_scores`;
     let storedScores: Record<string, { score: number; totalMarks: number }> = {};
@@ -158,6 +252,49 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
 
     storedScores[examId] = { score, totalMarks };
     localStorage.setItem(key, JSON.stringify(storedScores));
+  };
+
+  const getExamDetails = (exam: Exam) => {
+    let examType = exam.exam_type || "Trial";
+    let examDate = "";
+
+    if (exam.exam_source === "waec" && exam.waec_exam_metadata) {
+      examType = exam.waec_exam_metadata.exam_session || examType;
+      examDate = exam.waec_exam_metadata.exam_year?.toString() || "";
+    } else if (exam.exam_source === "school" && exam.school_exam_metadata) {
+      examDate = exam.school_exam_metadata.date || "";
+    } else if (exam.exam_source === "user" && exam.user_exam_metadata) {
+      examDate = exam.user_exam_metadata.date || "";
+    }
+
+    return { examType, examDate };
+  };
+
+  const getSuggestedExams = (currentExamId: string | undefined, exams?: Exam[]): Exam[] => {
+    if (!exams || !currentExamId) return [];
+    const currentExam = exams.find(exam => exam.id === currentExamId);
+    if (!currentExam) return [];
+    let completedExams: string[] = [];
+    try {
+      const storedScores = localStorage.getItem('kibra_exam_scores');
+      if (storedScores) {
+        completedExams = Object.keys(JSON.parse(storedScores));
+      }
+    } catch (e) {
+      console.error("Error parsing kibra_exam_scores from localStorage:", e);
+    }
+    const difficultyOrder = { Easy: 0, Medium: 1, Hard: 2 };
+    const currentOrder = difficultyOrder[currentExam.difficulty] || 1;
+    return exams
+      .filter(exam => !completedExams.includes(exam.id) && exam.subject === currentExam.subject)
+      .sort((a, b) => {
+        const aOrder = difficultyOrder[a.difficulty] || 1;
+        const bOrder = difficultyOrder[b.difficulty] || 1;
+        const aDistance = Math.abs(aOrder - currentOrder);
+        const bDistance = Math.abs(bOrder - currentOrder);
+        return aDistance - bDistance || aOrder - bOrder;
+      })
+      .slice(0, 2);
   };
 
   const syncCompletionWithSupabase = async (examId: string) => {
@@ -178,22 +315,41 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   };
 
   useEffect(() => {
-    setQuestions(initialQuestions)
-    setCurrentQuestionIndex(0)
-    setSelectedOption(null)
-    setShowExplanation(false)
-    setScore(0)
-    setAnsweredQuestions([])
-    setCorrectAnswers([])
-    setQuizCompleted(false)
-    setShowResults(false)
-    setTentativeOption(null)
-    setShowReviewMode(false)
-    setHintsUsed([])
-    setShowHint(false)
-    setUserAnswers({})
-    setEliminatedOptions({})
-  }, [initialQuestions])
+    setQuestions(initialQuestions);
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setShowExplanation(false);
+    setScore(0);
+    setAnsweredQuestions([]);
+    setCorrectAnswers([]);
+    setQuizCompleted(false);
+    setShowResults(false);
+    setTentativeOption(null);
+    setShowReviewMode(false);
+    setHintsUsed([]);
+    setShowHint(false);
+    setUserAnswers({});
+    setEliminatedOptions({});
+  }, [initialQuestions]);
+
+  useEffect(() => {
+    if (showResults && examId && exams) {
+      const suggestions = getSuggestedExams(examId, exams);
+      setSuggestedExams(suggestions);
+      console.log("Set suggestedExams:", suggestions);
+    }
+  }, [showResults, examId, exams]);
+
+  useEffect(() => {
+    try {
+      const storedScores = localStorage.getItem("kibra_exam_scores");
+      if (storedScores) {
+        setExamScores(JSON.parse(storedScores));
+      }
+    } catch (e) {
+      console.error("Error parsing exam scores from localStorage:", e);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -518,7 +674,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                     }}
                     maxLength={4}
                     className={cn(
-                      "mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary sm:text-sm transition-all",
+                      "mt-1 block w-full rounded-lg border border-gray-300 p-2 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary sm:text-sm transition-all",
                       formError && code.length !== 4 && "border-red-500"
                     )}
                     placeholder="Enter your 4-digit code"
@@ -597,13 +753,10 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
           <Card className="overflow-hidden border-0 shadow-lg">
             <div className="bg-gradient-to-br from-primary/90 to-primary p-6 text-white">
               <h2 className="text-2xl font-bold mb-2">Quiz Completed!</h2>
-              <p className="text-white/90 text-sm">
-                {quizTitle
-                  ? `You've completed "${quizTitle} ${waecExamYear}"`
-                  : "You've completed all questions"}
-                . Here's your performance summary:
+              <p className="text-white/90 text-sm">Here's your performance summary:
               </p>
             </div>
+
             <div className="p-6 flex flex-col items-center gap-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center">
@@ -626,7 +779,7 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                         ? "Good Job! 👍"
                         : "Keep Learning! 📚"}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                {/* <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                   {correctAnswers.length === totalQuestions
                     ? "You’ve mastered these concepts brilliantly!"
                     : score >= questions.reduce((sum, q) => sum + (q.marks || 1), 0) * 0.8
@@ -639,34 +792,347 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                   <p className="text-gray-500 dark:text-gray-400 text-xs mt-2">
                     Hints used: {hintsUsed.length} of {totalQuestions}
                   </p>
-                )}
+                )} */}
               </div>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Button
-                  onClick={enterReviewMode}
-                  className="px-5 py-2 text-sm font-medium bg-primary hover:bg-primary/90"
-                >
-                  Review Answers
-                </Button>
-                <Button
-                  onClick={() => setIsModalOpen(true)}
-                  variant="outline"
-                  className="px-5 py-2 text-sm font-medium flex items-center gap-2"
-                >
-                  <Send size={16} />
-                  Send Result to Sir Joe
-                </Button>
-                <Link
-                  href="/learn"
-                  className="px-5 py-2 text-sm font-medium text-primary flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
-                >
-                  <Home size={16} />
-                  Go Home
-                </Link>
-              </div>
+
+            </div>
+            <div className="mb-6">
+              <h3 className="text-base font-semibold text-gray-700 dark:text-gray-100 mb-2 text-center">Try These Next</h3>
+              {suggestedExams.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {suggestedExams.map((exam, index) => {
+                    const { examType, examDate } = getExamDetails(exam);
+                    const isCompleted = !!examScores[exam.id];
+                    return (
+                      <div key={exam.id} className="md:px-0 group">
+                        <Link
+                          href={`/exam/${exam.id}`}
+                          className={cn(
+                            "block w-full px-4 pt-4 transition-colors dark:bg-gray-950 dark:border-gray-800 hover:bg-[#f7f7f7] dark:hover:border-gray-700",
+                            isCompleted && "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900"
+                          )}
+                        >
+                          <div className="flex items-start">
+                            {/* <div
+                                className={cn(
+                                  "flex flex-shrink-0 items-center justify-center",
+                                  isCompleted
+                                    ? "h-6 w-6 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full"
+                                    : ""
+                                )}
+                              >
+                                {isCompleted ? (
+                                  <CheckCircle className="h-4 w-4" />
+                                ) : (
+                                  <p className="text-sm font-medium text-center text-gray-500">
+                                    {(() => {
+                                      const timeAgo = formatTimeAgo(exam.created_at.toISOString());
+                                      if (timeAgo.endsWith("h") || timeAgo.endsWith("d")) {
+                                        return `${timeAgo} ago`;
+                                      }
+                                      return timeAgo;
+                                    })()}
+                                  </p>
+                                )}
+                              </div> */}
+                            <div className="flex flex-col items-start gap-2">
+                              <div className="ml-3 flex-1 min-w-0">
+                                <h3 className="text-sm font-semibold text-left text-gray-600">
+                                  {exam.subject} {examType} {examDate && `(${examDate})`} Trial
+                                </h3>
+                                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-1">
+                                  <span>{exam.question_count} Questions</span>
+                                </div>
+                                {exam.topics.length > 0 && (
+                                  <div className="flex flex-wrap gap-x-2">
+                                    {exam.topics
+                                      .slice(0, showMoreTopics[exam.id] ? exam.topics.length : 3)
+                                      .map((topic) => (
+                                        <span
+                                          key={topic}
+                                          className={cn(
+                                            "py-1 text-xs underline underline-offset-4",
+                                            "text-gray-500"
+                                          )}
+                                        >
+                                          {topic}
+                                        </span>
+                                      ))}
+                                    {exam.topics.length > 3 && !showMoreTopics[exam.id] && (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          e.preventDefault();
+                                          setShowMoreTopics((prev) => ({
+                                            ...prev,
+                                            [exam.id]: true,
+                                          }));
+                                        }}
+                                        className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                                      >
+                                        +{exam.topics.length - 3} more
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex gap-1 w-full">
+                                {isDesktop ? (
+                                  <DropdownMenu
+                                    open={isShareOpen === exam.id}
+                                    onOpenChange={(open) => setIsShareOpen(open ? exam.id : null)}
+                                  >
+                                    <DropdownMenuTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                        role="button"
+                                        aria-label="Share exam link"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          e.preventDefault();
+                                          setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
+                                        }}
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
+                                          }
+                                        }}
+                                      >
+                                        <Share className="h-4 w-4 text-gray-500" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent
+                                      align="end"
+                                      sideOffset={8}
+                                      className="w-48 z-50"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <DropdownMenuLabel>Share This Test</DropdownMenuLabel>
+                                      <DropdownMenuSeparator />
+                                      <button
+                                        onClick={(e) => handleShare(exam.id, "copy", e)}
+                                        className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <Copy className="h-4 w-4 mr-2" />
+                                        Copy Link
+                                      </button>
+                                      <button
+                                        onClick={(e) => handleShare(exam.id, "twitter", e)}
+                                        className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <Twitter className="h-4 w-4 mr-2" />
+                                        Share on Twitter/X
+                                      </button>
+                                      <button
+                                        onClick={(e) => handleShare(exam.id, "whatsapp", e)}
+                                        className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <MessageCircle className="h-4 w-4 mr-2" />
+                                        Share on WhatsApp
+                                      </button>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                ) : (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                    role="button"
+                                    aria-label="Share exam link"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      e.preventDefault();
+                                      setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
+                                      }
+                                    }}
+                                  >
+                                    <Share className="h-4 w-4 text-gray-500" />
+                                  </Button>
+                                )}
+                                <Drawer
+                                  open={isShareOpen === exam.id && !isDesktop}
+                                  onOpenChange={(open) => setIsShareOpen(open ? exam.id : null)}
+                                >
+                                  <DrawerContent className="h-auto rounded-t-3xl">
+                                    <DrawerHeader>
+                                      <DrawerTitle>Share This Test</DrawerTitle>
+                                    </DrawerHeader>
+                                    <div className="py-4 space-y-2 px-4">
+                                      <button
+                                        onClick={(e) => handleShare(exam.id, "copy", e)}
+                                        className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <Copy className="h-4 w-4 mr-2" />
+                                        Copy Link
+                                      </button>
+                                      <button
+                                        onClick={(e) => handleShare(exam.id, "twitter", e)}
+                                        className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <Twitter className="h-4 w-4 mr-2" />
+                                        Share on Twitter/X
+                                      </button>
+                                      <button
+                                        onClick={(e) => handleShare(exam.id, "whatsapp", e)}
+                                        className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <MessageCircle className="h-4 w-4 mr-2" />
+                                        Share on WhatsApp
+                                      </button>
+                                    </div>
+                                  </DrawerContent>
+                                </Drawer>
+                                {isDesktop ? (
+                                  <div className="flex items-center gap-2">
+                                    <DropdownMenu
+                                      open={isViewCountOpen === exam.id}
+                                      onOpenChange={(open) => setIsViewCountOpen(open ? exam.id : null)}
+                                    >
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                          role="button"
+                                          aria-label="View exam clicks"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                          }}
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                              e.preventDefault();
+                                              e.stopPropagation();
+                                              setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                            }
+                                          }}
+                                        >
+                                          <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent
+                                        align="end"
+                                        sideOffset={8}
+                                        className="w-48 z-50"
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        <DropdownMenuLabel>Test View Count</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <div className="p-2 text-center">
+                                          <p className="text-sm text-gray-500">Coming soon</p>
+                                          <p className="text-xs text-gray-400">
+                                            The number of times this test has been completed will be displayed here
+                                          </p>
+                                        </div>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                    {examScores[exam.id] ? (
+                                      <span className="text-xs text-green-500 font-medium">
+                                        Score: {examScores[exam.id].score}/{examScores[exam.id].totalMarks}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-2">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                      role="button"
+                                      aria-label="View exam clicks"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                      }}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                        }
+                                      }}
+                                    >
+                                      <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
+                                    </Button>
+                                    {examScores[exam.id] ? (
+                                      <span className="text-xs text-green-500 font-medium">
+                                        Score: {examScores[exam.id].score}/{examScores[exam.id].totalMarks}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                )}
+                                <Drawer
+                                  open={isViewCountOpen === exam.id && !isDesktop}
+                                  onOpenChange={(open) => setIsViewCountOpen(open ? exam.id : null)}
+                                >
+                                  <DrawerContent className="h-auto rounded-t-3xl">
+                                    <DrawerHeader>
+                                      <DrawerTitle>Test View Count</DrawerTitle>
+                                    </DrawerHeader>
+                                    <div className="py-4 space-y-2 px-4 text-center mb-12">
+                                      <h3 className="text-lg">Coming soon</h3>
+                                      <p className="text-base text-gray-500">
+                                        The number of times this test has been clicked will be displayed here
+                                      </p>
+                                    </div>
+                                  </DrawerContent>
+                                </Drawer>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                        {index < suggestedExams.length - 1 && (
+                          <Separator className="opacity-1 transition-opacity duration-300 ml-4" />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">No additional exams available for this subject.</p>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-4 justify-center p-3">
+              <Button
+                onClick={enterReviewMode}
+                className="px-5 py-2 text-sm font-medium bg-primary hover:bg-primary/90"
+              >
+                Review Answers
+              </Button>
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                variant="outline"
+                className="px-5 py-2 text-sm font-medium flex items-center gap-2"
+              >
+                <Send size={16} />
+                Send Result to Sir Joe
+              </Button>
+              <Link
+                href="/learn"
+                className="px-5 py-2 text-sm font-medium text-primary flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+              >
+                <Home size={16} />
+                Go Home
+              </Link>
             </div>
           </Card>
         </motion.div>
+        <div className="py-1">
+          <Banner />
+        </div>
       </>
     );
   }
