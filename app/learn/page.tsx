@@ -88,6 +88,7 @@ interface Exam {
     description?: string;
   };
   completed: boolean;
+  score: number;
 }
 
 // Helper function to format time difference
@@ -107,6 +108,17 @@ const formatTimeAgo = (sortDate: string): string => {
       day: "numeric",
       month: "short",
     });
+  }
+};
+
+const loadExamScores = (): Record<string, { score: number; totalMarks: number }> => {
+  const key = `kibra_exam_scores`;
+  try {
+    const storedData = localStorage.getItem(key);
+    return storedData ? JSON.parse(storedData) : {};
+  } catch (e) {
+    console.error("Error parsing exam scores from localStorage:", e);
+    return {};
   }
 };
 
@@ -217,6 +229,7 @@ export default function Learn() {
   >({});
   const [isShareOpen, setIsShareOpen] = useState<string | null>(null);
   const [isViewCountOpen, setIsViewCountOpen] = useState<string | null>(null);
+  const [examScores, setExamScores] = useState<Record<string, { score: number; totalMarks: number }>>({});
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   // Initialize state from localStorage only on client side
@@ -417,6 +430,7 @@ export default function Learn() {
             waec_exam_metadata: exam.waec_exam_metadata || undefined,
             user_exam_metadata: exam.user_exam_metadata || undefined,
             completed: !!exam.user_exam_progress?.completed_at,
+            score: exam.user_exam_progress?.completed_at
           })) || [];
 
         setExams(formattedExams);
@@ -551,6 +565,13 @@ export default function Learn() {
 
   //   fetchExams();
   // }, [session?.user?.id]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const scores = loadExamScores();
+      setExamScores(scores);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -789,7 +810,7 @@ export default function Learn() {
                               href={`/exam/${exam.id}`}
                               className={cn(
                                 "block w-full px-4 pt-4 transition-colors dark:bg-gray-950 dark:border-gray-800 hover:bg-[#f7f7f7] dark:hover:border-gray-700",
-                                exam.completed &&
+                                examScores[exam.id] &&
                                 "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900"
                               )}
                             >
@@ -996,80 +1017,103 @@ export default function Learn() {
                                     </Drawer>
 
                                     {isDesktop ? (
-                                      <DropdownMenu
-                                        open={isViewCountOpen === exam.id}
-                                        onOpenChange={(open) => {
-                                          console.log("DropdownMenu open change, open:", open, "exam.id:", exam.id); // Debugging
-                                          setIsViewCountOpen(open ? exam.id : null);
-                                        }}
-                                      >
-                                        <DropdownMenuTrigger asChild>
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
-                                            role="button"
-                                            tabIndex={0}
-                                            aria-label="View exam clicks"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              e.preventDefault();
-                                              console.log("View count button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                              setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
-                                            }}
-                                            onKeyDown={(e) => {
-                                              if (e.key === "Enter" || e.key === " ") {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                console.log("View count button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                                setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
-                                              }
-                                            }}
-                                          >
-                                            <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
-                                          </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent
-                                          align="end"
-                                          sideOffset={8}
-                                          className="w-48 z-50"
-                                          onClick={(e) => e.stopPropagation()}
+                                      <div className="flex items-center gap-2">
+                                        <DropdownMenu
+                                          open={isViewCountOpen === exam.id}
+                                          onOpenChange={(open) => {
+                                            console.log("DropdownMenu open change, open:", open, "exam.id:", exam.id); // Debugging
+                                            setIsViewCountOpen(open ? exam.id : null);
+                                          }}
                                         >
-                                          <DropdownMenuLabel>Test View Count</DropdownMenuLabel>
-                                          <DropdownMenuSeparator />
-                                          <div className="p-2 text-center">
-                                            <p className="text-sm text-gray-500">Coming soon</p>
-                                            <p className="text-xs text-gray-400">
-                                              The number of times this test has been clicked will be displayed here
-                                            </p>
-                                          </div>
-                                        </DropdownMenuContent>
-                                      </DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                              role="button"
+                                              tabIndex={0}
+                                              aria-label="View exam clicks"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                                console.log("View count button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                                setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                              }}
+                                              onKeyDown={(e) => {
+                                                if (e.key === "Enter" || e.key === " ") {
+                                                  e.preventDefault();
+                                                  e.stopPropagation();
+                                                  console.log("View count button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                                  setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                                }
+                                              }}
+                                            >
+                                              <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent
+                                            align="end"
+                                            sideOffset={8}
+                                            className="w-48 z-50"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            <DropdownMenuLabel>Test View Count</DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <div className="p-2 text-center">
+                                              <p className="text-sm text-gray-500">Coming soon</p>
+                                              <p className="text-xs text-gray-400">
+                                                The number of times this test has been clicked will be displayed here
+                                              </p>
+                                            </div>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                        {examScores[exam.id] ? (
+                                          <span className="text-xs text-green-500 font-medium">
+                                           Score: {examScores[exam.id].score + 1}/{examScores[exam.id].totalMarks}
+                                          </span>
+                                        ) : typeof exam.score === "number" ? (
+                                          <span className="text-xs text-gray-500">
+                                            {exam.score}
+                                          </span>
+                                        ) : null}
+                                      </div>
                                     ) : (
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
-                                        role="button"
-                                        tabIndex={0}
-                                        aria-label="View exam clicks"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          e.preventDefault();
-                                          console.log("View count button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                          setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
-                                        }}
-                                        onKeyDown={(e) => {
-                                          if (e.key === "Enter" || e.key === " ") {
-                                            e.preventDefault();
+                                      <div className="flex items-center gap-2">
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
+                                          role="button"
+                                          tabIndex={0}
+                                          aria-label="View exam clicks"
+                                          onClick={(e) => {
                                             e.stopPropagation();
-                                            console.log("View count button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                            e.preventDefault();
+                                            console.log("View count button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
                                             setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
-                                          }
-                                        }}
-                                      >
-                                        <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
-                                      </Button>
+                                          }}
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                              e.preventDefault();
+                                              e.stopPropagation();
+                                              console.log("View count button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
+                                              setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
+                                            }
+                                          }}
+                                        >
+                                          <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
+                                        </Button>
+                                        {examScores[exam.id] ? (
+                                          <span className="text-xs text-gray-500">
+                                            Score: {examScores[exam.id].score + 1}/{examScores[exam.id].totalMarks}
+                                          </span>
+                                        ) : typeof exam.score === "number" ? (
+                                          <span className="text-xs text-gray-500">
+                                            {exam.score}
+                                          </span>
+                                        ) : null}
+                                      </div>
+
                                     )}
                                     <Drawer
                                       open={isViewCountOpen === exam.id && !isDesktop}

@@ -137,15 +137,27 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     }
   };
 
-  const loadCompletedExams = (): string[] => {
-    const userId = session?.user?.id || "anonymous";
-    const storedData = localStorage.getItem(`kibra_completed_exams_${userId}`);
-    return storedData ? JSON.parse(storedData) : [];
-  };
+  // const loadCompletedExams = (): string[] => {
+  //   const userId = session?.user?.id || "anonymous";
+  //   const storedData = localStorage.getItem(`kibra_completed_exams_${userId}`);
+  //   return storedData ? JSON.parse(storedData) : [];
+  // };
 
-  const saveCompletedExams = (completedExams: string[]) => {
-    const userId = session?.user?.id || "anonymous";
-    localStorage.setItem(`kibra_completed_exams_${userId}`, JSON.stringify(completedExams));
+  const saveExamScore = (examId: string, score: number, totalMarks: number) => {
+    const key = `kibra_exam_scores`;
+    let storedScores: Record<string, { score: number; totalMarks: number }> = {};
+
+    try {
+      const storedData = localStorage.getItem(key);
+      if (storedData) {
+        storedScores = JSON.parse(storedData);
+      }
+    } catch (e) {
+      console.error("Error parsing exam scores from localStorage:", e);
+    }
+
+    storedScores[examId] = { score, totalMarks };
+    localStorage.setItem(key, JSON.stringify(storedScores));
   };
 
   const syncCompletionWithSupabase = async (examId: string) => {
@@ -246,14 +258,12 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
       const newAnsweredCount = answeredQuestions.length + 1;
       if (newAnsweredCount === totalQuestions) {
         setQuizCompleted(true);
-        if (examId && onQuizComplete) {
-          const completedExams = loadCompletedExams();
-          if (!completedExams.includes(examId)) {
-            saveCompletedExams([...completedExams, examId]);
-            syncCompletionWithSupabase(examId);
-          }
-          if (onQuizComplete) onQuizComplete();
+        if (examId) {
+          const totalMarks = questions.reduce((sum, q) => sum + (q.marks || 1), 0);
+          saveExamScore(examId, score, totalMarks);
+          syncCompletionWithSupabase(examId);
         }
+        if (onQuizComplete) onQuizComplete();
       }
     }
     setTentativeOption(null);
@@ -664,17 +674,17 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   const QuizHeader = ({ quizTitle, topic, subtopic }: { quizTitle?: string; topic?: string; subtopic?: string }) => (
     <div className="flex flex-col items-center gap-2 max-w-24">
       {quizTitle && (
-      <h1 className="text-xs font-medium text-center text-gray-500 max-w-[35vw] md:max-w-[45vw] leading-tight">
-        {quizTitle}
-      </h1>
+        <h1 className="text-xs font-medium text-center text-gray-500 max-w-[35vw] md:max-w-[45vw] leading-tight">
+          {quizTitle}
+        </h1>
       )}
       {(topic) && (
-      <div className="flex flex-col items-center gap-1 max-w-[64%]">
-        {topic && <span className="text-xs text-gray-500 text-center">{topic}</span>}
-        {quizTitle === "English Language" && subtopic && (
-        <span className="text-xs text-gray-400 text-center">{subtopic}</span>
-        )}
-      </div>
+        <div className="flex flex-col items-center gap-1 max-w-[64%]">
+          {topic && <span className="text-xs text-gray-500 text-center">{topic}</span>}
+          {quizTitle === "English Language" && subtopic && (
+            <span className="text-xs text-gray-400 text-center">{subtopic}</span>
+          )}
+        </div>
       )}
     </div>
   )
