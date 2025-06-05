@@ -66,22 +66,22 @@ export default function Component() {
 
   const carouselImages = [
     {
-      src: "/placeholder.svg?height=300&width=400",
+      src: "/bitlabs-photo-2.jpg",
       alt: "Students learning programming",
-      title: "Interactive Learning Environment",
+      title: "Certification after Completion",
     },
     {
-      src: "/placeholder.svg?height=300&width=400",
+      src: "/bitlabs-photo-3.jpg",
       alt: "Modern computer lab",
       title: "State-of-the-Art Facilities",
     },
     {
-      src: "/placeholder.svg?height=300&width=400",
+      src: "/bitlabs-photo-4.jpg",
       alt: "Coding workshop session",
       title: "Hands-on Coding Workshops",
     },
     {
-      src: "/placeholder.svg?height=300&width=400",
+      src: "/bitlabs-photo-1.jpg",
       alt: "Students working on projects",
       title: "Real-world Project Development",
     },
