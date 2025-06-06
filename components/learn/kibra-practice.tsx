@@ -30,7 +30,7 @@ import MathExpression from "@/components/MathExpression"
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Banner from "@/components/annAdBanner";
-import { ExamCard } from "../ui/ExamCard"
+import { ExamCard } from "@/components/ui/ExamCard";
 
 interface Exam {
   id: string;
@@ -259,32 +259,33 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     return { examType, examDate };
   };
 
+  
   const getSuggestedExams = (currentExamId: string | undefined, exams?: Exam[]): Exam[] => {
-    if (!exams || !currentExamId) return [];
-    const currentExam = exams.find(exam => exam.id === currentExamId);
-    if (!currentExam) return [];
-    let completedExams: string[] = [];
-    try {
-      const storedScores = localStorage.getItem('kibra_exam_scores');
-      if (storedScores) {
-        completedExams = Object.keys(JSON.parse(storedScores));
-      }
-    } catch (e) {
-      console.error("Error parsing kibra_exam_scores from localStorage:", e);
+  if (!exams || !currentExamId) return [];
+  const currentExam = exams.find(exam => exam.id === currentExamId);
+  if (!currentExam) return [];
+  let completedExams: string[] = [];
+  try {
+    const storedScores = localStorage.getItem('kibra_exam_scores');
+    if (storedScores) {
+      completedExams = Object.keys(JSON.parse(storedScores));
     }
-    const difficultyOrder = { Easy: 0, Medium: 1, Hard: 2 };
-    const currentOrder = difficultyOrder[currentExam.difficulty] || 1;
-    return exams
-      .filter(exam => !completedExams.includes(exam.id) && exam.subject === currentExam.subject)
-      .sort((a, b) => {
-        const aOrder = difficultyOrder[a.difficulty] || 1;
-        const bOrder = difficultyOrder[b.difficulty] || 1;
-        const aDistance = Math.abs(aOrder - currentOrder);
-        const bDistance = Math.abs(bOrder - currentOrder);
-        return aDistance - bDistance || aOrder - bOrder;
-      })
-      .slice(0, 2);
-  };
+  } catch (e) {
+    console.error("Error parsing kibra_exam_scores from localStorage:", e);
+  }
+  const difficultyOrder = { Easy: 0, Medium: 1, Hard: 2 };
+  const currentOrder = difficultyOrder[currentExam.difficulty] || 1;
+  return exams
+    .filter(exam => !completedExams.includes(exam.id) && exam.subject === currentExam.subject && exam.exam_type === currentExam.exam_type)
+    .sort((a, b) => {
+      const aOrder = difficultyOrder[a.difficulty] || 1;
+      const bOrder = difficultyOrder[b.difficulty] || 1;
+      const aDistance = Math.abs(aOrder - currentOrder);
+      const bDistance = Math.abs(bOrder - currentOrder);
+      return aDistance - bDistance || aOrder - bOrder;
+    })
+    .slice(0, 2);
+};
 
   const syncCompletionWithSupabase = async (examId: string) => {
     if (session?.user?.id && examId) {
