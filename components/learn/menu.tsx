@@ -5,15 +5,12 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, CheckCircle, Clock, ArrowRight, Building2, Globe, User, Loader2, Filter, Share } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Search, Loader2 } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { supabase } from "@/lib/supabase"
 import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { toast } from "react-hot-toast";
-
+import { ExamCard } from "@/components/ui/ExamCard";
 // Interfaces
 interface Subject {
   id: number
@@ -52,26 +49,6 @@ interface Exam {
   }
   completed: boolean
 }
-
-// Helper function to format time difference
-const formatTimeAgo = (sortDate: string): string => {
-  const now = new Date();
-  const examDate = new Date(sortDate);
-  const diffInMs = now.getTime() - examDate.getTime();
-  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-  const diffInDays = Math.floor(diffInHours / 24);
-
-  if (diffInDays < 1) {
-    return `${diffInHours}h`;
-  } else if (diffInDays < 6) {
-    return `${diffInDays}d`;
-  } else {
-    return examDate.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-    });
-  }
-};
 
 interface MenuProps {
   open: boolean
@@ -404,153 +381,43 @@ export function Menuu({ open, onOpenChange }: MenuProps) {
   )
 
 
-  const handleCopyLink = (examId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const shareUrl = `${window.location.origin}/exam/${examId}`;
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      toast.success("Link Copied! Share this link with your friends!");
-    }).catch((err) => {
-      toast.error("Failed to copy link: " + err.message);
-    });
+  const handleCopyLink = (
+    examId: string,
+    platform: "copy" | "twitter" | "whatsapp",
+    event: React.MouseEvent
+  ) => {
+    event.stopPropagation();
+    if (platform === "copy") {
+      const shareUrl = `${window.location.origin}/exam/${examId}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        toast.success("Link Copied! Share this link with your friends!");
+      }).catch((err) => {
+        toast.error("Failed to copy link: " + err.message);
+      });
+    }
   };
 
   const renderExamList = (exams: Exam[]) => {
     return (
-      <div className="space-y-3 pb-8" style={{ scrollbarWidth: "thin" }}>
-        {exams.map((exam) => {
-          const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject"
-          const institution =
-            exam.exam_source === "school"
-              ? exam.school_exam_metadata?.school || "Unknown School"
-              : exam.exam_source === "waec"
-                ? exam.waec_exam_metadata?.region || "WAEC"
-                : exam.user_exam_metadata?.creator_name || "User Created"
-          const examiner =
-            exam.exam_source === "school"
-              ? exam.school_exam_metadata?.examiner || "Unknown"
-              : exam.user_exam_metadata?.creator_name || "Unknown"
-          const examType =
-            exam.exam_source === "school"
-              ? exam.exam_type
-              : exam.exam_source === "waec"
-                ? exam.exam_type
-                : exam.exam_type || "Custom"
-          const examDate =
-            exam.exam_source === "school"
-              ? exam.school_exam_metadata?.date
-              : exam.exam_source === "waec"
-                ? `${exam.waec_exam_metadata?.exam_year} ${exam.waec_exam_metadata?.exam_session}`
-                : exam.user_exam_metadata?.date || ""
-
+      <div className="pb-8" style={{ scrollbarWidth: "thin" }}>
+        {exams.map((exam, index) => {
+          const subject = subjects.find((s) => s.id === exam.subject_id)?.name || "Unknown Subject";
           return (
-            <Link
-              href={`/exam/${exam.id}`}
+            <ExamCard
               key={exam.id}
-              className={cn(
-                "flex w-full items-start justify-between gap-3 border-b py-4 md:px-0 px-2 text-left transition-colors",
-                exam.completed
-                  ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-900/20"
-                  : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-gray-950 dark:hover:border-gray-700"
-              )}
-            >
-              <div
-                className={cn(
-                  "flex flex-shrink-0 items-center justify-center",
-                  exam.completed
-                    ? " h-6 w-6 bg-green-100 text-green-700 rounded-full dark:bg-green-900/30 dark:text-green-400"
-                    : ""
-                )}
-              >
-                {exam.completed ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <p className="text-base font-medium text-center text-gray-500">
-                    {(() => {
-                      const timeAgo = formatTimeAgo(exam.created_at.toISOString());
-                      // Show "ago" only for hours or days (not for month)
-                      if (timeAgo.endsWith("h") || timeAgo.endsWith("d")) {
-                        return `${timeAgo} ago`;
-                      }
-                      return timeAgo;
-                    })()}
-                  </p>
-                )}
-              </div>
-              <div className="flex-1">
-                <h3 className="text-sm font-medium text-left">
-                  {subject} {examType} {examDate && `(${examDate})`} Trial
-                </h3>
-                <div className="mt-1 flex flex-col gap-1 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-3">
-                    {/* <div className="flex items-center gap-1">
-                      {exam.exam_source === "school" && <Building2 className="h-3 w-3" />}
-                      {exam.exam_source === "waec" && <Globe className="h-3 w-3" />}
-                      {exam.exam_source === "user" && <User className="h-3 w-3" />}
-                      <span>{institution}</span>
-                    </div> */}
-                    <div className="flex items-center gap-1">
-                      <span>{exam.question_count} questions </span> {(exam.exam_source !== "waec" && exam.exam_source !== "school") && <span>• {exam.difficulty}</span>}
-                    </div>
-                  </div>
-                  {exam.topics.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {exam.topics.slice(0, showMoreTopics[exam.id] ? 18 : 3).map((topic) => (
-                        <span
-                          key={topic}
-                          className="py-1 text-xs underline underline-offset-4 text-gray-500"
-                        >
-                          {topic}
-                        </span>
-                      ))}
-                      {exam.topics.length > 3 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            setshowMoreTopics((prev) => ({
-                              ...prev,
-                              [exam.id]: !prev[exam.id],
-                            }));
-                          }}
-                          role="button"
-                          tabIndex={0}
-                          className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              setshowMoreTopics((prev) => ({
-                                ...prev,
-                                [exam.id]: !prev[exam.id],
-                              }));
-                            }
-                          }}
-                        >
-                          {showMoreTopics[exam.id] ? "Less" : `+${exam.topics.length - 3} more`}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleCopyLink(exam.id, e)
-                }}
-                className="ml-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                aria-label="Copy share link"
-              >
-                <Share className="h-4 w-4 text-gray-500" />
-              </Button>
-            </Link>
+              exam={{ ...exam, subject }} // Merge subject into exam object
+              isDesktop={isDesktop}
+              onShare={handleCopyLink}
+              showMoreTopics={showMoreTopics}
+              setShowMoreTopics={setshowMoreTopics}
+              separator={index < exams.length - 1}
+              className="w-full items-start justify-between gap-3 md:py-4 md:px-0 text-left transition-colors group"
+            />
           );
         })}
       </div>
-    )
-  }
+    );
+  };
 
   const content = (
     <div className="py-4">

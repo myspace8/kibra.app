@@ -6,23 +6,11 @@ import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { Separator } from "@/components/ui/separator";
 import {
-  CheckCircle,
-  Clock,
-  Globe,
   Loader2,
   RefreshCw,
   Filter,
-  X,
-  ChevronDown,
-  ChevronUp,
-  Share,
-  Copy,
-  Twitter,
-  MessageCircle,
-  ChartNoAxesColumnIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,24 +25,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { LearnPageHeader } from "@/components/learn/learn-page-header";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import Banner from "@/components/annAdBanner";
+import { ExamCard } from "@/components/ui/ExamCard";
 
 // Interfaces
 interface Exam {
@@ -784,379 +759,23 @@ export default function Learn() {
                     </div>
                   ) : (
                     <div>
-                      {filteredExams.map((exam, index) => {
-                        const institution =
-                          exam.exam_source === "school"
-                            ? exam.school_exam_metadata?.school || "Unknown School"
-                            : exam.exam_source === "waec"
-                              ? exam.waec_exam_metadata?.region || "WAEC"
-                              : exam.user_exam_metadata?.creator_name ||
-                              "User Created";
-                        const examType =
-                          exam.exam_source === "school"
-                            ? exam.exam_type
-                            : exam.exam_source === "waec"
-                              ? exam.exam_type
-                              : exam.exam_type || "Custom";
-                        const examDate =
-                          exam.exam_source === "school"
-                            ? exam.school_exam_metadata?.date
-                            : exam.exam_source === "waec"
-                              ? `${exam.waec_exam_metadata?.exam_year} ${exam.waec_exam_metadata?.exam_session}`
-                              : exam.user_exam_metadata?.date || "";
-
-                        return (
-                          <div key={exam.id} className="md:px-0 group">
-                            <Link
-                              href={`/exam/${exam.id}`}
-                              className={cn(
-                                "block w-full px-4 pt-4 transition-colors dark:bg-gray-950 dark:border-gray-800 hover:bg-[#f7f7f7] dark:hover:border-gray-700",
-                                examScores[exam.id] &&
-                                "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900"
-                              )}
-                            >
-                              <div className="flex items-start">
-                                <div
-                                  className={cn(
-                                    "flex flex-shrink-0 items-center justify-center",
-                                    exam.completed
-                                      ? "h-6 w-6 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full"
-                                      : ""
-                                  )}
-                                >
-                                  {exam.completed ? (
-                                    <CheckCircle className="h-4 w-4" />
-                                  ) : (
-                                    <p className="text-sm font-medium text-center text-gray-500">
-                                      {(() => {
-                                        const timeAgo = formatTimeAgo(exam.created_at.toISOString());
-                                        // Show "ago" only for hours or days (not for month)
-                                        if (timeAgo.endsWith("h") || timeAgo.endsWith("d")) {
-                                          return `${timeAgo} ago`;
-                                        }
-                                        return timeAgo;
-                                      })()}
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="flex flex-col items-start gap-2">
-                                  <div className="ml-3 flex-1 min-w-0">
-                                    <h3 className="text-sm font-semibold text-left text-gray-600">
-                                      {exam.subject} {examType} {examDate && `(${examDate})`} Trial
-                                    </h3>
-                                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-1">
-                                      <span>{exam.question_count} Questions</span>
-                                    </div>
-                                    {exam.topics.length > 0 && (
-                                      <div className="flex flex-wrap gap-x-2">
-                                        {exam.topics
-                                          .slice(
-                                            0,
-                                            showMoreTopics[exam.id] ? exam.topics.length : 3
-                                          )
-                                          .map((topic) => (
-                                            <span
-                                              key={topic}
-                                              className={cn(
-                                                "py-1 text-xs underline underline-offset-4",
-                                                selectedTopics.includes(topic)
-                                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                                                  : "text-gray-500"
-                                              )}
-                                            >
-                                              {topic}
-                                            </span>
-                                          ))}
-                                        {exam.topics.length > 3 && !showMoreTopics[exam.id] && (
-                                          <button
-                                            type="button"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              e.preventDefault();
-                                              setShowMoreTopics((prev) => ({
-                                                ...prev,
-                                                [exam.id]: true,
-                                              }));
-                                            }}
-                                            className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-                                          >
-                                            +{exam.topics.length - 3} more
-                                          </button>
-                                        )}
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="flex gap-1 w-full">
-
-
-                                    {isDesktop ? (
-                                      <DropdownMenu
-                                        open={isShareOpen === exam.id}
-                                        onOpenChange={(open) => {
-                                          console.log("Share DropdownMenu open change, open:", open, "exam.id:", exam.id); // Debugging
-                                          setIsShareOpen(open ? exam.id : null);
-                                        }}
-                                      >
-                                        <DropdownMenuTrigger asChild>
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
-                                            role="button"
-                                            tabIndex={0}
-                                            aria-label="Share exam link"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              e.preventDefault();
-                                              console.log("Share button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                              setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
-                                            }}
-                                            onKeyDown={(e) => {
-                                              if (e.key === "Enter" || e.key === " ") {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                console.log("Share button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                                setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
-                                              }
-                                            }}
-                                          >
-                                            <Share className="h-4 w-4 text-gray-500" />
-                                          </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent
-                                          align="end"
-                                          sideOffset={8}
-                                          className="w-48 z-50"
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          <DropdownMenuLabel>Share This Test</DropdownMenuLabel>
-                                          <DropdownMenuSeparator />
-                                          <button
-                                            onClick={(e) => handleShare(exam.id, "copy", e)}
-                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                          >
-                                            <Copy className="h-4 w-4 mr-2" />
-                                            Copy Link
-                                          </button>
-                                          <button
-                                            onClick={(e) => handleShare(exam.id, "twitter", e)}
-                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                          >
-                                            <Twitter className="h-4 w-4 mr-2" />
-                                            Share on Twitter/X
-                                          </button>
-                                          <button
-                                            onClick={(e) => handleShare(exam.id, "whatsapp", e)}
-                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                          >
-                                            <MessageCircle className="h-4 w-4 mr-2" />
-                                            Share on WhatsApp
-                                          </button>
-                                        </DropdownMenuContent>
-                                      </DropdownMenu>
-                                    ) : (
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
-                                        role="button"
-                                        tabIndex={0}
-                                        aria-label="Share exam link"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          e.preventDefault();
-                                          console.log("Share button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                          setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
-                                        }}
-                                        onKeyDown={(e) => {
-                                          if (e.key === "Enter" || e.key === " ") {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            console.log("Share button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                            setIsShareOpen(isShareOpen === exam.id ? null : exam.id);
-                                          }
-                                        }}
-                                      >
-                                        <Share className="h-4 w-4 text-gray-500" />
-                                      </Button>
-                                    )}
-                                    <Drawer
-                                      open={isShareOpen === exam.id && !isDesktop}
-                                      onOpenChange={(open) => {
-                                        console.log("Share Drawer open change, open:", open, "exam.id:", exam.id); // Debugging
-                                        setIsShareOpen(open ? exam.id : null);
-                                      }}
-                                    >
-                                      <DrawerContent className="h-auto rounded-t-3xl">
-                                        <DrawerHeader>
-                                          <DrawerTitle>Share This Test</DrawerTitle>
-                                        </DrawerHeader>
-                                        <div className="py-4 space-y-2 px-4">
-                                          <button
-                                            onClick={(e) => handleShare(exam.id, "copy", e)}
-                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                          >
-                                            <Copy className="h-4 w-4 mr-2" />
-                                            Copy Link
-                                          </button>
-                                          <button
-                                            onClick={(e) => handleShare(exam.id, "twitter", e)}
-                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                          >
-                                            <Twitter className="h-4 w-4 mr-2" />
-                                            Share on Twitter/X
-                                          </button>
-                                          <button
-                                            onClick={(e) => handleShare(exam.id, "whatsapp", e)}
-                                            className="flex items-center w-full p-3 text-left text-sm font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-                                          >
-                                            <MessageCircle className="h-4 w-4 mr-2" />
-                                            Share on WhatsApp
-                                          </button>
-                                        </div>
-                                      </DrawerContent>
-                                    </Drawer>
-
-                                    {isDesktop ? (
-                                      <div className="flex items-center gap-2">
-                                        <DropdownMenu
-                                          open={isViewCountOpen === exam.id}
-                                          onOpenChange={(open) => {
-                                            console.log("DropdownMenu open change, open:", open, "exam.id:", exam.id); // Debugging
-                                            setIsViewCountOpen(open ? exam.id : null);
-                                          }}
-                                        >
-                                          <DropdownMenuTrigger asChild>
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
-                                              role="button"
-                                              tabIndex={0}
-                                              aria-label="View exam clicks"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                e.preventDefault();
-                                                console.log("View count button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                                setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
-                                              }}
-                                              onKeyDown={(e) => {
-                                                if (e.key === "Enter" || e.key === " ") {
-                                                  e.preventDefault();
-                                                  e.stopPropagation();
-                                                  console.log("View count button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                                  setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
-                                                }
-                                              }}
-                                            >
-                                              <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
-                                            </Button>
-                                          </DropdownMenuTrigger>
-                                          <DropdownMenuContent
-                                            align="end"
-                                            sideOffset={8}
-                                            className="w-48 z-50"
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            <DropdownMenuLabel>Test View Count</DropdownMenuLabel>
-                                            <DropdownMenuSeparator />
-                                            <div className="p-2 text-center">
-                                              <p className="text-sm text-gray-500">Coming soon</p>
-                                              <p className="text-xs text-gray-400">
-                                                The number of times this test has been clicked will be displayed here
-                                              </p>
-                                            </div>
-                                          </DropdownMenuContent>
-                                        </DropdownMenu>
-                                        {examScores[exam.id] ? (
-                                          <span className="text-xs text-green-500 font-medium">
-                                            Score: {examScores[exam.id].score + 1}/{examScores[exam.id].totalMarks}
-                                          </span>
-                                        ) : typeof exam.score === "number" ? (
-                                          <span className="text-xs text-gray-500">
-                                            {exam.score}
-                                          </span>
-                                        ) : null}
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-2">
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                          className="flex justify-center focus:outline-none rounded-full hover:bg-blue-50 w-9"
-                                          role="button"
-                                          tabIndex={0}
-                                          aria-label="View exam clicks"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                            console.log("View count button clicked, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                            setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
-                                          }}
-                                          onKeyDown={(e) => {
-                                            if (e.key === "Enter" || e.key === " ") {
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                              console.log("View count button keydown, exam.id:", exam.id, "isDesktop:", isDesktop); // Debugging
-                                              setIsViewCountOpen(isViewCountOpen === exam.id ? null : exam.id);
-                                            }
-                                          }}
-                                        >
-                                          <ChartNoAxesColumnIcon className="h-4 w-4 text-gray-500" />
-                                        </Button>
-                                        {examScores[exam.id] ? (
-                                          <span className="text-xs text-gray-500">
-                                            Score: {examScores[exam.id].score + 1}/{examScores[exam.id].totalMarks}
-                                          </span>
-                                        ) : typeof exam.score === "number" ? (
-                                          <span className="text-xs text-gray-500">
-                                            {exam.score}
-                                          </span>
-                                        ) : null}
-                                      </div>
-
-                                    )}
-                                    <Drawer
-                                      open={isViewCountOpen === exam.id && !isDesktop}
-                                      onOpenChange={(open) => {
-                                        console.log("Drawer open change, open:", open, "exam.id:", exam.id); // Debugging
-                                        setIsViewCountOpen(open ? exam.id : null);
-                                      }}
-                                    >
-                                      <DrawerContent className="h-auto rounded-t-3xl">
-                                        <DrawerHeader>
-                                          <DrawerTitle>Test view count</DrawerTitle>
-                                        </DrawerHeader>
-                                        <div className="py-4 space-y-2 px-4 text-center mb-12">
-                                          <h3 className="text-lg">Coming soon</h3>
-                                          <p className="text-base text-gray-500">
-                                            The number of times this test has been clicked will be displayed here
-                                          </p>
-                                        </div>
-                                      </DrawerContent>
-                                    </Drawer>
-                                  </div>
-                                </div>
-                              </div>
-                            </Link>
-                            {index < filteredExams.length - 1 && (
-                              <Separator className="opacity-1 transition-opacity duration-300" />
-                            )}
-                          </div>
-                        );
-                      })}
+                      {filteredExams.map((exam, index) => (
+                        <ExamCard
+                          key={exam.id}
+                          exam={exam}
+                          examScores={examScores}
+                          isDesktop={isDesktop}
+                          onShare={handleShare}
+                          showMoreTopics={showMoreTopics}
+                          setShowMoreTopics={setShowMoreTopics}
+                          selectedTopics={selectedTopics}
+                          separator={index < filteredExams.length - 1}
+                          className="md:px-0 group"
+                        />
+                      ))}
                     </div>
                   );
                 })()}
-                {/* Ad Placeholder */}
-                <div className="hidden mt-6 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg text-center">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Advertisement Placeholder
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500">
-                    300x250px Ad Space
-                  </p>
-                </div>
               </div>
             </>
           )}
