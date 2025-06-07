@@ -16,22 +16,28 @@ import {
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { Card, CardContent } from "@/components/ui/card"
 
-export default function Component() {
+export default function Banner() {
   const [isVisible, setIsVisible] = useState(true)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
   const [hasAppeared, setHasAppeared] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
 
   // Auto-dismiss timer
-  const AUTO_DISMISS_TIME = 600000
+  const AUTO_DISMISS_TIME = 100
+
+  // Ticker messages
+  const tickerMessages = [
+    "Get certified in web and app development",
+    "Computer programming training for every student!",
+    "Build real-world projects",
+  ]
 
   useEffect(() => {
-    // Set auto-dismiss timer
     const timer = setTimeout(() => {
-      handleDismiss()
+      // handleDismiss()
     }, AUTO_DISMISS_TIME)
 
-    // Set appeared state after a small delay for entrance animations
     const appearTimer = setTimeout(() => {
       setHasAppeared(true)
     }, 100)
@@ -44,8 +50,6 @@ export default function Component() {
 
   const handleDismiss = () => {
     setIsAnimating(true)
-
-    // Wait for animation to complete before hiding
     setTimeout(() => {
       setIsVisible(false)
     }, 300)
@@ -55,26 +59,15 @@ export default function Component() {
     const message = encodeURIComponent(
       "Hi! I'm interested in learning more about Bitlabs computer programming training. Can you provide me with more details about your courses and enrollment process?",
     )
-    const whatsappUrl = `https://wa.me/+233592771234?text=${message}` // Replace with actual WhatsApp number
+    const whatsappUrl = `https://wa.me/+233592771234?text=${message}`
     window.open(whatsappUrl, "_blank")
   }
 
-
   const handlePhoneCall = () => {
-    window.location.href = "tel:+233592771234" // Replace with actual phone number
+    window.location.href = "tel:+233592771234"
   }
 
   const carouselImages = [
-    {
-      src: "/bitlabs-photo-2.jpg",
-      alt: "Students learning programming",
-      title: "Certification after Completion",
-    },
-    {
-      src: "/bitlabs-photo-3.jpg",
-      alt: "Modern computer lab",
-      title: "State-of-the-Art Facilities",
-    },
     {
       src: "/bitlabs-photo-4.jpg",
       alt: "Coding workshop session",
@@ -84,6 +77,16 @@ export default function Component() {
       src: "/bitlabs-photo-1.jpg",
       alt: "Students working on projects",
       title: "Real-world Project Development",
+    },
+    {
+      src: "/bitlabs-photo-3.jpg",
+      alt: "Modern computer lab",
+      title: "State-of-the-Art Facilities",
+    },
+    {
+      src: "/bitlabs-photo-2.jpg",
+      alt: "Students learning programming",
+      title: "Certification after Completion",
     },
   ]
 
@@ -97,10 +100,18 @@ export default function Component() {
     },
     {
       name: "Anon",
-      school: "",
-      text: "Computers are magic. Bitlabs will prove that to you.",
+      age: "!42",
+      school: "Somewhere in Hogwart",
+      text: "Computers are magic—Bitlabs will prove that to you.",
       rating: 5,
     },
+    // {
+    //   name: "Ama",
+    //   age: 17,
+    //   school: "KNUST SHS, 2024",
+    //   text: "Bitlabs has the best instructors and a great learning environment. I feel confident about my future in tech!",
+    //   rating: 5,
+    // },
   ]
 
   if (!isVisible) {
@@ -114,8 +125,14 @@ export default function Component() {
           <div
             className={`bg-gradient-to-br from-red-500 via-pink-500 to-orange-500 bg-[length:200%_200%] animate-gradient-x rounded-full mx-1 text-white pr-2 pl-[0.15rem] py-[0.15rem] relative transition-all duration-300 ease-in-out overflow-hidden backdrop-blur-sm cursor-pointer hover:shadow-lg active:scale-95 ${isAnimating ? "transform translate-x-full opacity-0" : "transform translate-x-0 opacity-100"
               } ${hasAppeared ? "scale-100" : "scale-95"}`}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
+            onMouseEnter={() => {
+              setIsHovering(true)
+              setIsPaused(true)
+            }}
+            onMouseLeave={() => {
+              setIsHovering(false)
+              setIsPaused(false)
+            }}
             style={{
               transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
             }}
@@ -126,42 +143,53 @@ export default function Component() {
               {/* Human Image */}
               <div className="flex-shrink-0 relative group">
                 <div
-                  className={`absolute inset-0 
-                    rounded-full blur-sm transform scale-110 group-hover:scale-125 transition-transform duration-500 ${isHovering ? "animate-pulse-slow" : ""}`}
+                  className={`absolute inset-0 rounded-full blur-sm transform scale-110 group-hover:scale-125 transition-transform duration-500 ${isHovering ? "animate-pulse-slow" : ""
+                    }`}
                 ></div>
                 <img
                   src="/bitlabs-photo-1.jpg"
                   alt="Instructor"
-                  className="w-10 h-10 rounded-full border-2 border-white/40 object-cover relative z-10 shadow-lg transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105"
+                  className="w-10 h-10 rounded-full border-2 border-white/90 object-cover relative z-10 shadow-lg transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105"
                 />
               </div>
-
-              {/* Content */}
+              <p className="text-base">Learn to program</p>
+              {/* Ticker Content */}
               <div
-                className={`flex-1 min-w-0 transition-all duration-500 ${hasAppeared ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
+                className={`flex-1 min-w-0 overflow-hidden transition-all duration-500 ${hasAppeared ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+                  }`}
                 style={{
                   transitionDelay: "150ms",
                 }}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h2
-                      className="text-sm font-extrabold tracking-tight text-shadow relative inline-block"
+                  <div className="flex-1 overflow-hidden">
+                    <div
+                      className={`flex whitespace-nowrap ${isPaused ? "animate-none" : "animate-ticker"}`}
                       style={{
-                        transitionDelay: "200ms",
+                        animationDuration: "20s",
+                        animationTimingFunction: "linear",
+                        animationIterationCount: "infinite",
                       }}
                     >
-                      <span
-                        className={`transition-all duration-500 ${hasAppeared ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}
-                      >
-                        LEARN TO CODE
-                      </span>
-                    </h2>
+                      {/* Multiple sets of ticker messages for seamless loop */}
+                      {[...Array(3)].flatMap((_, setIndex) =>
+                        tickerMessages.map((message, index) => (
+                          <span
+                            key={`${setIndex}-${index}`}
+                            className="inline-block px-6 text-sm"
+                          >
+                            {message}
+                            <span className="mx-3 text-yellow-300">●</span>
+                          </span>
+                        ))
+                      )}
+                    </div>
                   </div>
 
                   {/* Arrow Icon */}
                   <div
-                    className={`ml-3 flex-shrink-0 transition-all duration-500 ${hasAppeared ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}
+                    className={`ml-3 flex-shrink-0 transition-all duration-500 ${hasAppeared ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                      }`}
                     style={{
                       transitionDelay: "350ms",
                     }}
@@ -179,10 +207,10 @@ export default function Component() {
         <DrawerContent className="max-h-[90vh] rounded-4xl">
           <div className="mx-auto w-full max-w-2xl">
             <DrawerHeader className="text-center">
-              <DrawerTitle className="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
-                Welcome to Bitlabs
+              <DrawerTitle className="text-2xl font-extrabold bg-gradient-to-r from-red-500 to-orange-500 uppercase bg-clip-text text-transparent">
+                Bit<span className="bg-red-500 text-white px-[2px] ml-[1px]">labs</span>
               </DrawerTitle>
-              <DrawerDescription className="text-base">
+              <DrawerDescription className="text-sm">
                 Center for IT and Innovation
               </DrawerDescription>
             </DrawerHeader>
@@ -273,9 +301,6 @@ export default function Component() {
                       <br />
                       Near the Opoku Ware SHS (OWASS)
                     </p>
-                    <p className="text-gray-500 text-xs mt-2">
-                      Easily accessible by public transport • Free parking available
-                    </p>
                   </div>
                 </div>
               </div>
@@ -305,7 +330,7 @@ export default function Component() {
                 </div>
               </div>
               <Button
-                variant="outline"
+                variant="link"
                 className="w-full"
                 size="lg"
                 onClick={() => window.open("https://bitlabsgh.com", "_blank")}
@@ -314,7 +339,7 @@ export default function Component() {
                 Visit Our Website
               </Button>
             </div>
-            <DrawerFooter className="flex flex-col space-y-3  bg-white/30 backdrop-blur-md">
+            <DrawerFooter className="flex flex-col space-y-3 bg-white/30 backdrop-blur-md">
               <div className="flex flex-col space-y-3 backdrop-blur-md bg-white/60">
                 <Button
                   onClick={handleWhatsAppClick}
@@ -325,14 +350,13 @@ export default function Component() {
                   Chat with us on WhatsApp
                 </Button>
 
-
                 <div className="flex justify-between items-center gap-3">
                   <DrawerClose asChild>
                     <Button variant="ghost" className="w-full">
                       Close
                     </Button>
                   </DrawerClose>
-                  <Button onClick={handlePhoneCall} className="bg-blue-600 hover:bg-blue-700 text-white" size="lg">
+                  <Button variant="outline" onClick={handlePhoneCall} size="lg">
                     <Phone className="w-4 h-4 mr-2" />
                     Call Now
                   </Button>
@@ -342,6 +366,21 @@ export default function Component() {
           </div>
         </DrawerContent>
       </Drawer>
+
+      {/* Custom CSS for ticker animation */}
+      <style jsx>{`
+        @keyframes ticker {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
+        .animate-ticker {
+          animation: ticker 40s linear infinite;
+        }
+      `}</style>
     </div>
   )
 }

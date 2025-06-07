@@ -29,7 +29,7 @@ import Link from "next/link"
 import MathExpression from "@/components/MathExpression"
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import Banner from "@/components/annAdBanner";
+// import Banner from "@/components/annAdBanner";
 import { ExamCard } from "@/components/ui/ExamCard";
 
 interface Exam {
@@ -259,11 +259,12 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
     return { examType, examDate };
   };
 
-  
-  const getSuggestedExams = (currentExamId: string | undefined, exams?: Exam[]): Exam[] => {
+
+const getSuggestedExams = (currentExamId: string | undefined, exams?: Exam[]): Exam[] => {
   if (!exams || !currentExamId) return [];
   const currentExam = exams.find(exam => exam.id === currentExamId);
   if (!currentExam) return [];
+  
   let completedExams: string[] = [];
   try {
     const storedScores = localStorage.getItem('kibra_exam_scores');
@@ -273,19 +274,17 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
   } catch (e) {
     console.error("Error parsing kibra_exam_scores from localStorage:", e);
   }
-  const difficultyOrder = { Easy: 0, Medium: 1, Hard: 2 };
-  const currentOrder = difficultyOrder[currentExam.difficulty] || 1;
+
   return exams
-    .filter(exam => !completedExams.includes(exam.id) && exam.subject === currentExam.subject && exam.exam_type === currentExam.exam_type)
-    .sort((a, b) => {
-      const aOrder = difficultyOrder[a.difficulty] || 1;
-      const bOrder = difficultyOrder[b.difficulty] || 1;
-      const aDistance = Math.abs(aOrder - currentOrder);
-      const bDistance = Math.abs(bOrder - currentOrder);
-      return aDistance - bDistance || aOrder - bOrder;
-    })
+    .filter(exam =>
+      !completedExams.includes(exam.id) &&
+      exam.subject === currentExam.subject &&
+      exam.exam_type === currentExam.exam_type
+    )
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // Descending order by created_at
     .slice(0, 2);
 };
+
 
   const syncCompletionWithSupabase = async (examId: string) => {
     if (session?.user?.id && examId) {
@@ -783,13 +782,21 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
                     Hints used: {hintsUsed.length} of {totalQuestions}
                   </p>
                 )} */}
+                <Button
+                  variant="default"
+
+                  onClick={enterReviewMode}
+                  className="px-5 py-2 text-sm font-medium"
+                >
+                  Review Answers
+                </Button>
               </div>
 
             </div>
             <div className="mb-6">
               <h3 className="text-base font-semibold text-gray-700 dark:text-gray-100 mb-2 text-center">Try These Next</h3>
               {suggestedExams.length > 0 ? (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col pt-2">
                   {suggestedExams.map((exam, index) => (
                     <ExamCard
                       key={exam.id}
@@ -813,12 +820,6 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
             </div>
             <div className="flex flex-wrap gap-4 justify-center p-3">
               <Button
-                onClick={enterReviewMode}
-                className="px-5 py-2 text-sm font-medium bg-primary hover:bg-primary/90"
-              >
-                Review Answers
-              </Button>
-              <Button
                 onClick={() => setIsModalOpen(true)}
                 variant="outline"
                 className="px-5 py-2 text-sm font-medium flex items-center gap-2"
@@ -836,9 +837,9 @@ export default function KibraPractice({ open, questions: initialQuestions, waecE
             </div>
           </Card>
         </motion.div>
-        <div className="py-1">
+        {/* <div className="py-1">
           <Banner />
-        </div>
+        </div> */}
       </>
     );
   }

@@ -338,12 +338,12 @@ export const ExamCard = ({
                       className="w-48 z-50"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <DropdownMenuLabel>Test View Count</DropdownMenuLabel>
+                      <DropdownMenuLabel>Test Complete Count</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <div className="p-2 text-center">
-                        <p className="text-sm text-gray-500">Coming soon</p>
+                        {/* <p className="text-sm text-gray-500">Coming soon</p> */}
                         <p className="text-xs text-gray-400">
-                          The number of times this test has been completed will be displayed here
+                          The total number of times this test has been solved will appear here.
                         </p>
                       </div>
                     </DropdownMenuContent>
@@ -392,12 +392,12 @@ export const ExamCard = ({
               >
                 <DrawerContent className="h-auto rounded-t-3xl">
                   <DrawerHeader>
-                    <DrawerTitle>Test View Count</DrawerTitle>
+                    <DrawerTitle>Test Complete Count</DrawerTitle>
                   </DrawerHeader>
                   <div className="py-4 space-y-2 px-4 text-center mb-12">
-                    <h3 className="text-lg">Coming soon</h3>
+                    {/* <h3 className="text-lg">Coming soon</h3> */}
                     <p className="text-base text-gray-500">
-                      The number of times this test has been clicked will be displayed here
+                      The total number of times this test has been solved will appear here.
                     </p>
                   </div>
                 </DrawerContent>

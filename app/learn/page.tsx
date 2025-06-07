@@ -100,11 +100,11 @@ const loadExamScores = (): Record<string, { score: number; totalMarks: number }>
 
 // WAEC-based subjects for BECE and WASSCE (2025, Ghana)
 const BECE_SUBJECTS = [
-  "English Language",
-  "Mathematics",
-  "Integrated Science",
   "Social Studies",
   "Information and Communication Technology",
+  "English Language",
+  "Integrated Science",
+  "Mathematics",
 ];
 
 const WASSCE_SUBJECTS = [
@@ -614,7 +614,7 @@ export default function Learn() {
             key={examType.value}
             onClick={() => handleExamTypeChange(examType.value as "BECE" | "WASSCE" | "EXPLORER")}
             className={cn(
-              "w-full p-3 text-left text-sm font-medium rounded-md transition-colors",
+              "w-full p-3 text-left text-sm font-medium transition-colors",
               selectedExamType === examType.value
                 ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700",
@@ -657,11 +657,11 @@ export default function Learn() {
               <div className="w-full border border-y-0 border-x">
                 {/* Subject Categories */}
                 <div>
-                  <div className="flex justify-center pt-2 min-w-max border-b">
+                  <div className="flex justify-center min-w-max border-b">
                     <button
                       onClick={() => setSelectedSubject("For you")}
                       className={cn(
-                        "mx-4 py-2 text-base whitespace-nowrap transition-colors relative",
+                        "mx-4 py-3 text-base whitespace-nowrap transition-colors relative",
                         selectedSubject === "For you"
                           ? "text-gray-900 font-medium dark:text-gray-100"
                           : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100",
@@ -705,10 +705,10 @@ export default function Learn() {
                     </div>
                   </div>
                 </div>
-                <div className="py-1">
+                <div className="border-b py-1">
                   <Banner />
                 </div>
-                <div className="text-center text-sm leading-tight text-gray-600 dark:text-gray-400 py-4 px-3 border-b">
+                <div className="text-center text-sm text-gray-600 dark:text-gray-400 py-3 px-3 border-b">
                   You're {selectedExamType === "EXPLORER" ? "an explorer" : `a ${selectedExamType} candidate`}.{" "}
                   <Dialog open={isExamTypeOpen && isDesktop} onOpenChange={setIsExamTypeOpen}>
                     <DialogTrigger asChild>
