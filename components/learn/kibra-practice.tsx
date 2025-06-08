@@ -1103,7 +1103,7 @@ const getSuggestedExams = (currentExamId: string | undefined, exams?: Exam[]): E
                         {isAnswered && isCorrect ? <CheckCircle size={14} /> : isWrong ? <XCircle size={14} /> : isTrueFalse ? option : option.split(".")[0]}
                       </div>
                       <div className={cn("flex-1 text-sm", isEliminated && !isAnswered ? "line-through text-gray-500 dark:text-gray-400" : "")}>
-                        {renderTextWithMath(option)}
+                        {renderTextWithMath(isTrueFalse ? option : option.split(".").slice(1).join(".").trim())}
                       </div>
                       {!isAnswered && !isTrueFalse && (
                         <button
