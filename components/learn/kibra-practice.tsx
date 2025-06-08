@@ -882,7 +882,7 @@ const getSuggestedExams = (currentExamId: string | undefined, exams?: Exam[]): E
           <div className="flex items-center justify-between w-full relative">
             {showDetails && (
               <div className="flex items-start justify-between w-full gap-2">
-                <QuizHeader quizTitle={quizTitle} topic={currentQuestion.topic} subtopic={currentQuestion.subtopic} />
+                <QuizHeader quizTitle={quizTitle} topic={currentQuestion.subtopic} subtopic={currentQuestion.subtopic} />
                 <QuizFooter sourceReference={currentQuestion.source_reference} waecExamType={waecExamType} currentIndex={currentQuestionIndex} total={totalQuestions} />
               </div>
             )}
