@@ -343,7 +343,7 @@ export const ExamCard = ({
                       <div className="p-2 text-center">
                         {/* <p className="text-sm text-gray-500">Coming soon</p> */}
                         <p className="text-xs text-gray-400">
-                          The total number of times this test has been solved will appear here.
+                          The total number of times this test has been completed will appear here.
                         </p>
                       </div>
                     </DropdownMenuContent>
@@ -397,7 +397,7 @@ export const ExamCard = ({
                   <div className="py-4 space-y-2 px-4 text-center mb-12">
                     {/* <h3 className="text-lg">Coming soon</h3> */}
                     <p className="text-base text-gray-500">
-                      The total number of times this test has been solved will appear here.
+                      The total number of times this test has been completed will appear here.
                     </p>
                   </div>
                 </DrawerContent>
