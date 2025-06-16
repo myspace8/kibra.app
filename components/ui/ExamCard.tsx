@@ -117,7 +117,7 @@ export const ExamCard = ({
   const [isViewCountOpen, setIsViewCountOpen] = useState(false);
   const { examType, examDate } = formatExamDetails(exam);
   const isCompleted = !!examScores?.[exam.id];
-  const timeAgo = formatTimeAgo(exam.created_at.toISOString());
+  const timeAgo = formatTimeAgo(exam.created_at.toLocaleString());
 
   return (
     <div className={cn("md:px-0 group", className)}>

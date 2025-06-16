@@ -1,17 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
-import { Separator } from "@/components/ui/separator";
 import {
   Loader2,
   RefreshCw,
   Filter,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -30,62 +27,7 @@ import { LearnPageHeader } from "@/components/learn/learn-page-header";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import Banner from "@/components/annAdBanner";
 import { ExamCard } from "@/components/ui/ExamCard";
-
-// Interfaces
-interface Exam {
-  score: any;
-  id: string;
-  exam_source: "school" | "waec" | "user";
-  subject: string;
-  exam_type: string; // "BECE", "WASSCE", or "EXPLORER"
-  question_count: number;
-  total_marks: number;
-  sort_date: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  topics: string[];
-  created_at: Date;
-  school_exam_metadata?: {
-    school: string;
-    grade_level: string;
-    date: string;
-    examiner: string;
-    school_location?: { region: string; city?: string; country?: string };
-  };
-  waec_exam_metadata?: {
-    exam_year: number;
-    exam_session: "May/June" | "November/December";
-    region: string;
-    syllabus_version: string;
-  };
-  user_exam_metadata?: {
-    creator_id: string;
-    creator_name: string;
-    date?: string;
-    description?: string;
-  };
-  completed: boolean;
-  // score: number;
-}
-
-// Helper function to format time difference
-const formatTimeAgo = (sortDate: string): string => {
-  const now = new Date();
-  const examDate = new Date(sortDate);
-  const diffInMs = now.getTime() - examDate.getTime();
-  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-  const diffInDays = Math.floor(diffInHours / 24);
-
-  if (diffInDays < 1) {
-    return `${diffInHours}h`;
-  } else if (diffInDays < 6) {
-    return `${diffInDays}d`;
-  } else {
-    return examDate.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-    });
-  }
-};
+import { useExams } from "@/hooks/useExam";
 
 const loadExamScores = (): Record<string, { score: number; totalMarks: number }> => {
   const key = `kibra_exam_scores`;
@@ -187,9 +129,6 @@ const WASSCE_TOPICS_BY_SUBJECT: Record<string, string[]> = {
 
 export default function Learn() {
   const { data: session } = useSession();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [exams, setExams] = useState<Exam[]>([]);
   const [showMoreTopics, setShowMoreTopics] = useState<Record<string, boolean>>(
     {},
   );
@@ -198,15 +137,15 @@ export default function Learn() {
   );
   const [selectedSubject, setSelectedSubject] = useState<string>("For you");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isExamTypeOpen, setIsExamTypeOpen] = useState(false);
   const [expandedSubjects, setExpandedSubjects] = useState<
     Record<string, boolean>
   >({});
   const [isShareOpen, setIsShareOpen] = useState<string | null>(null);
-  const [isViewCountOpen, setIsViewCountOpen] = useState<string | null>(null);
   const [examScores, setExamScores] = useState<Record<string, { score: number; totalMarks: number }>>({});
   const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  const { exams, isLoading, isError } = useExams(session?.user?.id);
 
   // Initialize state from localStorage only on client side
   useEffect(() => {
@@ -251,7 +190,7 @@ export default function Learn() {
   };
 
   const getFilteredExams = () => {
-    let filtered = exams.filter((exam) =>
+    let filtered = (exams ?? []).filter((exam) =>
       selectedExamType === "EXPLORER" ? true : exam.exam_type === selectedExamType
     );
 
@@ -302,54 +241,6 @@ export default function Learn() {
     }
   };
 
-  const handleTopicToggle = (topic: string) => {
-    setSelectedTopics((prev) => {
-      const newTopics = prev.includes(topic)
-        ? prev.filter((t) => t !== topic)
-        : [...prev, topic];
-      if (typeof window !== "undefined") {
-        localStorage.setItem("selectedTopics", JSON.stringify(newTopics));
-      }
-      return newTopics;
-    });
-  };
-
-  const clearSelectedTopics = () => {
-    setSelectedTopics([]);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("selectedTopics", JSON.stringify([]));
-    }
-  };
-
-  const toggleSubjectExpansion = (subject: string) => {
-    setExpandedSubjects((prev) => ({
-      ...prev,
-      [subject]: !prev[subject],
-    }));
-  };
-
-  const selectAllTopicsForSubject = (subject: string, topics: string[]) => {
-    setSelectedTopics((prev) => {
-      const currentTopics = new Set(prev);
-      const allSelected = topics.every((topic) => currentTopics.has(topic));
-      let newTopics: string[];
-
-      if (allSelected) {
-        newTopics = prev.filter((topic) => !topics.includes(topic));
-      } else {
-        newTopics = [
-          ...prev,
-          ...topics.filter((topic) => !currentTopics.has(topic)),
-        ];
-      }
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem("selectedTopics", JSON.stringify(newTopics));
-      }
-      return newTopics;
-    });
-  };
-
   const handleExamTypeChange = (examType: "BECE" | "WASSCE" | "EXPLORER") => {
     setSelectedExamType(examType);
     setSelectedTopics([]);
@@ -359,188 +250,6 @@ export default function Learn() {
     }
     setIsExamTypeOpen(false);
   };
-
-  // SUPABASE FETCH
-  useEffect(() => {
-    const fetchExams = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const { data: examsData, error: examsError } = await supabase
-          .from("exams")
-          .select(`
-            id,
-            exam_source,
-            exam_type,
-            subject,
-            question_count,
-            total_marks,
-            sort_date,
-            created_at,
-            difficulty,
-            topics,
-            school_exam_metadata,
-            waec_exam_metadata,
-            user_exam_metadata,
-            user_exam_progress!user_exam_progress_exam_id_fkey(completed_at)
-          `)
-          .order("sort_date", { ascending: false });
-
-        if (examsError)
-          throw new Error("Failed to fetch exams: " + examsError.message);
-
-        const formattedExams: Exam[] =
-          examsData?.map((exam: any) => ({
-            id: exam.id,
-            exam_source: exam.exam_source,
-            exam_type: exam.exam_type,
-            subject: exam.subject,
-            created_at: new Date(exam.created_at),
-            question_count: exam.question_count || 0,
-            total_marks: exam.total_marks || 0,
-            sort_date: exam.sort_date,
-            difficulty: exam.difficulty || "Medium",
-            topics: exam.topics || [],
-            school_exam_metadata: exam.school_exam_metadata || undefined,
-            waec_exam_metadata: exam.waec_exam_metadata || undefined,
-            user_exam_metadata: exam.user_exam_metadata || undefined,
-            completed: !!exam.user_exam_progress?.completed_at,
-            score: exam.user_exam_progress?.completed_at
-          })) || [];
-
-        setExams(formattedExams);
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "An error occurred while fetching exams.",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchExams();
-  }, [session?.user?.id]);
-
-  // DEV MODE MOCK DATA
-  // useEffect(() => {
-  //   const fetchExams = async () => {
-  //     setLoading(true);
-  //     setError(null);
-
-  //     try {
-  //       // Mock data
-  //       const mockExams: Exam[] = [
-  //         {
-  //           id: "1",
-  //           exam_source: "school",
-  //           exam_type: "BECE",
-  //           subject: "Mathematics",
-  //           question_count: 40,
-  //           total_marks: 100,
-  //           sort_date: "2025-05-01",
-  //           difficulty: "Medium",
-  //           topics: ["Arithmetic (Fractions, Percentages, Ratios)", "Algebra (Equations, Expressions)"],
-  //           school_exam_metadata: {
-  //             school: "Accra Academy",
-  //             grade_level: "JHS 3",
-  //             date: "2025-04-15",
-  //             examiner: "Mr. Kofi Mensah",
-  //             school_location: { region: "Greater Accra", city: "Accra", country: "Ghana" },
-  //           },
-  //           completed: false,
-  //         },
-  //         {
-  //           id: "2",
-  //           exam_source: "waec",
-  //           exam_type: "WASSCE",
-  //           subject: "English Language",
-  //           question_count: 60,
-  //           total_marks: 150,
-  //           sort_date: "2025-06-10",
-  //           difficulty: "Hard",
-  //           topics: ["Advanced Grammar and Usage", "Essay Writing (Argumentative, Expository)"],
-  //           waec_exam_metadata: {
-  //             exam_year: 2025,
-  //             exam_session: "May/June",
-  //             region: "West Africa",
-  //             syllabus_version: "2025",
-  //           },
-  //           completed: true,
-  //         },
-  //         {
-  //           id: "3",
-  //           exam_source: "user",
-  //           exam_type: "EXPLORER",
-  //           subject: "Integrated Science",
-  //           question_count: 25,
-  //           total_marks: 50,
-  //           sort_date: "2025-03-20",
-  //           difficulty: "Easy",
-  //           topics: ["Physical Science (Energy, Forces)", "Scientific Investigation"],
-  //           user_exam_metadata: {
-  //             creator_id: "user123",
-  //             creator_name: "Jane Doe",
-  //             date: "2025-03-18",
-  //             description: "Practice test for science enthusiasts",
-  //           },
-  //           completed: false,
-  //         },
-  //         {
-  //           id: "4",
-  //           exam_source: "school",
-  //           exam_type: "BECE",
-  //           subject: "Social Studies",
-  //           question_count: 50,
-  //           total_marks: 120,
-  //           sort_date: "2025-04-25",
-  //           difficulty: "Medium",
-  //           topics: ["Governance and Citizenship", "Geography (Physical and Human)"],
-  //           school_exam_metadata: {
-  //             school: "Wesley Girls High School",
-  //             grade_level: "JHS 3",
-  //             date: "2025-04-20",
-  //             examiner: "Mrs. Ama Boateng",
-  //             school_location: { region: "Central Region", city: "Cape Coast", country: "Ghana" },
-  //           },
-  //           completed: true,
-  //         },
-  //         {
-  //           id: "5",
-  //           exam_source: "waec",
-  //           exam_type: "WASSCE",
-  //           subject: "Financial Accounting",
-  //           question_count: 45,
-  //           total_marks: 100,
-  //           sort_date: "2025-06-15",
-  //           difficulty: "Hard",
-  //           topics: ["Financial Statements and Analysis", "Bookkeeping and Ledger Accounts"],
-  //           waec_exam_metadata: {
-  //             exam_year: 2025,
-  //             exam_session: "November/December",
-  //             region: "West Africa",
-  //             syllabus_version: "2025",
-  //           },
-  //           completed: false,
-  //         },
-  //       ];
-
-  //       setExams(mockExams);
-  //     } catch (err) {
-  //       setError(
-  //         err instanceof Error
-  //           ? err.message
-  //           : "An error occurred while fetching exams.",
-  //       );
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchExams();
-  // }, [session?.user?.id]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -632,15 +341,18 @@ export default function Learn() {
       <LearnPageHeader />
       <main className="min-h-[calc(100vh-4rem)] overflow-auto bg-white dark:from-gray-900 dark:to-gray-950 pb-6 md:px-3">
         <div className="max-w-2xl mx-auto">
-          {loading && (
+          {/* Show loading spinner while fetching */}
+          {isLoading && (
             <div className="flex justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           )}
-          {error && (
+
+          {/* Show error message if there's an error */}
+          {isError && !isLoading && (
             <div className="text-center py-8">
               <p className="text-sm text-red-600 dark:text-red-400 mb-2">
-                {error}
+                {isError?.message || "An error occurred while fetching exams."}
               </p>
               <a
                 href="/learn"
@@ -652,7 +364,8 @@ export default function Learn() {
             </div>
           )}
 
-          {!loading && !error && (
+          {/* Show content when not loading and no error */}
+          {!isLoading && !isError && (
             <>
               <div className="w-full border border-y-0 border-x">
                 {/* Subject Categories */}
@@ -731,7 +444,6 @@ export default function Learn() {
                   </Drawer>
                 </div>
 
-
                 {/* Exam Cards */}
                 {(() => {
                   const filteredExams = getFilteredExams();
@@ -746,15 +458,7 @@ export default function Learn() {
                       </p>
                       {selectedSubject === "For you" &&
                         selectedTopics.length === 0 && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setIsFilterOpen(true)}
-                            className="mt-2"
-                          >
-                            <Filter className="h-4 w-4 mr-2" />
-                            Select Topics
-                          </Button>
+                         ""
                         )}
                     </div>
                   ) : (
