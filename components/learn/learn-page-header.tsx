@@ -5,7 +5,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import Logo from "@/components/logo"
 import { SourcesModal } from "@/components/learn/sources-modal"
-import { Menuu } from "@/components/learn/menu" // Updated to match enhanced Menuu
+import { ExamMenu } from "@/components/learn/menu" // Updated to match enhanced ExamMenu
 import { UserNav } from "../user-nav"
 import { TextSearch } from "lucide-react"
 
@@ -93,7 +93,7 @@ export function LearnPageHeader({ className, showActions = true }: HeaderProps) 
             onOpenChange={setSourcesModalOpen}
             educationalLevel={userSettings.educationalLevel}
           />
-          <Menuu
+          <ExamMenu
             open={menuOpen}
             onOpenChange={handleMenuToggle}
           />
