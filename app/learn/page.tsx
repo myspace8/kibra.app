@@ -145,7 +145,7 @@ export default function Learn() {
   const [examScores, setExamScores] = useState<Record<string, { score: number; totalMarks: number }>>({});
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const { exams, isLoading, isError } = useExams(session?.user?.id);
+  const { exams, isLoading, isError } = useExams();
 
   // Initialize state from localStorage only on client side
   useEffect(() => {
